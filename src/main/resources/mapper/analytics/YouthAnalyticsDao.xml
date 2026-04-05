@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.analytics.dao.YouthAnalyticsDao">
+
+    <resultMap id="ChartItemResultMap" type="com.haidong.tuanwei.analytics.entity.ChartItem">
+        <result property="name" column="name"/>
+        <result property="value" column="item_value"/>
+    </resultMap>
+
+    <select id="countByColumn" resultMap="ChartItemResultMap">
+        select ${column} as name, count(*) as item_value
+        from youth_info
+        where deleted = 0
+          and youth_type = #{youthType}
+          and ${column} is not null
+          and ${column} != ''
+        group by ${column}
+        order by item_value desc
+    </select>
+
+    <select id="countByAgeRange" resultMap="ChartItemResultMap">
+        select case
+                   when year(current_date) - year(birth_date) &lt;= 20 then '20岁及以下'
+                   when year(current_date) - year(birth_date) between 21 and 25 then '21-25岁'
+                   when year(current_date) - year(birth_date) between 26 and 30 then '26-30岁'
+                   else '30岁以上'
+                   end as name,
+               count(*) as item_value
+        from youth_info
+        where deleted = 0
+          and youth_type = #{youthType}
+          and birth_date is not null
+        group by case
+                     when year(current_date) - year(birth_date) &lt;= 20 then '20岁及以下'
+                     when year(current_date) - year(birth_date) between 21 and 25 then '21-25岁'
+                     when year(current_date) - year(birth_date) between 26 and 30 then '26-30岁'
+                     else '30岁以上'
+                 end
+    </select>
+</mapper>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+        <section class="page-hero">
+            <h2 class="page-hero-title">数据分析</h2>
+            <p class="page-hero-subtitle" th:text="${youthTypeLabel + '分类统计分析看板'}">在校大学生分类统计分析看板</p>
+        </section>
+        <section class="panel">
+            <div class="tab-row">
+                <div class="tab-list">
+                    <a class="tab-link"
+                       th:classappend="${youthType == 'college'} ? ' active' : ''"
+                       th:href="@{/analytics/college}">在校大学生</a>
+                    <a class="tab-link"
+                       th:classappend="${youthType == 'graduate'} ? ' active' : ''"
+                       th:href="@{/analytics/graduate}">毕业未就业</a>
+                    <a class="tab-link"
+                       th:classappend="${youthType == 'rural'} ? ' active' : ''"
+                       th:href="@{/analytics/rural}">农村社区待业</a>
+                    <a class="tab-link"
+                       th:classappend="${youthType == 'entrepreneur'} ? ' active' : ''"
+                       th:href="@{/analytics/entrepreneur}">创业青年</a>
+                </div>
+            </div>
+            <div class="panel-header">
+                <div>
+                    <h2 th:text="${youthTypeLabel + '分析看板'}">在校大学生分析看板</h2>
+                    <p>当前页面汇总年龄、学历、性别、民族、政治面貌和创业需求分布。</p>
+                </div>
+            </div>
+            <div class="analytics-grid">
+                <div class="panel"><div id="ageChart" class="chart-box tall"></div></div>
+                <div class="panel"><div id="educationChart" class="chart-box tall"></div></div>
+                <div class="panel"><div id="ethnicityChart" class="chart-box"></div></div>
+                <div class="panel"><div id="politicalChart" class="chart-box"></div></div>
+                <div class="panel"><div id="genderChart" class="chart-box"></div></div>
+                <div class="panel"><div id="demandChart" class="chart-box"></div></div>
+            </div>
+        </section>
+    </main>
+</div>
+<script th:inline="javascript">
+    const ageData = /*[[${ageDistributionJson}]]*/ '[]';
+    const genderData = /*[[${genderDistributionJson}]]*/ '[]';
+    const educationData = /*[[${educationDistributionJson}]]*/ '[]';
+    const ethnicityData = /*[[${ethnicityDistributionJson}]]*/ '[]';
+    const politicalData = /*[[${politicalStatusDistributionJson}]]*/ '[]';
+    const demandData = /*[[${entrepreneurshipDemandDistributionJson}]]*/ '[]';
+
+    function parseData(raw) {
+        return JSON.parse(raw || '[]');
+    }
+
+    function baseOption(title) {
+        return {
+            title: {
+                text: title,
+                left: 'center',
+                top: 10,
+                textStyle: {color: '#e7f0ff', fontSize: 16, fontWeight: 700}
+            },
+            tooltip: {trigger: 'item'},
+            textStyle: {color: '#8ea3cc'}
+        };
+    }
+
+    function renderAreaChart(elementId, title, rawData) {
+        const data = parseData(rawData);
+        const chart = echarts.init(document.getElementById(elementId));
+        chart.setOption(Object.assign(baseOption(title), {
+            tooltip: {trigger: 'axis'},
+            grid: {left: 50, right: 24, top: 60, bottom: 40},
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: data.map(item => item.name),
+                axisLabel: {color: '#8ea3cc'}
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {color: '#8ea3cc'},
+                splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
+            },
+            series: [{
+                type: 'line',
+                smooth: true,
+                data: data.map(item => item.value),
+                symbol: 'circle',
+                symbolSize: 8,
+                lineStyle: {width: 3, color: '#4bc8ff'},
+                itemStyle: {color: '#8ef3ff'},
+                areaStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        {offset: 0, color: 'rgba(74, 234, 255, 0.65)'},
+                        {offset: 1, color: 'rgba(24, 107, 255, 0.06)'}
+                    ])
+                }
+            }]
+        }));
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderHorizontalBar(elementId, title, rawData) {
+        const data = parseData(rawData);
+        const chart = echarts.init(document.getElementById(elementId));
+        chart.setOption(Object.assign(baseOption(title), {
+            tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+            grid: {left: 70, right: 24, top: 60, bottom: 30},
+            xAxis: {
+                type: 'value',
+                axisLabel: {color: '#8ea3cc'},
+                splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
+            },
+            yAxis: {
+                type: 'category',
+                data: data.map(item => item.name),
+                axisLabel: {color: '#8ea3cc'}
+            },
+            series: [{
+                type: 'bar',
+                data: data.map(item => item.value),
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+                        {offset: 0, color: '#6be6ff'},
+                        {offset: 1, color: '#2d7fff'}
+                    ]),
+                    borderRadius: [0, 8, 8, 0]
+                },
+                barMaxWidth: 18
+            }]
+        }));
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    function renderPieChart(elementId, title, rawData, donut) {
+        const data = parseData(rawData);
+        const chart = echarts.init(document.getElementById(elementId));
+        chart.setOption(Object.assign(baseOption(title), {
+            legend: {bottom: 0, textStyle: {color: '#8ea3cc'}},
+            series: [{
+                type: 'pie',
+                radius: donut ? ['48%', '68%'] : '68%',
+                center: ['50%', '46%'],
+                label: {color: '#dce7ff'},
+                itemStyle: {
+                    borderColor: '#071738',
+                    borderWidth: 4
+                },
+                data: data.map((item, index) => ({
+                    name: item.name,
+                    value: item.value,
+                    itemStyle: {
+                        color: ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa'][index % 6]
+                    }
+                }))
+            }]
+        }));
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    renderAreaChart('ageChart', '年龄结构', ageData);
+    renderHorizontalBar('educationChart', '学历层次', educationData);
+    renderPieChart('ethnicityChart', '民族分布', ethnicityData, false);
+    renderPieChart('politicalChart', '政治面貌', politicalData, true);
+    renderHorizontalBar('genderChart', '性别分布', genderData);
+    renderPieChart('demandChart', '创业需求', demandData, true);
+</script>
+</body>
+</html>

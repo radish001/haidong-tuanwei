@@ -1,0 +1,4656 @@
+{
+  "version": "2.10",
+  "children": [
+    {
+      "type": "frame",
+      "id": "bi8Au",
+      "x": 0,
+      "y": 0,
+      "name": "首页驾驶舱",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "stroke": {
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "5rvfy",
+          "x": 0,
+          "y": 0,
+          "name": "sidebarHome",
+          "width": 196,
+          "height": 900,
+          "fill": "$sidebar",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "ykVgH",
+          "x": 212,
+          "y": 12,
+          "name": "headerHome",
+          "width": 1212,
+          "height": 72,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 90,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D285F",
+                "position": 0
+              },
+              {
+                "color": "#133B82",
+                "position": 0.5
+              },
+              {
+                "color": "#0D285F",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$accent"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "id": "eTct5",
+              "x": 18,
+              "y": 6,
+              "name": "headerLineHome",
+              "fill": "#58E8FF",
+              "width": 1176,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "PVDD5",
+          "x": 0,
+          "y": 46,
+          "name": "selectBarHome",
+          "fill": "$accent",
+          "width": 4,
+          "height": 36
+        },
+        {
+          "type": "frame",
+          "id": "Y7f6o",
+          "x": 12,
+          "y": 42,
+          "width": 164,
+          "height": 34,
+          "fill": "#123467",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "txLei",
+              "fill": "$accent",
+              "content": "首页",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "SqQqS",
+          "x": 24,
+          "y": 138,
+          "name": "menu2Home",
+          "fill": "$textPrimary",
+          "content": "青年信息库",
+          "fontFamily": "Inter",
+          "fontSize": 16
+        },
+        {
+          "type": "text",
+          "id": "a4naP",
+          "x": 24,
+          "y": 190,
+          "name": "menu3Home",
+          "fill": "$textPrimary",
+          "content": "数据分析",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "vkngI",
+          "x": 24,
+          "y": 242,
+          "name": "menu4Home",
+          "fill": "$textPrimary",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "0GSmI",
+          "x": 24,
+          "y": 294,
+          "name": "menu5Home",
+          "fill": "$textPrimary",
+          "content": "企业招聘信息",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "PZ6UN",
+          "x": 24,
+          "y": 346,
+          "name": "menu6Home",
+          "fill": "$textPrimary",
+          "content": "系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "sgds1",
+          "x": 16,
+          "y": 8,
+          "name": "platformHome",
+          "fill": "$accent",
+          "textGrowth": "fixed-width",
+          "width": 164,
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "hMpKy",
+          "x": 528,
+          "y": 27,
+          "name": "titleHome",
+          "fill": "$textPrimary",
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "yDHDZ",
+          "x": 1304,
+          "y": 28,
+          "name": "userHome",
+          "fill": "$accent",
+          "content": "超级管理员",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "UTQcI",
+          "x": 212,
+          "y": 96,
+          "name": "contentHome",
+          "width": 1212,
+          "height": 786,
+          "layout": "vertical",
+          "gap": 18,
+          "children": [
+            {
+              "type": "frame",
+              "id": "A4efh",
+              "name": "mapRowHome",
+              "width": "fill_container",
+              "height": 360,
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pGREX",
+                  "name": "mapCard1",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Tiwhc",
+                      "name": "mapTitle1",
+                      "fill": "$textPrimary",
+                      "content": "在校大学生分布",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ZAs5v",
+                      "name": "mapInner1",
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": "#0B2A63",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$accentSoft"
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "QNsMm",
+                          "x": 22,
+                          "y": 28,
+                          "name": "map1GlowA",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#2FBFFF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#2FBFFF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 110,
+                          "height": 132
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "AgScL",
+                          "x": 92,
+                          "y": 18,
+                          "name": "map1GlowB",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#8FE8FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#8FE8FF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 124,
+                          "height": 166
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "DoMxd",
+                          "x": 14,
+                          "y": 210,
+                          "name": "map1Legend",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 90,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#7CEBFF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#1676D6",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 84,
+                          "height": 10
+                        },
+                        {
+                          "type": "text",
+                          "id": "cfXXF",
+                          "x": 14,
+                          "y": 224,
+                          "name": "map1Scale",
+                          "fill": "$textSecondary",
+                          "content": "0            1000",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "lMt4g",
+                      "name": "mapLegend1",
+                      "fill": "$textSecondary",
+                      "content": "蓝色越深表示人数越多",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "caf8E",
+                  "name": "mapCard2",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HBszt",
+                      "name": "mapTitle2",
+                      "fill": "$textPrimary",
+                      "content": "毕业未就业大学生分布",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ePiRU",
+                      "name": "mapInner2",
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": "#0B2A63",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$accentSoft"
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "zdTly",
+                          "x": 26,
+                          "y": 24,
+                          "name": "map2GlowA",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#85E6FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#85E6FF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 116,
+                          "height": 144
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "nUnIb",
+                          "x": 104,
+                          "y": 14,
+                          "name": "map2GlowB",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#D2F8FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#D2F8FF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 108,
+                          "height": 154
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "Djujr",
+                          "x": 14,
+                          "y": 210,
+                          "name": "map2Legend",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 90,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#CCF8FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#54BFEA",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 84,
+                          "height": 10
+                        },
+                        {
+                          "type": "text",
+                          "id": "XzXfE",
+                          "x": 14,
+                          "y": 224,
+                          "name": "map2Scale",
+                          "fill": "$textSecondary",
+                          "content": "0            1000",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "V5tWK",
+                      "name": "mapLegend2",
+                      "fill": "$textSecondary",
+                      "content": "支持按区域查看数据热力",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "AkMc7",
+                  "name": "mapCard3",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "s0InN",
+                      "name": "mapTitle3",
+                      "fill": "$textPrimary",
+                      "content": "农村社区待业青年分布",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "bIBYm",
+                      "name": "mapInner3",
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": "#0B2A63",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$accentSoft"
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "SsF4w",
+                          "x": 20,
+                          "y": 20,
+                          "name": "map3GlowA",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#91E7FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#91E7FF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 126,
+                          "height": 150
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "r2pcA",
+                          "x": 96,
+                          "y": 26,
+                          "name": "map3GlowB",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#44C2F8",
+                                "position": 0
+                              },
+                              {
+                                "color": "#44C2F800",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 116,
+                          "height": 148
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "Zpoxg",
+                          "x": 14,
+                          "y": 210,
+                          "name": "map3Legend",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 90,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#A4F0FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#2692F0",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 84,
+                          "height": 10
+                        },
+                        {
+                          "type": "text",
+                          "id": "vsqZ6",
+                          "x": 14,
+                          "y": 224,
+                          "name": "map3Scale",
+                          "fill": "$textSecondary",
+                          "content": "0            1000",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZX36O",
+                      "name": "mapLegend3",
+                      "fill": "$textSecondary",
+                      "content": "区县数据可联动到信息库",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "u6eAV",
+                  "name": "mapCard4",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mCApX",
+                      "name": "mapTitle4",
+                      "fill": "$textPrimary",
+                      "content": "创业青年分布",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "LKumf",
+                      "name": "mapInner4",
+                      "width": "fill_container",
+                      "height": 240,
+                      "fill": "#0B2A63",
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$accentSoft"
+                      },
+                      "layout": "none",
+                      "children": [
+                        {
+                          "type": "ellipse",
+                          "id": "OyB6b",
+                          "x": 18,
+                          "y": 24,
+                          "name": "map4GlowA",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#49CFFF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#49CFFF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 124,
+                          "height": 156
+                        },
+                        {
+                          "type": "ellipse",
+                          "id": "dOrui",
+                          "x": 98,
+                          "y": 18,
+                          "name": "map4GlowB",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "radial",
+                            "enabled": true,
+                            "rotation": 0,
+                            "size": {
+                              "width": 1,
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#7EF2FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#7EF2FF00",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 118,
+                          "height": 162
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 3,
+                          "id": "i2Kpf",
+                          "x": 14,
+                          "y": 210,
+                          "name": "map4Legend",
+                          "fill": {
+                            "type": "gradient",
+                            "gradientType": "linear",
+                            "enabled": true,
+                            "rotation": 90,
+                            "size": {
+                              "height": 1
+                            },
+                            "colors": [
+                              {
+                                "color": "#97F5FF",
+                                "position": 0
+                              },
+                              {
+                                "color": "#22C5FF",
+                                "position": 1
+                              }
+                            ]
+                          },
+                          "width": 84,
+                          "height": 10
+                        },
+                        {
+                          "type": "text",
+                          "id": "y4O6q",
+                          "x": 14,
+                          "y": 224,
+                          "name": "map4Scale",
+                          "fill": "$textSecondary",
+                          "content": "0            1000",
+                          "fontFamily": "Inter",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "h6Fmh",
+                      "name": "mapLegend4",
+                      "fill": "$textSecondary",
+                      "content": "覆盖创业主体与创业意向人群",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "X728c",
+              "name": "listRowHome",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nrUj9",
+                  "name": "listCard1",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Sm1qp",
+                      "name": "listTitle1",
+                      "fill": "$textPrimary",
+                      "content": "青年就业创业信息",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "FXNPF",
+                      "name": "listMore1",
+                      "fill": "$accent",
+                      "content": "更多 >>",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Eh5kR",
+                      "name": "tableWrap1",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "7DDDl",
+                          "name": "head1",
+                          "width": "fill_container",
+                          "height": 38,
+                          "fill": "$mutedRow",
+                          "cornerRadius": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NFH7W",
+                              "name": "head1Text",
+                              "fill": "$accent",
+                              "content": "标题                    发布人      发布日期",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "stOy8",
+                          "name": "row11",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "#0A1A45",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#143566"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "R71Oj",
+                              "name": "row11Text",
+                              "fill": "$textPrimary",
+                              "content": "海东市急需紧缺人才引进办法（试行）      超级管理员   2025-11-14",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "sEwIN",
+                          "name": "row12",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "#0A1A45",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#143566"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "NwNhW",
+                              "name": "row12Text",
+                              "fill": "$textPrimary",
+                              "content": "关于加快推进新时代人才强市的若干措施      超级管理员   2025-11-14",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Mo1So",
+                          "name": "row13",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "#0A1A45",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#143566"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "CsPbp",
+                              "name": "row13Text",
+                              "fill": "$textPrimary",
+                              "content": "青年创业就业服务指南                      超级管理员   2025-09-18",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "06Us9",
+                  "name": "listCard2",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "iFtmc",
+                      "name": "listTitle2",
+                      "fill": "$textPrimary",
+                      "content": "企业招聘信息",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "mMvZW",
+                      "name": "listMore2",
+                      "fill": "$accent",
+                      "content": "更多 >>",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mEbi8",
+                      "name": "tableWrap2",
+                      "width": "fill_container",
+                      "height": "fill_container",
+                      "layout": "vertical",
+                      "gap": 8,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "QZcvQ",
+                          "name": "head2",
+                          "width": "fill_container",
+                          "height": 38,
+                          "fill": "$mutedRow",
+                          "cornerRadius": 6,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "JFzVJ",
+                              "name": "head2Text",
+                              "fill": "$accent",
+                              "content": "职位名称          企业名称              经验要求      发布时间",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "4K9vJ",
+                          "name": "row21",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "#0A1A45",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#143566"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "7mgvV",
+                              "name": "row21Text",
+                              "fill": "$textPrimary",
+                              "content": "SMT操作工       无锡华叶科技有限公司     不限        2025-09-19",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "02fox",
+                          "name": "row22",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "#0A1A45",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#143566"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "qDfu0",
+                              "name": "row22Text",
+                              "fill": "$textPrimary",
+                              "content": "模组品质作工     无锡市科佳新材料有限公司  1-3年       2025-09-19",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "WAazG",
+                          "name": "row23",
+                          "width": "fill_container",
+                          "height": 46,
+                          "fill": "#0A1A45",
+                          "cornerRadius": 6,
+                          "stroke": {
+                            "thickness": 1,
+                            "fill": "#143566"
+                          },
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "oXLMu",
+                              "name": "row23Text",
+                              "fill": "$textPrimary",
+                              "content": "仓库管理员       江苏中铁高铁有限公司      不限        2025-09-18",
+                              "fontFamily": "Inter",
+                              "fontSize": 13,
+                              "fontWeight": "normal"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "TadZf",
+          "x": 10,
+          "y": 42,
+          "name": "menuBgHome",
+          "width": 166,
+          "height": 34,
+          "fill": "#0F2A5E",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "82uyK",
+          "x": 1268,
+          "y": 24,
+          "name": "avatarHome",
+          "fill": "#5FCBFF",
+          "width": 22,
+          "height": 22
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "80COF",
+      "x": 1520,
+      "y": 0,
+      "name": "青年信息库",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "stroke": {
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "AZeUr",
+          "x": 0,
+          "y": 0,
+          "name": "sidebarYouth",
+          "width": 196,
+          "height": 900,
+          "fill": "$sidebar",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "YTnq5",
+          "x": 212,
+          "y": 12,
+          "name": "headerYouth",
+          "width": 1212,
+          "height": 72,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 90,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D285F",
+                "position": 0
+              },
+              {
+                "color": "#133B82",
+                "position": 0.5
+              },
+              {
+                "color": "#0D285F",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$accent"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "uHjHj",
+          "x": 0,
+          "y": 82,
+          "name": "selectBarYouth",
+          "fill": "$accent",
+          "width": 4,
+          "height": 36
+        },
+        {
+          "type": "text",
+          "id": "0pOwv",
+          "x": 16,
+          "y": 8,
+          "name": "platformYouth",
+          "fill": "$accent",
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "KTIGx",
+          "x": 24,
+          "y": 30,
+          "name": "menu1Youth",
+          "fill": "$textPrimary",
+          "content": "首页",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "A6EWA",
+          "x": 12,
+          "y": 78,
+          "width": 164,
+          "height": 34,
+          "fill": "#123467",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qTROe",
+              "fill": "$accent",
+              "content": "青年信息库",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "ds5YT",
+          "x": 24,
+          "y": 138,
+          "name": "menu3Youth",
+          "fill": "$textPrimary",
+          "content": "数据分析",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "QDAMo",
+          "x": 24,
+          "y": 190,
+          "name": "menu4Youth",
+          "fill": "$textPrimary",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "QsMZ3",
+          "x": 24,
+          "y": 242,
+          "name": "menu5Youth",
+          "fill": "$textPrimary",
+          "content": "企业招聘信息",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "6Fp3o",
+          "x": 24,
+          "y": 294,
+          "name": "menu6Youth",
+          "fill": "$textPrimary",
+          "content": "系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "FSxmv",
+          "x": 704,
+          "y": 27,
+          "name": "pageTitleYouth",
+          "fill": "$textPrimary",
+          "content": "青年信息库",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "V4blc",
+          "x": 1304,
+          "y": 28,
+          "name": "userYouth",
+          "fill": "$accent",
+          "content": "超级管理员",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "WoWpB",
+          "x": 212,
+          "y": 96,
+          "name": "contentYouth",
+          "width": 1212,
+          "height": 786,
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "frame",
+              "id": "qXIGn",
+              "name": "tabsYouth",
+              "height": 40,
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "P9eTF",
+                  "height": 32,
+                  "fill": "$tabActive",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$tabStroke"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "rm7Lc",
+                      "fill": "#FFFFFF",
+                      "content": "在校大学生",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kOtx2",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UgCr5",
+                      "fill": "$textPrimary",
+                      "content": "毕业未就业",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "nOLp1",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "0DHm3",
+                      "fill": "$textPrimary",
+                      "content": "农村社区待业",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pugH9",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MdPL2",
+                      "fill": "$textPrimary",
+                      "content": "创业青年",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KsGD8",
+              "name": "filterYouth",
+              "width": "fill_container",
+              "height": 118,
+              "fill": "$panel",
+              "cornerRadius": 10,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "fwcb8",
+                  "width": 724,
+                  "height": 34,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "tQVh7",
+                      "width": 118,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "iI3hq",
+                          "fill": "$textSecondary",
+                          "content": "区域",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "GSyw9",
+                          "fill": "$textPrimary",
+                          "content": "请选择",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "wxNrr",
+                      "width": 98,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XjO9t",
+                          "fill": "$textSecondary",
+                          "content": "年龄",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Hu7VF",
+                          "fill": "$textPrimary",
+                          "content": "请选择",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MB2fT",
+                      "width": 98,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "1O7tk",
+                          "fill": "$textSecondary",
+                          "content": "性别",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "kCPba",
+                          "fill": "$textPrimary",
+                          "content": "全部",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "yKut2",
+                      "width": 108,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Y2O9B",
+                          "fill": "$textSecondary",
+                          "content": "民族",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qvglB",
+                          "fill": "$textPrimary",
+                          "content": "请选择",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "zODT8",
+                      "width": 126,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "R5T5i",
+                          "fill": "$textSecondary",
+                          "content": "政治面貌",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "xWWBP",
+                          "fill": "$textPrimary",
+                          "content": "请选择",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "mECPW",
+                      "width": 126,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "8FIlU",
+                          "fill": "$textSecondary",
+                          "content": "学历层次",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "T2ZgE",
+                          "fill": "$textPrimary",
+                          "content": "请选择",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Opjfo",
+                  "width": 494,
+                  "height": 34,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "AlC4n",
+                      "width": 160,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wg20P",
+                          "fill": "$textSecondary",
+                          "content": "姓名",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "E23xc",
+                      "width": 160,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "0DTdx",
+                          "fill": "$textSecondary",
+                          "content": "专业",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tVrfX",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$tabActive",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$tabStroke"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "A654e",
+                          "fill": "#FFFFFF",
+                          "content": "查询",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sg0D8",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$btnDark",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "6wu8C",
+                          "fill": "$textPrimary",
+                          "content": "重置",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "2lAvV",
+              "name": "toolYouth",
+              "width": "fill_container",
+              "height": 40,
+              "gap": 10,
+              "justifyContent": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "qBvdD",
+                  "width": 84,
+                  "height": 32,
+                  "fill": "$tabActive",
+                  "cornerRadius": 4,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$tabStroke"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "uukH2",
+                      "fill": "#FFFFFF",
+                      "content": "+ 新增",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Bqcff",
+                  "width": 92,
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 4,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tIzc5",
+                      "fill": "$textPrimary",
+                      "content": "导入导出",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tMwtQ",
+                  "width": 72,
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 4,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "DwBej",
+                      "fill": "$textPrimary",
+                      "content": "删除",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1bPl8",
+              "name": "tableYouth",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$panel",
+              "cornerRadius": 10,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "y61SQ",
+                  "name": "headYouth",
+                  "width": "fill_container",
+                  "height": 38,
+                  "fill": "$headerRow",
+                  "cornerRadius": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SCIVG",
+                      "name": "headYouthText",
+                      "fill": "$accent",
+                      "content": "序号    姓名    性别    出生年月    民族    政治面貌    籍贯    学校    专业    毕业时间    联系方式    操作",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qntvR",
+                  "name": "row1Youth",
+                  "width": "fill_container",
+                  "height": 50,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "2bYqD",
+                      "name": "row1YouthText",
+                      "fill": "$textPrimary",
+                      "content": "1    张子龙    男    2003-07    回族    共青团员    青海省海东市    重庆人文科技学院    数字媒体    2026    178****840    编辑 / 删除",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "292kn",
+                  "name": "row2Youth",
+                  "width": "fill_container",
+                  "height": 50,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "cnLCu",
+                      "name": "row2YouthText",
+                      "fill": "$textPrimary",
+                      "content": "2    魏士博    男    2004-08    汉族    共青团员    青海省海东市    重庆城市管理学院    大数据    2026    199****210    编辑 / 删除",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "cMW49",
+                  "name": "row3Youth",
+                  "width": "fill_container",
+                  "height": 50,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yfFpD",
+                      "name": "row3YouthText",
+                      "fill": "$textPrimary",
+                      "content": "3    李文静    女    2004-01    汉族    共青团员    青海省海东市    重庆工商大学    现代物流    2026    138****328    编辑 / 删除",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "SHofB",
+                  "name": "pagerYouth",
+                  "fill": "$textSecondary",
+                  "content": "共 128 条记录    第 1 / 13 页",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "cYoxz",
+      "x": 3040,
+      "y": 0,
+      "name": "数据分析",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "stroke": {
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "9vBN5",
+          "x": 0,
+          "y": 0,
+          "name": "sidebarAna",
+          "width": 196,
+          "height": 900,
+          "fill": "$sidebar",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "5zy2g",
+          "x": 212,
+          "y": 12,
+          "name": "headerAna",
+          "width": 1212,
+          "height": 72,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 90,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D285F",
+                "position": 0
+              },
+              {
+                "color": "#133B82",
+                "position": 0.5
+              },
+              {
+                "color": "#0D285F",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$accent"
+          },
+          "layout": "none",
+          "children": [
+            {
+              "type": "rectangle",
+              "id": "QOMPn",
+              "x": 18,
+              "y": 6,
+              "name": "headerLineAna",
+              "fill": "#58E8FF",
+              "width": 1176,
+              "height": 2
+            }
+          ]
+        },
+        {
+          "type": "rectangle",
+          "id": "JDQF9",
+          "x": 0,
+          "y": 134,
+          "name": "selectBarAna",
+          "fill": "$accent",
+          "width": 4,
+          "height": 36
+        },
+        {
+          "type": "text",
+          "id": "d2pRk",
+          "x": 16,
+          "y": 8,
+          "name": "platformAna",
+          "fill": "$accent",
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "xb8Qz",
+          "x": 24,
+          "y": 30,
+          "name": "menu1Ana",
+          "fill": "$textPrimary",
+          "content": "首页",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "Lcu2d",
+          "x": 24,
+          "y": 82,
+          "name": "menu2Ana",
+          "fill": "$textPrimary",
+          "content": "青年信息库",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "nx226",
+          "x": 12,
+          "y": 130,
+          "width": 164,
+          "height": 34,
+          "fill": "#123467",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "tLOPo",
+              "fill": "$accent",
+              "content": "数据分析",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "F5eCD",
+          "x": 24,
+          "y": 190,
+          "name": "menu4Ana",
+          "fill": "$textPrimary",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "QLrKw",
+          "x": 24,
+          "y": 242,
+          "name": "menu5Ana",
+          "fill": "$textPrimary",
+          "content": "企业招聘信息",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "gJa7o",
+          "x": 24,
+          "y": 294,
+          "name": "menu6Ana",
+          "fill": "$textPrimary",
+          "content": "系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "6DiP9",
+          "x": 718,
+          "y": 27,
+          "name": "pageTitleAna",
+          "fill": "$textPrimary",
+          "content": "数据分析",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "LfHoC",
+          "x": 1304,
+          "y": 28,
+          "name": "userAna",
+          "fill": "$accent",
+          "content": "超级管理员",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "7yaOK",
+          "x": 212,
+          "y": 96,
+          "name": "contentAna",
+          "width": 1212,
+          "height": 786,
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "frame",
+              "id": "8McyQ",
+              "name": "tabsAna",
+              "height": 40,
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "f8GDv",
+                  "height": 32,
+                  "fill": "$tabActive",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$tabStroke"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "tQ3HL",
+                      "fill": "#FFFFFF",
+                      "content": "在校大学生",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "aIzxN",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "5B3xf",
+                      "fill": "$textPrimary",
+                      "content": "毕业未就业",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "2yRTm",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "azPrF",
+                      "fill": "$textPrimary",
+                      "content": "农村社区待业",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "qhzy6",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WDEkz",
+                      "fill": "$textPrimary",
+                      "content": "创业青年",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "qWlFP",
+              "name": "row1Ana",
+              "width": "fill_container",
+              "height": 360,
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pKTvu",
+                  "name": "chart1Ana",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "JrXk9",
+                      "name": "ct1",
+                      "fill": "$textPrimary",
+                      "content": "年龄结构",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "YR1cW",
+                      "name": "ci1",
+                      "width": "fill_container",
+                      "height": 260,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "linear",
+                        "enabled": true,
+                        "rotation": 180,
+                        "size": {
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#0D2E67",
+                            "position": 0
+                          },
+                          {
+                            "color": "#53D3B1",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "cornerRadius": 12,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$border"
+                      }
+                    },
+                    {
+                      "type": "text",
+                      "id": "DUHmf",
+                      "name": "legendAge",
+                      "fill": "$textSecondary",
+                      "content": "男   女",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "84w99",
+                  "name": "chart2Ana",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Zpcyt",
+                      "name": "ct2",
+                      "fill": "$textPrimary",
+                      "content": "学历层次",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DzIZH",
+                      "name": "barWrap2",
+                      "width": "fill_container",
+                      "height": 260,
+                      "gap": 14,
+                      "padding": [
+                        0,
+                        10
+                      ],
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "AQYa2",
+                          "name": "bar21",
+                          "fill": "$accent",
+                          "width": "fill_container",
+                          "height": 96
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "CpAL8",
+                          "name": "bar22",
+                          "fill": "$success",
+                          "width": "fill_container",
+                          "height": 186
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "7nsqu",
+                          "name": "bar23",
+                          "fill": "$accentSoft",
+                          "width": "fill_container",
+                          "height": 132
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "u6byp",
+                          "name": "bar24",
+                          "fill": "$warning",
+                          "width": "fill_container",
+                          "height": 44
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Py7oL",
+                      "name": "barLabel2",
+                      "fill": "$textSecondary",
+                      "content": "专科   本科   硕士   博士",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "0tX60",
+                  "name": "chart3Ana",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "UxS24",
+                      "name": "ct3",
+                      "fill": "$textPrimary",
+                      "content": "专业分布",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "ZtyHh",
+                      "name": "donut3",
+                      "innerRadius": 0.62,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "angular",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "$accent",
+                            "position": 0
+                          },
+                          {
+                            "color": "$success",
+                            "position": 0.58
+                          },
+                          {
+                            "color": "#143566",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 220,
+                      "height": 220
+                    },
+                    {
+                      "type": "text",
+                      "id": "0XRlI",
+                      "name": "legendDonut3",
+                      "fill": "$textSecondary",
+                      "content": "其他 70.2%    无 29.8%",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cwW2C",
+              "name": "row2Ana",
+              "width": "fill_container",
+              "height": 412,
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sKjWq",
+                  "name": "chart4Ana",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EfaXl",
+                      "name": "ct4",
+                      "fill": "$textPrimary",
+                      "content": "民族",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "zI60j",
+                      "name": "pie4",
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "angular",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#D15C8D",
+                            "position": 0
+                          },
+                          {
+                            "color": "#3A8DDB",
+                            "position": 0.42
+                          },
+                          {
+                            "color": "#F4C15D",
+                            "position": 0.75
+                          },
+                          {
+                            "color": "#53D3B1",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 220,
+                      "height": 220
+                    },
+                    {
+                      "type": "text",
+                      "id": "lZh2f",
+                      "name": "legendPie4",
+                      "fill": "$textSecondary",
+                      "content": "汉族    藏族    回族    土族",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "wJ3iS",
+                  "name": "chart5Ana",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "v8g75",
+                      "name": "ct5",
+                      "fill": "$textPrimary",
+                      "content": "政治面貌",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "ellipse",
+                      "id": "2aWFx",
+                      "name": "donut5",
+                      "innerRadius": 0.62,
+                      "fill": {
+                        "type": "gradient",
+                        "gradientType": "angular",
+                        "enabled": true,
+                        "rotation": 0,
+                        "size": {
+                          "width": 1,
+                          "height": 1
+                        },
+                        "colors": [
+                          {
+                            "color": "#4C84FF",
+                            "position": 0
+                          },
+                          {
+                            "color": "#53D3B1",
+                            "position": 0.48
+                          },
+                          {
+                            "color": "#F45B72",
+                            "position": 1
+                          }
+                        ]
+                      },
+                      "width": 220,
+                      "height": 220
+                    },
+                    {
+                      "type": "text",
+                      "id": "ZyKqP",
+                      "name": "legendDonut5",
+                      "fill": "$textSecondary",
+                      "content": "群众 53.7%    共青团员 43.9%",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZHuoN",
+                  "name": "chart6Ana",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 14,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "yCTWG",
+                      "name": "ct6",
+                      "fill": "$textPrimary",
+                      "content": "性别分布",
+                      "fontFamily": "Inter",
+                      "fontSize": 18,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "NlUfM",
+                      "name": "barWrap6",
+                      "width": "fill_container",
+                      "height": 260,
+                      "gap": 16,
+                      "padding": [
+                        0,
+                        8
+                      ],
+                      "alignItems": "end",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "NSwa5",
+                          "name": "bar61",
+                          "fill": "$accent",
+                          "width": "fill_container",
+                          "height": 180
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "1WTdF",
+                          "name": "bar62",
+                          "fill": "$success",
+                          "width": "fill_container",
+                          "height": 214
+                        },
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 6,
+                          "id": "qmZuA",
+                          "name": "bar63",
+                          "fill": "#4C84FF",
+                          "width": "fill_container",
+                          "height": 132
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "DJC3k",
+                      "name": "barLabel6",
+                      "fill": "$textSecondary",
+                      "content": "2025     2024     2023",
+                      "fontFamily": "Inter",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "i2UTR",
+          "x": 10,
+          "y": 130,
+          "name": "menuBgAna",
+          "width": 166,
+          "height": 34,
+          "fill": "#0F2A5E",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          }
+        },
+        {
+          "type": "ellipse",
+          "id": "o7HV0",
+          "x": 1268,
+          "y": 24,
+          "name": "avatarAna",
+          "fill": "#5FCBFF",
+          "width": 22,
+          "height": 22
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "0ebfM",
+      "x": 0,
+      "y": 980,
+      "name": "就业创业政策",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "stroke": {
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "zuXoA",
+          "x": 0,
+          "y": 0,
+          "name": "sidebarPol",
+          "width": 196,
+          "height": 900,
+          "fill": "$sidebar",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "qoYkj",
+          "x": 212,
+          "y": 12,
+          "name": "headerPol",
+          "width": 1212,
+          "height": 72,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 90,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D285F",
+                "position": 0
+              },
+              {
+                "color": "#133B82",
+                "position": 0.5
+              },
+              {
+                "color": "#0D285F",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$accent"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "0U4Nd",
+          "x": 0,
+          "y": 186,
+          "name": "selectBarPol",
+          "fill": "$accent",
+          "width": 4,
+          "height": 36
+        },
+        {
+          "type": "text",
+          "id": "gjvh5",
+          "x": 16,
+          "y": 8,
+          "name": "platformPol",
+          "fill": "$accent",
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "gHnE6",
+          "x": 24,
+          "y": 30,
+          "name": "menu1Pol",
+          "fill": "$textPrimary",
+          "content": "首页",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "ma4gv",
+          "x": 24,
+          "y": 82,
+          "name": "menu2Pol",
+          "fill": "$textPrimary",
+          "content": "青年信息库",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "0H7Ro",
+          "x": 24,
+          "y": 134,
+          "name": "menu3Pol",
+          "fill": "$textPrimary",
+          "content": "数据分析",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "O6m7Y",
+          "x": 12,
+          "y": 182,
+          "width": 164,
+          "height": 34,
+          "fill": "#123467",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "AvepK",
+              "fill": "$accent",
+              "content": "就业创业政策",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "8jR4Z",
+          "x": 24,
+          "y": 242,
+          "name": "menu5Pol",
+          "fill": "$textPrimary",
+          "content": "企业招聘信息",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "ACJYa",
+          "x": 24,
+          "y": 294,
+          "name": "menu6Pol",
+          "fill": "$textPrimary",
+          "content": "系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "MJvym",
+          "x": 676,
+          "y": 27,
+          "name": "pageTitlePol",
+          "fill": "$textPrimary",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "NxQsu",
+          "x": 1304,
+          "y": 28,
+          "name": "userPol",
+          "fill": "$accent",
+          "content": "超级管理员",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "MFmfR",
+          "x": 212,
+          "y": 96,
+          "name": "contentPol",
+          "width": 1212,
+          "height": 786,
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "frame",
+              "id": "Gciol",
+              "name": "filterPol",
+              "width": "fill_container",
+              "height": 92,
+              "fill": "$panel",
+              "cornerRadius": 10,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "5TYlk",
+                  "width": 864,
+                  "height": 34,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "EMQwu",
+                      "width": 180,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "MRHNN",
+                          "fill": "$textSecondary",
+                          "content": "标题",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "aa2lV",
+                      "width": 156,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "6UnAN",
+                          "fill": "$textSecondary",
+                          "content": "政策来源",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "HxUiT",
+                      "width": 136,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "N6kEV",
+                          "fill": "$textSecondary",
+                          "content": "发布人",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "EX3wZ",
+                      "width": 228,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "b21oE",
+                          "fill": "$textSecondary",
+                          "content": "发布时间",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "L1xP6",
+                      "width": 124,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Zoy6z",
+                          "fill": "$textSecondary",
+                          "content": "状态",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "8iLIj",
+                          "fill": "$textPrimary",
+                          "content": "全部",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gP6Ic",
+                  "width": 154,
+                  "height": 34,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "biTQB",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$tabActive",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$tabStroke"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ZXlbT",
+                          "fill": "#FFFFFF",
+                          "content": "查询",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DeMhh",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$btnDark",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tLTKU",
+                          "fill": "$textPrimary",
+                          "content": "重置",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HvkRA",
+              "name": "toolPol",
+              "width": "fill_container",
+              "height": 40,
+              "gap": 10,
+              "justifyContent": "end",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "rdb6O",
+                  "width": 84,
+                  "height": 32,
+                  "fill": "$tabActive",
+                  "cornerRadius": 4,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$tabStroke"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "v4zp7",
+                      "fill": "#FFFFFF",
+                      "content": "+ 新增",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "YkQ2s",
+                  "width": 72,
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 4,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "mrHo3",
+                      "fill": "$textPrimary",
+                      "content": "删除",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "AUL1U",
+              "name": "tablePol",
+              "width": "fill_container",
+              "height": "fill_container",
+              "fill": "$panel",
+              "cornerRadius": 10,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "3snDt",
+                  "name": "headPol",
+                  "width": "fill_container",
+                  "height": 40,
+                  "fill": "$headerRow",
+                  "cornerRadius": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Hzc0x",
+                      "name": "headPolText",
+                      "fill": "$accent",
+                      "content": "标题                                 发布人        政策来源          发布时间            状态        操作",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "csQqA",
+                  "name": "row1Pol",
+                  "width": "fill_container",
+                  "height": 54,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "gVEmg",
+                      "name": "row1PolText",
+                      "fill": "$textPrimary",
+                      "content": "海东市急需紧缺人才引进办法（试行）         超级管理员     海东市党组织部     2025-11-14     已发布     编辑 / 删除 / 详情",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "kFEVT",
+                  "name": "row2Pol",
+                  "width": "fill_container",
+                  "height": 54,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "imsEG",
+                      "name": "row2PolText",
+                      "fill": "$textPrimary",
+                      "content": "关于加快推进新时代人才强市的若干措施       超级管理员     海东市委组织部     2025-11-14     已发布     编辑 / 删除 / 详情",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Bsa9W",
+                  "name": "row3Pol",
+                  "width": "fill_container",
+                  "height": 54,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "TsDAq",
+                      "name": "row3PolText",
+                      "fill": "$textPrimary",
+                      "content": "青年创业就业服务指南                       超级管理员     海东市人社局       2025-09-18     已发布     编辑 / 删除 / 详情",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "J8GQZ",
+                  "name": "row4Pol",
+                  "width": "fill_container",
+                  "height": 54,
+                  "fill": "#0A1A45",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#143566"
+                  },
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "W8o48",
+                      "name": "row4PolText",
+                      "fill": "$textPrimary",
+                      "content": "支持高校毕业生来青就业创业若干措施         超级管理员     海东市人社局       2025-06-24     已发布     编辑 / 删除 / 详情",
+                      "fontFamily": "Inter",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "DAVeK",
+                  "name": "pagerPol",
+                  "fill": "$textSecondary",
+                  "content": "共 6 条记录    第 1 / 1 页",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "QJbda",
+      "x": 1520,
+      "y": 980,
+      "name": "企业招聘信息",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "stroke": {
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "8piYS",
+          "x": 0,
+          "y": 0,
+          "name": "sidebarEnt",
+          "width": 196,
+          "height": 900,
+          "fill": "$sidebar",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "E5iOU",
+          "x": 212,
+          "y": 12,
+          "name": "headerEnt",
+          "width": 1212,
+          "height": 72,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 90,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D285F",
+                "position": 0
+              },
+              {
+                "color": "#133B82",
+                "position": 0.5
+              },
+              {
+                "color": "#0D285F",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$accent"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "N1vRk",
+          "x": 0,
+          "y": 238,
+          "name": "selectBarEnt",
+          "fill": "$accent",
+          "width": 4,
+          "height": 36
+        },
+        {
+          "type": "text",
+          "id": "eIWIO",
+          "x": 16,
+          "y": 8,
+          "name": "platformEnt",
+          "fill": "$accent",
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "I1J1N",
+          "x": 24,
+          "y": 30,
+          "name": "menu1Ent",
+          "fill": "$textPrimary",
+          "content": "首页",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "CieTi",
+          "x": 24,
+          "y": 82,
+          "name": "menu2Ent",
+          "fill": "$textPrimary",
+          "content": "青年信息库",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "p5YUD",
+          "x": 24,
+          "y": 134,
+          "name": "menu3Ent",
+          "fill": "$textPrimary",
+          "content": "数据分析",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "hq5fr",
+          "x": 24,
+          "y": 186,
+          "name": "menu4Ent",
+          "fill": "$textPrimary",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "h9Jqj",
+          "x": 12,
+          "y": 234,
+          "width": 164,
+          "height": 34,
+          "fill": "#123467",
+          "cornerRadius": 6,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$tabStroke"
+          },
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "WZbAi",
+              "fill": "$accent",
+              "content": "企业招聘信息",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "700"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "zaNlz",
+          "x": 24,
+          "y": 294,
+          "name": "menu6Ent",
+          "fill": "$textPrimary",
+          "content": "系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "E7H3c",
+          "x": 662,
+          "y": 27,
+          "name": "pageTitleEnt",
+          "fill": "$textPrimary",
+          "content": "企业招聘信息",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "AoDuE",
+          "x": 1304,
+          "y": 28,
+          "name": "userEnt",
+          "fill": "$accent",
+          "content": "超级管理员",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "LLvBB",
+          "x": 212,
+          "y": 96,
+          "name": "contentEnt",
+          "width": 1212,
+          "height": 786,
+          "layout": "vertical",
+          "gap": 14,
+          "children": [
+            {
+              "type": "frame",
+              "id": "BMIQC",
+              "name": "tabsEnt",
+              "height": 40,
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "DdIhs",
+                  "height": 32,
+                  "fill": "$btnDark",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$fieldBorder"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "HQ2iP",
+                      "fill": "$textPrimary",
+                      "content": "招聘岗位",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uOSGJ",
+                  "height": 32,
+                  "fill": "$tabActive",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$tabStroke"
+                  },
+                  "padding": [
+                    6,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "aEmU6",
+                      "fill": "#FFFFFF",
+                      "content": "企业信息",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ygDEH",
+              "name": "filterEnt",
+              "width": "fill_container",
+              "height": 88,
+              "fill": "$panel",
+              "cornerRadius": 10,
+              "stroke": {
+                "thickness": 1,
+                "fill": "$border"
+              },
+              "layout": "vertical",
+              "gap": 10,
+              "padding": 14,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "PMHJN",
+                  "width": 414,
+                  "height": 34,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "BlUJc",
+                      "width": 240,
+                      "height": 34,
+                      "fill": "$fieldBg",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rMcvg",
+                          "fill": "$textSecondary",
+                          "content": "企业名称",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "WHmme",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$tabActive",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$tabStroke"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "N5pFi",
+                          "fill": "#FFFFFF",
+                          "content": "查询",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "qvfZq",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$btnDark",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kT19o",
+                          "fill": "$textPrimary",
+                          "content": "重置",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Hieqa",
+                  "width": 166,
+                  "height": 34,
+                  "gap": 10,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "uCEQV",
+                      "width": 84,
+                      "height": 34,
+                      "fill": "$tabActive",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$tabStroke"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Fnfh8",
+                          "fill": "#FFFFFF",
+                          "content": "+ 新增",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "zjW2f",
+                      "width": 72,
+                      "height": 34,
+                      "fill": "$btnDark",
+                      "cornerRadius": 4,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "$fieldBorder"
+                      },
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "7zf3r",
+                          "fill": "$textPrimary",
+                          "content": "删除",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "1K9NF",
+              "name": "mainSplitEnt",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nd0M9",
+                  "name": "listEnt",
+                  "width": 760,
+                  "height": "fill_container",
+                  "fill": "$panel",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 10,
+                  "padding": 12,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ClYqE",
+                      "name": "listHeadEnt",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "$headerRow",
+                      "cornerRadius": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "s3KIp",
+                          "name": "listHeadEntText",
+                          "fill": "$accent",
+                          "content": "企业名称                      企业规模      行业        企业性质      发布时间            操作",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MRkx2",
+                      "name": "rowEnt1",
+                      "width": "fill_container",
+                      "height": 56,
+                      "fill": "#0A1A45",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#143566"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ujbty",
+                          "name": "rowEnt1Text",
+                          "fill": "$textPrimary",
+                          "content": "无锡华叶科技有限公司            500-999人     智能硬件    民营企业    2025-09-19     编辑 / 删除",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "IFPlR",
+                      "name": "rowEnt2",
+                      "width": "fill_container",
+                      "height": 56,
+                      "fill": "#0A1A45",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#143566"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "sVVZe",
+                          "name": "rowEnt2Text",
+                          "fill": "$textPrimary",
+                          "content": "无锡市科佳新材料有限公司        500-999人     生活服务    民营企业    2025-09-19     编辑 / 删除",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "CzFBT",
+                      "name": "rowEnt3",
+                      "width": "fill_container",
+                      "height": 56,
+                      "fill": "#0A1A45",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#143566"
+                      },
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "5nthd",
+                          "name": "rowEnt3Text",
+                          "fill": "$textPrimary",
+                          "content": "江苏中铁高铁有限公司            20-99人       大数据      民营企业    2025-09-18     编辑 / 删除",
+                          "fontFamily": "Inter",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "UTJhE",
+                  "name": "drawerEnt",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "fill": "#17234A",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 14,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hrP5d",
+                      "name": "drawerTitleEnt",
+                      "fill": "$textPrimary",
+                      "content": "编辑",
+                      "fontFamily": "Inter",
+                      "fontSize": 22,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "L0hL3",
+                      "name": "fieldEnt1",
+                      "fill": "$textPrimary",
+                      "content": "企业名称: 无锡华叶科技有限公司",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o8rCa",
+                      "name": "fieldEnt2",
+                      "fill": "$textPrimary",
+                      "content": "行业: 智能硬件",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "0gfTY",
+                      "name": "fieldEnt3",
+                      "fill": "$textPrimary",
+                      "content": "企业性质: 民营企业",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "bk7Sv",
+                      "name": "fieldEnt4",
+                      "fill": "$textPrimary",
+                      "content": "企业规模: 500-999人",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "UqA6T",
+                      "name": "fieldEnt5",
+                      "fill": "$textPrimary",
+                      "content": "企业地址: 江苏省无锡市梁溪区",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "6fWU6",
+                      "name": "introBoxEnt",
+                      "width": "fill_container",
+                      "height": 220,
+                      "fill": "#0A1A45",
+                      "cornerRadius": 8,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#143566"
+                      },
+                      "padding": 12,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "4n9bY",
+                          "name": "introTextEnt",
+                          "fill": "$textSecondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "企业介绍:\n无锡华叶科技有限公司成立于 1999 年，是一家专注于生产各类电子元件及汽车驱动电机的高新技术企业。",
+                          "fontFamily": "Inter",
+                          "fontSize": 14,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "Yb3vi",
+                      "name": "actionsEnt",
+                      "fill": "$accent",
+                      "content": "取消        保存",
+                      "fontFamily": "Inter",
+                      "fontSize": 14,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "dBhGz",
+      "x": 3040,
+      "y": 980,
+      "name": "政策详情",
+      "clip": true,
+      "width": 1440,
+      "height": 900,
+      "fill": "$bg",
+      "stroke": {
+        "thickness": 1,
+        "fill": "$border"
+      },
+      "layout": "none",
+      "children": [
+        {
+          "type": "frame",
+          "id": "y7dxb",
+          "x": 0,
+          "y": 0,
+          "name": "sidebarPD",
+          "width": 196,
+          "height": 900,
+          "fill": "$sidebar",
+          "stroke": {
+            "thickness": {
+              "right": 1
+            },
+            "fill": "$border"
+          }
+        },
+        {
+          "type": "frame",
+          "id": "FyZK2",
+          "x": 212,
+          "y": 12,
+          "name": "headerPD",
+          "width": 1212,
+          "height": 72,
+          "fill": {
+            "type": "gradient",
+            "gradientType": "linear",
+            "enabled": true,
+            "rotation": 90,
+            "size": {
+              "height": 1
+            },
+            "colors": [
+              {
+                "color": "#0D285F",
+                "position": 0
+              },
+              {
+                "color": "#133B82",
+                "position": 0.5
+              },
+              {
+                "color": "#0D285F",
+                "position": 1
+              }
+            ]
+          },
+          "cornerRadius": 8,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$accent"
+          }
+        },
+        {
+          "type": "rectangle",
+          "id": "3ogSG",
+          "x": 0,
+          "y": 186,
+          "name": "selectBarPD",
+          "fill": "$accent",
+          "width": 4,
+          "height": 36
+        },
+        {
+          "type": "text",
+          "id": "AsNpD",
+          "x": 16,
+          "y": 8,
+          "name": "platformPD",
+          "fill": "$accent",
+          "content": "海东市联东服务青年就业创业信息平台",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "600"
+        },
+        {
+          "type": "text",
+          "id": "BCPPa",
+          "x": 24,
+          "y": 30,
+          "name": "menu1PD",
+          "fill": "$textPrimary",
+          "content": "首页",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "aJpHs",
+          "x": 24,
+          "y": 82,
+          "name": "menu2PD",
+          "fill": "$textPrimary",
+          "content": "青年信息库",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "kb55t",
+          "x": 24,
+          "y": 134,
+          "name": "menu3PD",
+          "fill": "$textPrimary",
+          "content": "数据分析",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "OwzGM",
+          "x": 24,
+          "y": 190,
+          "name": "menu4PD",
+          "fill": "$accent",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "DyRmo",
+          "x": 24,
+          "y": 242,
+          "name": "menu5PD",
+          "fill": "$textPrimary",
+          "content": "企业招聘信息",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "2j1Sz",
+          "x": 24,
+          "y": 294,
+          "name": "menu6PD",
+          "fill": "$textPrimary",
+          "content": "系统设置",
+          "fontFamily": "Inter",
+          "fontSize": 16,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "m1Jyk",
+          "x": 676,
+          "y": 27,
+          "name": "pageTitlePD",
+          "fill": "$textPrimary",
+          "content": "就业创业政策",
+          "fontFamily": "Inter",
+          "fontSize": 28,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "2DpeY",
+          "x": 1304,
+          "y": 28,
+          "name": "userPD",
+          "fill": "$accent",
+          "content": "超级管理员",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "text",
+          "id": "uHX2s",
+          "x": 230,
+          "y": 105,
+          "name": "backPD",
+          "fill": "$textSecondary",
+          "content": "< 返回列表",
+          "fontFamily": "Inter",
+          "fontSize": 14,
+          "fontWeight": "normal"
+        },
+        {
+          "type": "frame",
+          "id": "9m99y",
+          "x": 230,
+          "y": 140,
+          "name": "articleCardPD",
+          "width": 1176,
+          "height": 692,
+          "fill": "$panel",
+          "cornerRadius": 10,
+          "stroke": {
+            "thickness": 1,
+            "fill": "$border"
+          },
+          "layout": "vertical",
+          "gap": 18,
+          "padding": [
+            28,
+            32
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "t6mEU",
+              "name": "articleTitlePD",
+              "fill": "$textPrimary",
+              "content": "海东市急需紧缺人才引进办法（试行）",
+              "fontFamily": "Inter",
+              "fontSize": 26,
+              "fontWeight": "700"
+            },
+            {
+              "type": "text",
+              "id": "9mAJn",
+              "name": "articleMetaPD",
+              "fill": "$textSecondary",
+              "content": "发布单位：海东市委组织部    发布时间：2025-11-14 13:43:03",
+              "fontFamily": "Inter",
+              "fontSize": 14,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "oz7qx",
+              "name": "articleP1",
+              "fill": "$textPrimary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "第一章 总则\n为深入贯彻新时代人才工作部署，进一步优化青年就业创业生态，推动人才与城市协同发展，现结合本市实际，制定本办法。",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "3CI6t",
+              "name": "articleP2",
+              "fill": "$textPrimary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "第二章 基本原则\n坚持党管人才、需求导向、统筹推进、公平公开。围绕重点产业链、重点企业和重点项目，强化紧缺急需青年人才引进和服务保障。",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "zzSX1",
+              "name": "articleP3",
+              "fill": "$textPrimary",
+              "textGrowth": "fixed-width",
+              "width": "fill_container",
+              "content": "第三章 引进方式\n采取公开招聘、柔性引才、项目合作、校地合作等多种形式，面向高校毕业生、技能人才和创业青年提供政策支持与创业服务。",
+              "fontFamily": "Inter",
+              "fontSize": 16,
+              "fontWeight": "normal"
+            },
+            {
+              "type": "text",
+              "id": "2dgRF",
+              "name": "articleActionsPD",
+              "fill": "$accent",
+              "content": "关闭        发布",
+              "fontFamily": "Inter",
+              "fontSize": 15,
+              "fontWeight": "600"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variables": {
+    "accent": {
+      "type": "color",
+      "value": "#25D8FF"
+    },
+    "accentSoft": {
+      "type": "color",
+      "value": "#1AA8E8"
+    },
+    "bg": {
+      "type": "color",
+      "value": "#06173D"
+    },
+    "border": {
+      "type": "color",
+      "value": "#1C5DA3"
+    },
+    "danger": {
+      "type": "color",
+      "value": "#F45B72"
+    },
+    "headerGlow": {
+      "type": "color",
+      "value": "#133B82"
+    },
+    "mutedRow": {
+      "type": "color",
+      "value": "#1C2440"
+    },
+    "panel": {
+      "type": "color",
+      "value": "#0B1F57"
+    },
+    "panelAlt": {
+      "type": "color",
+      "value": "#0A2A63"
+    },
+    "sidebar": {
+      "type": "color",
+      "value": "#08152F"
+    },
+    "success": {
+      "type": "color",
+      "value": "#53D3B1"
+    },
+    "textPrimary": {
+      "type": "color",
+      "value": "#D8ECFF"
+    },
+    "textSecondary": {
+      "type": "color",
+      "value": "#8DA8CC"
+    },
+    "warning": {
+      "type": "color",
+      "value": "#F4C15D"
+    },
+    "btnDark": {
+      "type": "color",
+      "value": "#0B1736"
+    },
+    "fieldBg": {
+      "type": "color",
+      "value": "#10234C"
+    },
+    "fieldBorder": {
+      "type": "color",
+      "value": "#334D7C"
+    },
+    "headerRow": {
+      "type": "color",
+      "value": "#3A3E49"
+    },
+    "panelDeep": {
+      "type": "color",
+      "value": "#0A1946"
+    },
+    "tabActive": {
+      "type": "color",
+      "value": "#24CFF8"
+    },
+    "tabStroke": {
+      "type": "color",
+      "value": "#59E7FF"
+    }
+  }
+}

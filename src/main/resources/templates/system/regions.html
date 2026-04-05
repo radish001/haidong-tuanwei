@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>区域管理</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <section class="panel">
+            <div class="panel-header">
+                <h2>区域树</h2>
+                <p>已打通区域数据查询，并支持基础新增能力，后续可继续扩展编辑与三级联动。</p>
+            </div>
+            <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
+            <form th:action="@{/system/regions}" th:object="${regionForm}" method="post" class="filter-form">
+                <input type="number" th:field="*{parentId}" placeholder="上级区域ID，顶级填 0">
+                <input type="text" th:field="*{regionCode}" placeholder="区域编码">
+                <input type="text" th:field="*{regionName}" placeholder="区域名称">
+                <input type="number" th:field="*{regionLevel}" placeholder="区域层级">
+                <button type="submit">新增区域</button>
+            </form>
+            <div class="region-tree">
+                <div th:each="province : ${regions}" class="region-node">
+                    <div class="region-name" th:text="${province.regionName}">青海省</div>
+                    <div class="region-children" th:each="city : ${province.children}">
+                        <div class="region-name child" th:text="${city.regionName}">海东市</div>
+                        <div class="region-leaf-list">
+                            <span class="region-leaf" th:each="district : ${city.children}" th:text="${district.regionName}">乐都区</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

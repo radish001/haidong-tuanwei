@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青年信息库</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <section class="page-hero">
+            <h2 class="page-hero-title">青年信息库</h2>
+            <p class="page-hero-subtitle">
+                在校大学生信息检索、导入导出与表单维护
+            </p>
+        </section>
+        <div class="drawer-page-layout" data-drawer-page>
+        <section class="panel drawer-list-panel">
+            <div class="tab-row">
+                <div class="tab-list">
+                    <a class="tab-link"
+                       th:classappend="' active'"
+                       th:href="@{/youth/college}">在校大学生</a>
+                </div>
+            </div>
+
+            <div class="panel-header">
+                <div>
+                    <h2>在校大学生列表</h2>
+                    <p>统一驾驶舱风格下展示在校大学生筛选、导入导出和明细维护。</p>
+                </div>
+            </div>
+
+            <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
+            <div class="alert success-alert" th:if="${importMessage}" th:text="${importMessage}"></div>
+
+            <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
+            <div class="youth-toolbar">
+                <form class="filter-form youth-filter-grid" method="get" id="youth-list-form" data-ajax-form>
+                    <select name="ageRange">
+                        <option value="">年龄</option>
+                        <option value="16-18" th:selected="${query.ageRange == '16-18'}">16-18岁</option>
+                        <option value="19-22" th:selected="${query.ageRange == '19-22'}">19-22岁</option>
+                        <option value="23-26" th:selected="${query.ageRange == '23-26'}">23-26岁</option>
+                        <option value="27-30" th:selected="${query.ageRange == '27-30'}">27-30岁</option>
+                    </select>
+                    <select name="gender">
+                        <option value="">性别</option>
+                        <option th:each="item : ${genders}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.gender}"></option>
+                    </select>
+                    <select name="ethnicity">
+                        <option value="">民族</option>
+                        <option th:each="item : ${ethnicities}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.ethnicity}"></option>
+                    </select>
+                    <select name="politicalStatus">
+                        <option value="">政治面貌</option>
+                        <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.politicalStatus}"></option>
+                    </select>
+                    <select name="educationLevel">
+                        <option value="">学历层次</option>
+                        <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.educationLevel}"></option>
+                    </select>
+                    <input type="text" name="name" th:value="${query.name}" placeholder="姓名">
+                    <select name="schoolName">
+                        <option value="">就读院校</option>
+                        <option th:each="item : ${schools}"
+                                th:value="${item.schoolName}"
+                                th:text="${item.schoolName}"
+                                th:selected="${item.schoolName == query.schoolName}"></option>
+                    </select>
+                    <select name="majorCategory">
+                        <option value="">专业类别</option>
+                        <option th:each="item : ${majorCategories}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.majorCategory}"></option>
+                    </select>
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="籍贯">
+                        <input type="hidden" name="nativeProvinceCode" th:value="${query.nativeProvinceCode}" data-region-province>
+                        <input type="hidden" name="nativeCityCode" th:value="${query.nativeCityCode}" data-region-city>
+                        <input type="hidden" name="nativeCountyCode" th:value="${query.nativeCountyCode}" data-region-county>
+                    </div>
+                    <div class="filter-actions-inline">
+                        <button type="submit">查询</button>
+                        <a class="secondary-button" data-ajax-link th:href="@{/youth/college(pageSize=${pageSize})}">重置</a>
+                    </div>
+                </form>
+
+                <div class="panel-actions youth-page-actions">
+                    <a class="ghost-button" data-drawer-link th:href="@{/youth/college/new}">新增</a>
+                    <button type="button" class="ghost-button" data-modal-open="youth-import-export-modal">导入导出</button>
+                    <button type="button"
+                            class="secondary-button"
+                            data-batch-delete-button
+                            data-batch-form-id="youth-batch-delete-form">删除</button>
+                </div>
+            </div>
+
+            <form id="youth-batch-delete-form"
+                  th:action="@{/youth/college/batch-delete}"
+                  method="post"
+                  data-confirm-message="确认删除选中的青年信息吗？"></form>
+
+            <div class="import-result" th:if="${importResult != null}">
+                <h3>导入结果</h3>
+                <p th:text="${'成功 ' + importResult.successCount + ' 条，失败 ' + importResult.failCount + ' 条'}"></p>
+                <table class="simple-table" th:if="${!#lists.isEmpty(importResult.errors)}">
+                    <thead>
+                    <tr>
+                        <th>失败行号</th>
+                        <th>失败原因</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="error : ${importResult.errors}">
+                        <td th:text="${error.rowNumber}">2</td>
+                        <td th:text="${error.message}">数据错误</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <table class="simple-table">
+                <thead>
+                <tr>
+                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                    <th class="index-cell">序号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>出生年月</th>
+                    <th>政治面貌</th>
+                    <th>籍贯</th>
+                    <th>就读院校</th>
+                    <th>专业类别</th>
+                    <th>就业方向</th>
+                    <th>联系方式</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, itemStat : ${records}">
+                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                    <td th:text="${item.name}">张三</td>
+                    <td th:text="${item.gender}">男</td>
+                    <td th:text="${item.birthDate}">2001-01-01</td>
+                    <td th:text="${item.politicalStatus}">共青团员</td>
+                    <td th:text="${item.nativePlaceName}">乐都区</td>
+                    <td th:text="${item.schoolName}">青海大学</td>
+                    <td th:text="${item.majorCategory}">工学</td>
+                    <td th:text="${item.employmentDirection}">互联网开发</td>
+                    <td th:text="${item.phone}">13900000001</td>
+                    <td class="table-actions">
+                        <a data-drawer-link th:href="@{'/youth/college/' + ${item.id}}">详情</a>
+                        <a data-drawer-link th:href="@{'/youth/college/' + ${item.id} + '/edit'}">编辑</a>
+                        <form th:action="@{'/youth/college/' + ${item.id} + '/delete'}"
+                              method="post"
+                              data-confirm-message="确认删除这条青年信息吗？">
+                            <button type="submit" class="link-button">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(records)}">
+                    <td class="empty-cell" colspan="12">当前分类下暂无数据</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination-bar" th:if="${totalCount > 0}">
+                <div class="pagination-meta"
+                     th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
+                <div class="pagination-tools">
+                    <label class="pagination-page-size">
+                        <span>每页</span>
+                        <select name="pageSize" form="youth-list-form" data-page-size-select>
+                            <option value="10" th:selected="${pageSize == 10}">10</option>
+                            <option value="20" th:selected="${pageSize == 20}">20</option>
+                            <option value="50" th:selected="${pageSize == 50}">50</option>
+                            <option value="100" th:selected="${pageSize == 100}">100</option>
+                        </select>
+                        <span>条</span>
+                    </label>
+                    <div class="pagination-actions">
+                        <button class="pagination-link" type="submit" form="youth-list-form" name="page"
+                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                        <button class="pagination-link" type="submit" form="youth-list-form" name="page"
+                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
+                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
+                        <button class="pagination-link"
+                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                                th:each="pageNumber : ${pageNumbers}"
+                                type="submit"
+                                form="youth-list-form"
+                                name="page"
+                                th:value="${pageNumber}"
+                                th:text="${pageNumber}"
+                                th:disabled="${pageNumber == currentPage}">1</button>
+                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
+                        <button class="pagination-link" type="submit" form="youth-list-form" name="page"
+                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
+                        <button class="pagination-link" type="submit" form="youth-list-form" name="page"
+                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+        <aside class="record-drawer" data-drawer-panel hidden>
+            <div class="panel record-drawer-panel">
+                <div data-drawer-content class="record-drawer-content"></div>
+            </div>
+        </aside>
+        </div>
+
+        <div class="modal-backdrop" id="youth-import-export-modal" hidden>
+            <div class="modal-card">
+                <div class="modal-header">
+                    <div>
+                        <h3>导入导出</h3>
+                        <p>支持导出当前筛选结果、下载导入模板，并通过拖拽区域上传 Excel 文件。</p>
+                    </div>
+                    <button type="button" class="modal-close" aria-label="关闭" data-modal-close="youth-import-export-modal">×</button>
+                </div>
+
+                <div class="modal-actions-row">
+                    <form class="modal-inline-form" th:action="@{/youth/college/export}" method="get">
+                        <input type="hidden" name="name" th:value="${query.name}">
+                        <input type="hidden" name="gender" th:value="${query.gender}">
+                        <input type="hidden" name="ethnicity" th:value="${query.ethnicity}">
+                        <input type="hidden" name="politicalStatus" th:value="${query.politicalStatus}">
+                        <input type="hidden" name="educationLevel" th:value="${query.educationLevel}">
+                        <input type="hidden" name="nativeProvinceCode" th:value="${query.nativeProvinceCode}">
+                        <input type="hidden" name="nativeCityCode" th:value="${query.nativeCityCode}">
+                        <input type="hidden" name="nativeCountyCode" th:value="${query.nativeCountyCode}">
+                        <input type="hidden" name="residenceProvinceCode" th:value="${query.residenceProvinceCode}">
+                        <input type="hidden" name="residenceCityCode" th:value="${query.residenceCityCode}">
+                        <input type="hidden" name="residenceCountyCode" th:value="${query.residenceCountyCode}">
+                        <input type="hidden" name="schoolProvinceCode" th:value="${query.schoolProvinceCode}">
+                        <input type="hidden" name="schoolCityCode" th:value="${query.schoolCityCode}">
+                        <input type="hidden" name="schoolCountyCode" th:value="${query.schoolCountyCode}">
+                        <input type="hidden" name="schoolName" th:value="${query.schoolName}">
+                        <input type="hidden" name="majorCategory" th:value="${query.majorCategory}">
+                        <button type="submit">导出</button>
+                    </form>
+                    <a class="ghost-button" th:href="@{/youth/college/template}">下载导入模板</a>
+                </div>
+
+                <form class="import-dropzone-form" th:action="@{/youth/college/import}" method="post" enctype="multipart/form-data">
+                    <label class="import-dropzone" for="youth-import-file" data-dropzone>
+                        <input id="youth-import-file" type="file" name="file" accept=".xlsx,.xls" hidden>
+                        <strong>拖动 Excel 文件到此处</strong>
+                        <span>或点击选择文件，支持 `.xlsx`、`.xls`</span>
+                        <em data-file-name>未选择文件</em>
+                    </label>
+                    <div class="modal-footer">
+                        <button type="button" class="secondary-button" data-modal-close="youth-import-export-modal">取消</button>
+                        <button type="submit">上传文件</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/list-pagination.js}"></script>
+<script th:src="@{/js/record-drawer.js}"></script>
+<script th:src="@{/js/region-step-select.js}"></script>
+<script>
+    (() => {
+        const modal = document.getElementById('youth-import-export-modal');
+        if (!modal) {
+            return;
+        }
+
+        const openButtons = document.querySelectorAll('[data-modal-open="youth-import-export-modal"]');
+        const closeButtons = modal.querySelectorAll('[data-modal-close="youth-import-export-modal"]');
+        const fileInput = modal.querySelector('#youth-import-file');
+        const dropzone = modal.querySelector('[data-dropzone]');
+        const fileName = modal.querySelector('[data-file-name]');
+
+        const closeModal = () => {
+            modal.hidden = true;
+            document.body.classList.remove('modal-open');
+        };
+
+        const openModal = () => {
+            modal.hidden = false;
+            document.body.classList.add('modal-open');
+        };
+
+        const updateFileName = (file) => {
+            fileName.textContent = file ? file.name : '未选择文件';
+        };
+
+        openButtons.forEach((button) => {
+            button.addEventListener('click', openModal);
+        });
+
+        closeButtons.forEach((button) => {
+            button.addEventListener('click', closeModal);
+        });
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && !modal.hidden) {
+                closeModal();
+            }
+        });
+
+        fileInput.addEventListener('change', () => {
+            updateFileName(fileInput.files[0]);
+        });
+
+        ['dragenter', 'dragover'].forEach((eventName) => {
+            dropzone.addEventListener(eventName, (event) => {
+                event.preventDefault();
+                dropzone.classList.add('is-dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach((eventName) => {
+            dropzone.addEventListener(eventName, (event) => {
+                event.preventDefault();
+                dropzone.classList.remove('is-dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', (event) => {
+            const files = event.dataTransfer.files;
+            if (files && files.length) {
+                fileInput.files = files;
+                updateFileName(files[0]);
+            }
+        });
+    })();
+</script>
+</body>
+</html>

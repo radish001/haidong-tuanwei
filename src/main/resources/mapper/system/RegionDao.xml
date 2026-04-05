@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.RegionDao">
+
+    <resultMap id="RegionResultMap" type="com.haidong.tuanwei.system.entity.Region">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="regionCode" column="region_code"/>
+        <result property="regionName" column="region_name"/>
+        <result property="regionLevel" column="region_level"/>
+        <result property="sortNo" column="sort_no"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="RegionResultMap">
+        select id, parent_id, region_code, region_name, region_level, sort_no
+        from sys_region
+        where deleted = 0
+        order by region_level, sort_no, id
+    </select>
+
+    <select id="search" resultMap="RegionResultMap">
+        select id, parent_id, region_code, region_name, region_level, sort_no
+        from sys_region
+        where deleted = 0
+        <if test="regionLevel != null">
+            and region_level = #{regionLevel}
+        </if>
+        <if test="parentId != null and regionLevel != null and regionLevel &gt; 1">
+            and parent_id = #{parentId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            and (region_name like concat('%', #{keyword}, '%')
+            or region_code like concat('%', #{keyword}, '%'))
+        </if>
+        order by sort_no, id
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        from sys_region
+        where deleted = 0
+        <if test="regionLevel != null">
+            and region_level = #{regionLevel}
+        </if>
+        <if test="parentId != null and regionLevel != null and regionLevel &gt; 1">
+            and parent_id = #{parentId}
+        </if>
+        <if test="keyword != null and keyword != ''">
+            and (region_name like concat('%', #{keyword}, '%')
+            or region_code like concat('%', #{keyword}, '%'))
+        </if>
+    </select>
+
+    <select id="findById" resultMap="RegionResultMap">
+        select id, parent_id, region_code, region_name, region_level, sort_no
+        from sys_region
+        where id = #{id}
+          and deleted = 0
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.Region" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_region (parent_id, region_code, region_name, region_level, sort_no, deleted)
+        values (#{parentId}, #{regionCode}, #{regionName}, #{regionLevel}, #{sortNo}, 0)
+    </insert>
+
+    <update id="update" parameterType="com.haidong.tuanwei.system.entity.Region">
+        update sys_region
+        set parent_id = #{parentId},
+            region_code = #{regionCode},
+            region_name = #{regionName},
+            region_level = #{regionLevel}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDelete">
+        update sys_region
+        set deleted = 1
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <select id="findByCode" resultMap="RegionResultMap">
+        select id, parent_id, region_code, region_name, region_level, sort_no
+        from sys_region
+        where region_code = #{regionCode}
+          and deleted = 0
+        limit 1
+    </select>
+
+    <select id="countChildren" resultType="long">
+        select count(*)
+        from sys_region
+        where parent_id = #{parentId}
+          and deleted = 0
+    </select>
+
+    <select id="countUsage" resultType="long">
+        select
+            (select count(*) from youth_info where deleted = 0 and (
+                native_province_code = #{regionCode}
+                or native_city_code = #{regionCode}
+                or native_county_code = #{regionCode}
+                or residence_province_code = #{regionCode}
+                or residence_city_code = #{regionCode}
+                or residence_county_code = #{regionCode}
+                or school_province_code = #{regionCode}
+                or school_city_code = #{regionCode}
+                or school_county_code = #{regionCode}
+                or native_place_code = #{regionCode}
+                or current_residence_code = #{regionCode}
+                or school_region_code = #{regionCode}
+            ))
+            +
+            (select count(*) from enterprise_info where deleted = 0 and (
+                region_province_code = #{regionCode}
+                or region_city_code = #{regionCode}
+                or region_county_code = #{regionCode}
+                or region_code = #{regionCode}
+            ))
+            +
+            (select count(*) from job_post where deleted = 0 and (
+                work_province_code = #{regionCode}
+                or work_city_code = #{regionCode}
+                or work_county_code = #{regionCode}
+                or work_region_code = #{regionCode}
+            ))
+    </select>
+
+    <select id="findByLevel" resultMap="RegionResultMap">
+        select id, parent_id, region_code, region_name, region_level, sort_no
+        from sys_region
+        where region_level = #{regionLevel}
+          and deleted = 0
+        order by sort_no, id
+    </select>
+</mapper>

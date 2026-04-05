@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<aside class="sidebar" th:fragment="sidebar">
+    <div class="brand brand-compact">
+        <div class="brand-glow"></div>
+        <div class="brand-mark">HD</div>
+        <div class="brand-copy">
+            <div class="brand-title">海东市联络服务青年就业创业信息平台</div>
+            <div class="brand-subtitle">Youth Employment Console</div>
+        </div>
+    </div>
+
+    <nav class="menu">
+        <div class="menu-group" th:each="menu : ${sideMenus}">
+            <a class="menu-link"
+               th:classappend="${currentPath == menu.menuPath or (!#lists.isEmpty(menu.children) and #lists.contains(menu.children.![menuPath], currentPath))} ? ' active' : ''"
+               th:href="@{${menu.menuPath}}">
+                <span class="menu-link-accent"></span>
+                <span class="menu-icon"
+                      th:text="${menu.icon != null ? #strings.substring(menu.icon, 0, 1).toUpperCase() : '•'}">H</span>
+                <span class="menu-text" th:text="${menu.menuName}"></span>
+            </a>
+            <div class="submenu" th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息'}">
+                <a class="submenu-link"
+                   th:each="child : ${menu.children}"
+                   th:classappend="${currentPath == child.menuPath} ? ' active' : ''"
+                   th:href="@{${child.menuPath}}"
+                   th:text="${child.menuName}"></a>
+            </div>
+        </div>
+    </nav>
+</aside>
+</body>
+</html>

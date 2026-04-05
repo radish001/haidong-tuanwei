@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业信息</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+        <section class="page-hero">
+            <h2 class="page-hero-title">企业招聘信息库</h2>
+            <p class="page-hero-subtitle">集中呈现企业信息、招聘关联与重点联系资料，整体风格与驾驶舱布局统一。</p>
+        </section>
+        <div class="drawer-page-layout" data-drawer-page>
+        <section class="panel drawer-list-panel">
+            <div class="tab-row">
+                <div class="tab-list">
+                    <a class="tab-link" th:href="@{/jobs}">招聘信息</a>
+                    <a class="tab-link active" th:href="@{/enterprises}">企业信息</a>
+                </div>
+            </div>
+            <div class="panel-header">
+                <div>
+                    <h2>企业信息列表</h2>
+                    <p>支持按企业名称、行业筛选，并维护企业基础资料。</p>
+                </div>
+            </div>
+            <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+            <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
+            <div class="youth-toolbar">
+                <form class="filter-form compact-filter" method="get" id="enterprise-list-form" data-ajax-form>
+                    <input type="text" name="enterpriseName" th:value="${query.enterpriseName}" placeholder="企业名称">
+                    <select name="industry">
+                        <option value="">企业行业</option>
+                        <option th:each="item : ${industryOptions}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.industry}"></option>
+                    </select>
+                    <select name="enterpriseNature">
+                        <option value="">企业性质</option>
+                        <option th:each="item : ${natureOptions}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.enterpriseNature}"></option>
+                    </select>
+                    <select name="enterpriseScale">
+                        <option value="">企业规模</option>
+                        <option th:each="item : ${scaleOptions}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.enterpriseScale}"></option>
+                    </select>
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="所在地区">
+                        <input type="hidden" name="regionProvinceCode" th:value="${query.regionProvinceCode}" data-region-province>
+                        <input type="hidden" name="regionCityCode" th:value="${query.regionCityCode}" data-region-city>
+                        <input type="hidden" name="regionCountyCode" th:value="${query.regionCountyCode}" data-region-county>
+                    </div>
+                    <div class="filter-actions-inline">
+                        <button type="submit">查询</button>
+                        <a class="secondary-button" data-ajax-link th:href="@{/enterprises(pageSize=${pageSize})}">重置</a>
+                    </div>
+                </form>
+
+                <div class="panel-actions youth-page-actions">
+                    <a class="ghost-button" data-drawer-link th:href="@{/enterprises/new}">新增</a>
+                    <button type="button"
+                            class="secondary-button"
+                            data-batch-delete-button
+                            data-batch-form-id="enterprise-batch-delete-form">删除</button>
+                </div>
+            </div>
+
+            <form id="enterprise-batch-delete-form"
+                  th:action="@{/enterprises/batch-delete}"
+                  method="post"
+                  data-confirm-message="确认删除选中的企业信息吗？"></form>
+
+            <table class="simple-table">
+                <thead>
+                <tr>
+                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                    <th class="index-cell">序号</th>
+                    <th>企业名称</th>
+                    <th>企业规模</th>
+                    <th>行业</th>
+                    <th>企业性质</th>
+                    <th>所在区域</th>
+                    <th>联系人</th>
+                    <th>联系电话</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, itemStat : ${records}">
+                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                    <td th:text="${item.enterpriseName}">示例企业</td>
+                    <td th:text="${item.enterpriseScale}">500-999人</td>
+                    <td th:text="${item.industry}">智能硬件</td>
+                    <td th:text="${item.enterpriseNature}">民营企业</td>
+                    <td th:text="${item.regionName}">乐都区</td>
+                    <td th:text="${item.contactPerson}">陈先生</td>
+                    <td th:text="${item.contactPhone}">13800000000</td>
+                    <td class="table-actions">
+                        <a data-drawer-link th:href="@{'/enterprises/' + ${item.id} + '/edit'}">编辑</a>
+                        <form th:action="@{'/enterprises/' + ${item.id} + '/delete'}"
+                              method="post"
+                              data-confirm-message="确认删除这条企业信息吗？">
+                            <button type="submit" class="link-button">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(records)}">
+                    <td class="empty-cell" colspan="10">暂无企业数据</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination-bar" th:if="${totalCount > 0}">
+                <div class="pagination-meta"
+                     th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
+                <div class="pagination-tools">
+                    <label class="pagination-page-size">
+                        <span>每页</span>
+                        <select name="pageSize" form="enterprise-list-form" data-page-size-select>
+                            <option value="10" th:selected="${pageSize == 10}">10</option>
+                            <option value="20" th:selected="${pageSize == 20}">20</option>
+                            <option value="50" th:selected="${pageSize == 50}">50</option>
+                            <option value="100" th:selected="${pageSize == 100}">100</option>
+                        </select>
+                        <span>条</span>
+                    </label>
+                    <div class="pagination-actions">
+                        <button class="pagination-link" type="submit" form="enterprise-list-form" name="page"
+                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                        <button class="pagination-link" type="submit" form="enterprise-list-form" name="page"
+                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
+                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
+                        <button class="pagination-link"
+                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                                th:each="pageNumber : ${pageNumbers}"
+                                type="submit"
+                                form="enterprise-list-form"
+                                name="page"
+                                th:value="${pageNumber}"
+                                th:text="${pageNumber}"
+                                th:disabled="${pageNumber == currentPage}">1</button>
+                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
+                        <button class="pagination-link" type="submit" form="enterprise-list-form" name="page"
+                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
+                        <button class="pagination-link" type="submit" form="enterprise-list-form" name="page"
+                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+        <aside class="record-drawer" data-drawer-panel hidden>
+            <div class="panel record-drawer-panel">
+                <div data-drawer-content class="record-drawer-content"></div>
+            </div>
+        </aside>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/list-pagination.js}"></script>
+<script th:src="@{/js/record-drawer.js}"></script>
+<script th:src="@{/js/region-step-select.js}"></script>
+</body>
+</html>

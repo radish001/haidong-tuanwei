@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.MenuDao">
+
+    <resultMap id="MenuResultMap" type="com.haidong.tuanwei.system.entity.Menu">
+        <id property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="menuName" column="menu_name"/>
+        <result property="menuPath" column="menu_path"/>
+        <result property="icon" column="icon"/>
+        <result property="sortNo" column="sort_no"/>
+        <result property="visible" column="visible"/>
+    </resultMap>
+
+    <select id="findMenusByUserId" resultMap="MenuResultMap">
+        select distinct m.id, m.parent_id, m.menu_name, m.menu_path, m.icon, m.sort_no, m.visible
+        from sys_menu m
+                 inner join sys_role_menu rm on rm.menu_id = m.id and rm.deleted = 0
+                 inner join sys_user_role ur on ur.role_id = rm.role_id and ur.deleted = 0
+                 inner join sys_role r on r.id = rm.role_id and r.deleted = 0 and r.enabled = 1
+        where ur.user_id = #{userId}
+          and m.deleted = 0
+          and m.visible = 1
+        order by m.parent_id, m.sort_no, m.id
+    </select>
+</mapper>

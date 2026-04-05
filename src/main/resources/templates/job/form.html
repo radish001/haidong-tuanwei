@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>招聘岗位表单</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+        <section class="drawer-shell">
+            <div class="drawer-placeholder">
+                <div class="drawer-placeholder-copy">
+                    <h2>招聘岗位</h2>
+                    <p>在统一驾驶舱风格下维护岗位、企业、地区和联系人信息，保留现有提交流程。</p>
+                </div>
+            </div>
+
+            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+                <div class="panel-header">
+                    <div class="drawer-panel-header">
+                        <div>
+                            <h2 th:text="${formTitle}">新增招聘岗位</h2>
+                            <p>岗位信息与企业信息仍按现有接口关联保存。</p>
+                        </div>
+                        <a class="drawer-close-link" th:href="@{/jobs}" data-drawer-close>×</a>
+                    </div>
+                </div>
+                <form th:action="@{${formAction}}" th:object="${jobForm}" method="post" class="edit-form">
+                    <label>
+                        <span>所属企业</span>
+                        <select th:field="*{enterpriseId}">
+                            <option value="">请选择企业</option>
+                            <option th:each="enterprise : ${enterprises}" th:value="${enterprise.id}"
+                                    th:text="${enterprise.enterpriseName}"></option>
+                        </select>
+                    </label>
+                    <label><span>岗位名称</span><input type="text" th:field="*{jobName}"></label>
+                    <label><span>岗位类别</span><input type="text" th:field="*{jobCategory}"></label>
+                    <label>
+                        <span>学历要求</span>
+                        <select th:field="*{educationRequirement}">
+                            <option value="">请选择</option>
+                            <option th:each="item : ${educationOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>经验要求</span>
+                        <select th:field="*{experienceRequirement}">
+                            <option value="">请选择</option>
+                            <option th:each="item : ${experienceOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>薪资待遇</span>
+                        <select th:field="*{salaryRange}">
+                            <option value="">请选择</option>
+                            <option th:each="item : ${salaryOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                        </select>
+                    </label>
+                    <label><span>招聘人数</span><input type="number" th:field="*{recruitCount}"></label>
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="工作地区">
+                        <input type="hidden" th:field="*{workProvinceCode}" data-region-province>
+                        <input type="hidden" th:field="*{workCityCode}" data-region-city>
+                        <input type="hidden" th:field="*{workCountyCode}" data-region-county>
+                    </div>
+                    <label><span>联系人</span><input type="text" th:field="*{contactPerson}"></label>
+                    <label><span>联系电话</span><input type="text" th:field="*{contactPhone}"></label>
+                    <label class="full-width"><span>岗位描述</span><textarea th:field="*{jobDescription}"></textarea></label>
+                    <div class="form-actions full-width">
+                        <a class="ghost-button" th:href="@{/jobs}" data-drawer-close>取消</a>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/region-step-select.js}"></script>
+</body>
+</html>

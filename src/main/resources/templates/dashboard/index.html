@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台首页</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <section class="page-hero">
+            <h2 class="page-hero-title">海东市联络服务青年就业创业信息平台</h2>
+            <p class="page-hero-subtitle">统一驾驶舱首页，集中呈现青年分类分布、政策信息与企业招聘动态。</p>
+            <div class="page-hero-actions">
+                <a class="ghost-button" th:href="@{/analytics/college}">就业创业总览</a>
+                <a class="ghost-button" th:href="@{/enterprises}">企业招聘信息</a>
+            </div>
+        </section>
+
+        <section class="map-grid">
+            <article class="map-card panel">
+                <div class="panel-header map-card-header">
+                    <div>
+                        <h2>中国地图</h2>
+                        <p>在校大学生分布，按学校所在省统计。</p>
+                    </div>
+                </div>
+                <div id="chinaCollegeMap" class="map-visual real-map"></div>
+                <div class="map-legend">
+                    <span>统计口径：学校所在省</span>
+                    <strong id="chinaCollegeMapSummary">0 人 / 0 省级区域</strong>
+                </div>
+            </article>
+            <article class="map-card panel">
+                <div class="panel-header map-card-header">
+                    <div>
+                        <h2>海东地图</h2>
+                        <p>海东市在校大学生分布，按籍贯区县统计。</p>
+                    </div>
+                </div>
+                <div id="haidongCollegeMap" class="map-visual real-map"></div>
+                <div class="map-legend">
+                    <span>统计口径：籍贯区县</span>
+                    <strong id="haidongCollegeMapSummary">0 人 / 0 区县</strong>
+                </div>
+            </article>
+        </section>
+
+        <section class="stats-grid">
+            <article class="stat-card">
+                <span class="stat-label">青年总数</span>
+                <strong th:text="${stats.youthCount}">0</strong>
+                <div class="stat-meta">四类青年统一总表</div>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">企业总数</span>
+                <strong th:text="${stats.enterpriseCount}">0</strong>
+                <div class="stat-meta">企业信息实时维护</div>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">岗位总数</span>
+                <strong th:text="${stats.jobCount}">0</strong>
+                <div class="stat-meta">岗位与企业关联管理</div>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">政策总数</span>
+                <strong th:text="${stats.policyCount}">0</strong>
+                <div class="stat-meta">富文本政策资讯</div>
+            </article>
+        </section>
+
+        <section class="list-grid">
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>青年就业创业信息</h2>
+                        <p>最新维护的政策摘要与重点信息。</p>
+                    </div>
+                    <a class="ghost-button" th:href="@{/policies}">更多</a>
+                </div>
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th>标题</th>
+                        <th>发布人</th>
+                        <th>发布时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${recentPolicies}">
+                        <td th:text="${item['title']}">示例政策</td>
+                        <td th:text="${item['issuing_organization']}">发文单位</td>
+                        <td th:text="${item['publish_time']}">2026-01-01</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentPolicies)}">
+                        <td class="empty-cell" colspan="3">暂无政策摘要</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </article>
+
+            <article class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>企业招聘信息</h2>
+                        <p>岗位与企业的最新发布情况。</p>
+                    </div>
+                    <a class="ghost-button" th:href="@{/jobs}">更多</a>
+                </div>
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th>岗位名称</th>
+                        <th>企业名称</th>
+                        <th>联系人</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${recentJobs}">
+                        <td th:text="${item['job_name']}">Java开发工程师</td>
+                        <td th:text="${item['enterprise_name']}">示例企业</td>
+                        <td th:text="${item['contact_person']}">陈先生</td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentJobs)}">
+                        <td class="empty-cell" colspan="3">暂无招聘摘要</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </article>
+        </section>
+    </main>
+</div>
+<script th:inline="javascript">
+    const collegeSchoolProvinceDistribution = /*[[${collegeSchoolProvinceDistributionJson}]]*/ '[]';
+    const collegeHaidongNativeCountyDistribution = /*[[${collegeHaidongNativeCountyDistributionJson}]]*/ '[]';
+
+    function parseData(raw) {
+        return JSON.parse(raw || '[]');
+    }
+
+    function normalizeChinaProvinceName(name) {
+        const nameMap = {
+            '北京市': '北京',
+            '天津市': '天津',
+            '上海市': '上海',
+            '重庆市': '重庆',
+            '河北省': '河北',
+            '山西省': '山西',
+            '辽宁省': '辽宁',
+            '吉林省': '吉林',
+            '黑龙江省': '黑龙江',
+            '江苏省': '江苏',
+            '浙江省': '浙江',
+            '安徽省': '安徽',
+            '福建省': '福建',
+            '江西省': '江西',
+            '山东省': '山东',
+            '河南省': '河南',
+            '湖北省': '湖北',
+            '湖南省': '湖南',
+            '广东省': '广东',
+            '海南省': '海南',
+            '四川省': '四川',
+            '贵州省': '贵州',
+            '云南省': '云南',
+            '陕西省': '陕西',
+            '甘肃省': '甘肃',
+            '青海省': '青海',
+            '台湾省': '台湾',
+            '内蒙古自治区': '内蒙古',
+            '广西壮族自治区': '广西',
+            '西藏自治区': '西藏',
+            '宁夏回族自治区': '宁夏',
+            '新疆维吾尔自治区': '新疆',
+            '香港特别行政区': '香港',
+            '澳门特别行政区': '澳门'
+        };
+        return nameMap[name] || name;
+    }
+
+    function toSeriesData(rawData, nameFormatter) {
+        return parseData(rawData)
+            .filter(item => item.regionName)
+            .map(item => ({
+                name: nameFormatter ? nameFormatter(item.regionName) : item.regionName,
+                value: Number(item.total || 0)
+            }));
+    }
+
+    function updateSummary(elementId, data, unitLabel) {
+        const total = data.reduce((sum, item) => sum + Number(item.value || 0), 0);
+        const regionCount = data.filter(item => Number(item.value || 0) > 0).length;
+        document.getElementById(elementId).textContent = `${total} 人 / ${regionCount} ${unitLabel}`;
+    }
+
+    function renderMap(elementId, mapName, data, options) {
+        const element = document.getElementById(elementId);
+        const chart = echarts.init(element);
+        const maxValue = Math.max(...data.map(item => item.value), 0);
+        const hasData = data.length > 0 && maxValue > 0;
+        chart.setOption({
+            tooltip: {
+                trigger: 'item',
+                formatter: params => `${params.name}<br/>${params.value || 0} 人`
+            },
+            visualMap: {
+                min: 0,
+                max: Math.max(maxValue, 1),
+                left: 18,
+                bottom: 12,
+                calculable: true,
+                text: ['高', '低'],
+                textStyle: {color: '#9fb5da'},
+                inRange: {
+                    color: ['#11386f', '#1e6ce5', '#4ed4ff']
+                }
+            },
+            graphic: hasData ? [] : [{
+                type: 'text',
+                left: 'center',
+                top: 'middle',
+                style: {
+                    text: '暂无地图数据',
+                    fill: '#9fb5da',
+                    fontSize: 16,
+                    fontWeight: 600
+                }
+            }],
+            series: [{
+                type: 'map',
+                map: mapName,
+                roam: false,
+                zoom: options.zoom,
+                layoutCenter: options.layoutCenter || ['50%', '50%'],
+                layoutSize: options.layoutSize,
+                label: {
+                    show: options.showLabel,
+                    color: '#dce7ff',
+                    fontSize: options.fontSize || 11
+                },
+                itemStyle: {
+                    areaColor: '#0e3267',
+                    borderColor: '#67d7ff',
+                    borderWidth: 1
+                },
+                emphasis: {
+                    label: {color: '#ffffff'},
+                    itemStyle: {
+                        areaColor: '#28b8ff'
+                    }
+                },
+                data
+            }]
+        });
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    async function loadMapJson(url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`地图资源加载失败: ${url}`);
+        }
+        return response.json();
+    }
+
+    async function initHomepageMaps() {
+        const chinaData = toSeriesData(collegeSchoolProvinceDistribution, normalizeChinaProvinceName);
+        const haidongData = toSeriesData(collegeHaidongNativeCountyDistribution);
+        updateSummary('chinaCollegeMapSummary', chinaData, '省级区域');
+        updateSummary('haidongCollegeMapSummary', haidongData, '区县');
+
+        try {
+            const haidongGeoJson = await loadMapJson('/map/haidong.json');
+            echarts.registerMap('haidong-students', haidongGeoJson);
+            renderMap('chinaCollegeMap', 'china', chinaData, {
+                zoom: 1.1,
+                layoutCenter: ['50%', '52%'],
+                layoutSize: '106%',
+                showLabel: false
+            });
+            renderMap('haidongCollegeMap', 'haidong-students', haidongData, {
+                zoom: 1.02,
+                layoutSize: '92%',
+                showLabel: true,
+                fontSize: 12
+            });
+        } catch (error) {
+            document.getElementById('chinaCollegeMap').innerHTML = '<div class="map-empty">中国地图资源加载失败</div>';
+            document.getElementById('haidongCollegeMap').innerHTML = '<div class="map-empty">海东地图资源加载失败</div>';
+            console.error(error);
+        }
+    }
+
+    initHomepageMaps();
+</script>
+</body>
+</html>

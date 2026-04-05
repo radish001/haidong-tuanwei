@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.dashboard.dao.DashboardDao">
+
+    <resultMap id="DashboardStatsResultMap" type="com.haidong.tuanwei.dashboard.entity.DashboardStats">
+        <result property="youthCount" column="youth_count"/>
+        <result property="enterpriseCount" column="enterprise_count"/>
+        <result property="jobCount" column="job_count"/>
+        <result property="policyCount" column="policy_count"/>
+    </resultMap>
+
+    <select id="getStats" resultMap="DashboardStatsResultMap">
+        select
+            (select count(*) from youth_info where deleted = 0) as youth_count,
+            (select count(*) from enterprise_info where deleted = 0) as enterprise_count,
+            (select count(*) from job_post where deleted = 0) as job_count,
+            (select count(*) from policy_article where deleted = 0) as policy_count
+    </select>
+
+    <select id="getYouthDistributionByType" resultType="map">
+        select youth_type as type, count(*) as total
+        from youth_info
+        where deleted = 0
+        group by youth_type
+        order by youth_type
+    </select>
+
+    <select id="getCollegeDistributionBySchoolProvince" resultType="map">
+        select y.school_province_code as regionCode,
+               p.region_name as regionName,
+               count(*) as total
+        from youth_info y
+                 left join sys_region p on p.region_code = y.school_province_code and p.deleted = 0
+        where y.deleted = 0
+          and y.youth_type = 'COLLEGE'
+          and y.school_province_code is not null
+          and y.school_province_code != ''
+        group by y.school_province_code, p.region_name
+        order by total desc, y.school_province_code
+    </select>
+
+    <select id="getCollegeDistributionByNativeCountyInHaidong" resultType="map">
+        select y.native_county_code as regionCode,
+               c.region_name as regionName,
+               count(*) as total
+        from youth_info y
+                 left join sys_region c on c.region_code = y.native_county_code and c.deleted = 0
+                 left join sys_region city on city.id = c.parent_id and city.deleted = 0
+        where y.deleted = 0
+          and y.youth_type = 'COLLEGE'
+          and y.native_county_code is not null
+          and y.native_county_code != ''
+          and city.region_code = '630200'
+        group by y.native_county_code, c.region_name, c.sort_no
+        order by c.sort_no, y.native_county_code
+    </select>
+
+    <select id="getRecentPolicies" resultType="map">
+        select title, issuing_organization, publish_time, status
+        from policy_article
+        where deleted = 0
+        order by publish_time desc, id desc
+        limit #{limit}
+    </select>
+
+    <select id="getRecentJobs" resultType="map">
+        select j.job_name, e.enterprise_name, j.publish_time, j.contact_person
+        from job_post j
+                 left join enterprise_info e on e.id = j.enterprise_id and e.deleted = 0
+        where j.deleted = 0
+        order by j.publish_time desc, j.id desc
+        limit #{limit}
+    </select>
+</mapper>

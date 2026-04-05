@@ -1,0 +1,29 @@
+package com.haidong.tuanwei.job.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
+public class JobFormRequest {
+
+    private Long id;
+
+    @NotNull(message = "所属企业不能为空")
+    private Long enterpriseId;
+
+    @NotBlank(message = "岗位名称不能为空")
+    private String jobName;
+
+    private String jobCategory;
+    private String educationRequirement;
+    private String experienceRequirement;
+    private String salaryRange;
+    private Integer recruitCount;
+    private String workProvinceCode;
+    private String workCityCode;
+    private String workCountyCode;
+    private String contactPerson;
+    private String contactPhone;
+    private String jobDescription;
+}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政策详情</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+        <section class="drawer-shell">
+            <div class="drawer-placeholder">
+                <div class="drawer-placeholder-copy">
+                    <h2>政策详情</h2>
+                    <p th:text="${record.issuingOrganization}">发布单位</p>
+                </div>
+            </div>
+
+            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+                <div class="panel-header">
+                    <div class="drawer-panel-header">
+                        <div>
+                            <h2 th:text="${record.title}">政策标题</h2>
+                            <p th:text="${record.issuingOrganization}">发布单位</p>
+                        </div>
+                        <a class="drawer-close-link" th:href="@{/policies}" data-drawer-close>×</a>
+                    </div>
+                </div>
+                <div class="detail-grid">
+                    <div><span>来源</span><strong th:text="${record.policySource}">官网</strong></div>
+                    <div><span>状态</span><strong th:text="${record.status == 1 ? '已发布' : '草稿'}">已发布</strong></div>
+                    <div class="full-width"><span>摘要</span><strong th:text="${record.summary}">政策摘要</strong></div>
+                    <div class="full-width policy-content"><span>正文</span><div th:utext="${record.contentHtml}"></div></div>
+                </div>
+                <div class="form-actions" style="margin-top: 16px;">
+                    <a class="ghost-button" th:href="@{/policies}" data-drawer-close>返回列表</a>
+                    <a class="ghost-button" data-drawer-link th:href="@{'/policies/' + ${record.id} + '/edit'}">编辑</a>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

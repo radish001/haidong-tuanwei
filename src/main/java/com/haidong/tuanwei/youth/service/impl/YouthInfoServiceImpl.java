@@ -1,0 +1,570 @@
+package com.haidong.tuanwei.youth.service.impl;
+
+import com.haidong.tuanwei.system.dao.DictionaryDao;
+import com.haidong.tuanwei.system.dao.MajorCatalogDao;
+import com.haidong.tuanwei.system.dao.RegionDao;
+import com.haidong.tuanwei.system.dao.SchoolDao;
+import com.haidong.tuanwei.youth.dao.YouthInfoDao;
+import com.haidong.tuanwei.youth.dto.YouthFormRequest;
+import com.haidong.tuanwei.youth.dto.YouthImportResult;
+import com.haidong.tuanwei.youth.dto.YouthSearchRequest;
+import com.haidong.tuanwei.system.entity.DictItem;
+import com.haidong.tuanwei.system.entity.MajorCatalog;
+import com.haidong.tuanwei.system.entity.Region;
+import com.haidong.tuanwei.system.entity.School;
+import com.haidong.tuanwei.system.support.RegionSelectionSupport;
+import com.haidong.tuanwei.youth.entity.YouthInfo;
+import com.haidong.tuanwei.youth.service.YouthInfoService;
+import com.haidong.tuanwei.common.util.ExcelUtils;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+@Service
+@RequiredArgsConstructor
+public class YouthInfoServiceImpl implements YouthInfoService {
+
+    private static final String REGION_PATH_DELIMITER = " / ";
+    private static final String[] TEMPLATE_HEADERS = {
+            "姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学校",
+            "学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"
+    };
+
+    private final YouthInfoDao youthInfoDao;
+    private final DictionaryDao dictionaryDao;
+    private final RegionDao regionDao;
+    private final MajorCatalogDao majorCatalogDao;
+    private final SchoolDao schoolDao;
+    private final RegionSelectionSupport regionSelectionSupport;
+
+    @Override
+    public List<YouthInfo> search(String youthType, YouthSearchRequest query) {
+        return youthInfoDao.search(youthType, query);
+    }
+
+    @Override
+    public long count(String youthType, YouthSearchRequest query) {
+        return youthInfoDao.count(youthType, query);
+    }
+
+    @Override
+    public YouthInfo getById(Long id) {
+        return youthInfoDao.findById(id);
+    }
+
+    @Override
+    public void create(String youthType, YouthFormRequest request, Long operatorId) {
+        YouthInfo youthInfo = toEntity(request);
+        youthInfo.setYouthType(youthType);
+        youthInfo.setCreateBy(operatorId);
+        youthInfo.setUpdateBy(operatorId);
+        youthInfoDao.insert(youthInfo);
+    }
+
+    @Override
+    public void update(Long id, YouthFormRequest request, Long operatorId) {
+        YouthInfo youthInfo = toEntity(request);
+        youthInfo.setId(id);
+        youthInfo.setUpdateBy(operatorId);
+        youthInfoDao.update(youthInfo);
+    }
+
+    @Override
+    public void delete(Long id, Long operatorId) {
+        youthInfoDao.softDelete(id, operatorId);
+    }
+
+    @Override
+    public int deleteBatch(String youthType, List<Long> ids, Long operatorId) {
+        if (ids == null || ids.isEmpty()) {
+            return 0;
+        }
+        return youthInfoDao.softDeleteBatch(youthType, ids, operatorId);
+    }
+
+    @Override
+    public byte[] generateImportTemplate() {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet mainSheet = workbook.createSheet("青年信息导入模板");
+            createHeader(mainSheet);
+
+            List<String> genderOptions = dictionaryValues("gender");
+            List<String> ethnicityOptions = dictionaryValues("ethnicity");
+            List<String> politicalOptions = dictionaryValues("political_status");
+            List<String> regionOptions = regionPaths();
+            List<String> educationOptions = dictionaryValues("education_level");
+            List<String> schoolOptions = schoolNames();
+            List<String> majorOptions = majorNames();
+
+            createHiddenSheet(workbook, "hidden_1", "genderOptions", genderOptions);
+            createHiddenSheet(workbook, "hidden_3", "ethnicityOptions", ethnicityOptions);
+            createHiddenSheet(workbook, "hidden_4", "politicalOptions", politicalOptions);
+            createHiddenSheet(workbook, "hidden_5", "nativePlaceOptions", regionOptions);
+            createHiddenSheet(workbook, "hidden_6", "educationOptions", educationOptions);
+            createHiddenSheet(workbook, "hidden_7", "schoolOptions", schoolOptions);
+            createHiddenSheet(workbook, "hidden_8", "schoolRegionOptions", regionOptions);
+            createHiddenSheet(workbook, "hidden_9", "majorOptions", majorOptions);
+
+            applyDropDown(mainSheet, "genderOptions", 1);
+            applyDropDown(mainSheet, "ethnicityOptions", 3);
+            applyDropDown(mainSheet, "politicalOptions", 4);
+            applyDropDown(mainSheet, "nativePlaceOptions", 5);
+            applyDropDown(mainSheet, "educationOptions", 6);
+            applyDropDown(mainSheet, "schoolOptions", 7);
+            applyDropDown(mainSheet, "schoolRegionOptions", 8);
+            applyDropDown(mainSheet, "majorOptions", 9);
+
+            for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+                mainSheet.autoSizeColumn(i);
+                mainSheet.setColumnWidth(i, Math.max(mainSheet.getColumnWidth(i), 16 * 256));
+            }
+            return ExcelUtils.toBytes(workbook);
+        } catch (IOException e) {
+            throw new IllegalStateException("导入模板生成失败", e);
+        }
+    }
+
+    @Override
+    public YouthImportResult importFromExcel(String youthType, MultipartFile file, Long operatorId) {
+        YouthImportResult result = new YouthImportResult();
+        Map<String, RegionSelectionSupport.RegionSelection> regionPathMap = regionPathMap();
+        Set<String> fileDuplicates = new HashSet<>();
+
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            try {
+                validateTemplateHeader(sheet);
+            } catch (IllegalArgumentException ex) {
+                result.addError(1, ex.getMessage());
+                return result;
+            }
+            for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+                Row row = sheet.getRow(rowIndex);
+                if (row == null || isEmptyRow(row)) {
+                    continue;
+                }
+                int displayRow = rowIndex + 1;
+                try {
+                    YouthInfo youthInfo = mapRowToYouth(row, regionPathMap);
+                    youthInfo.setYouthType(youthType);
+                    youthInfo.setCreateBy(operatorId);
+                    youthInfo.setUpdateBy(operatorId);
+
+                    String duplicateKey = youthType + "|" + youthInfo.getName() + "|" + youthInfo.getPhone();
+                    if (!fileDuplicates.add(duplicateKey)) {
+                        result.addError(displayRow, "文件中存在重复数据");
+                        continue;
+                    }
+                    if (youthInfoDao.countDuplicate(youthType, youthInfo.getName(), youthInfo.getPhone()) > 0) {
+                        result.addError(displayRow, "系统中已存在同名同联系方式数据");
+                        continue;
+                    }
+
+                    youthInfoDao.insert(youthInfo);
+                    result.addSuccess();
+                } catch (IllegalArgumentException ex) {
+                    result.addError(displayRow, ex.getMessage());
+                }
+            }
+            return result;
+        } catch (IOException e) {
+            throw new IllegalStateException("导入文件读取失败", e);
+        }
+    }
+
+    @Override
+    public byte[] exportExcel(String youthType, YouthSearchRequest query) {
+        query.setPaged(false);
+        List<YouthInfo> records = search(youthType, query);
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("青年信息导出");
+            createHeader(sheet);
+
+            int rowIndex = 1;
+            for (YouthInfo item : records) {
+                Row row = sheet.createRow(rowIndex++);
+                row.createCell(0).setCellValue(safe(item.getName()));
+                row.createCell(1).setCellValue(safe(item.getGender()));
+                row.createCell(2).setCellValue(ExcelUtils.formatDate(item.getBirthDate()));
+                row.createCell(3).setCellValue(safe(item.getEthnicity()));
+                row.createCell(4).setCellValue(safe(item.getPoliticalStatus()));
+                row.createCell(5).setCellValue(regionSelectionSupport.buildExcelPath(
+                        item.getNativeProvinceCode(), item.getNativeCityCode(), item.getNativeCountyCode()));
+                row.createCell(6).setCellValue(safe(item.getEducationLevel()));
+                row.createCell(7).setCellValue(safe(item.getSchoolName()));
+                row.createCell(8).setCellValue(regionSelectionSupport.buildExcelPath(
+                        item.getSchoolProvinceCode(), item.getSchoolCityCode(), item.getSchoolCountyCode()));
+                row.createCell(9).setCellValue(safe(item.getMajor()));
+                row.createCell(10).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
+                row.createCell(11).setCellValue(safe(item.getEmploymentDirection()));
+                row.createCell(12).setCellValue(safe(item.getPhone()));
+            }
+            for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            return ExcelUtils.toBytes(workbook);
+        } catch (IOException e) {
+            throw new IllegalStateException("导出文件生成失败", e);
+        }
+    }
+
+    private YouthInfo toEntity(YouthFormRequest request) {
+        YouthInfo youthInfo = new YouthInfo();
+        youthInfo.setName(request.getName());
+        youthInfo.setGender(validateDictValue("gender", request.getGender(), "性别"));
+        youthInfo.setBirthDate(parseDate(request.getBirthDate()));
+        youthInfo.setEthnicity(validateDictValue("ethnicity", request.getEthnicity(), "民族"));
+        youthInfo.setPoliticalStatus(validateDictValue("political_status", request.getPoliticalStatus(), "政治面貌"));
+        RegionSelectionSupport.RegionSelection nativeSelection = regionSelectionSupport.normalize(
+                request.getNativeProvinceCode(), request.getNativeCityCode(), request.getNativeCountyCode(), "籍贯");
+        youthInfo.setNativeProvinceCode(nativeSelection.getProvinceCode());
+        youthInfo.setNativeCityCode(nativeSelection.getCityCode());
+        youthInfo.setNativeCountyCode(nativeSelection.getCountyCode());
+        youthInfo.setEducationLevel(validateDictValue("education_level", request.getEducationLevel(), "学历层次"));
+        School school = requireSchool(request.getSchoolName());
+        youthInfo.setSchoolName(school.getSchoolName());
+        RegionSelectionSupport.RegionSelection schoolSelection = regionSelectionSupport.normalize(
+                request.getSchoolProvinceCode(), request.getSchoolCityCode(), request.getSchoolCountyCode(), "学校所在地");
+        youthInfo.setSchoolProvinceCode(schoolSelection.getProvinceCode());
+        youthInfo.setSchoolCityCode(schoolSelection.getCityCode());
+        youthInfo.setSchoolCountyCode(schoolSelection.getCountyCode());
+        MajorCatalog majorCatalog = requireMajor(request.getMajor());
+        youthInfo.setMajor(majorCatalog.getMajorName());
+        youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
+        youthInfo.setGraduationDate(parseDate(request.getGraduationDate()));
+        youthInfo.setEmploymentDirection(request.getEmploymentDirection());
+        youthInfo.setPhone(request.getPhone());
+        RegionSelectionSupport.RegionSelection residenceSelection = regionSelectionSupport.normalize(
+                request.getResidenceProvinceCode(), request.getResidenceCityCode(), request.getResidenceCountyCode(), "现居住地");
+        youthInfo.setResidenceProvinceCode(residenceSelection.getProvinceCode());
+        youthInfo.setResidenceCityCode(residenceSelection.getCityCode());
+        youthInfo.setResidenceCountyCode(residenceSelection.getCountyCode());
+        youthInfo.setEmploymentStatus(request.getEmploymentStatus());
+        youthInfo.setCurrentJob(request.getCurrentJob());
+        youthInfo.setEmploymentCompany(request.getEmploymentCompany());
+        youthInfo.setEntrepreneurshipStatus(request.getEntrepreneurshipStatus());
+        youthInfo.setEntrepreneurshipProject(request.getEntrepreneurshipProject());
+        youthInfo.setEntrepreneurshipDemand(request.getEntrepreneurshipDemand());
+        youthInfo.setRemarks(request.getRemarks());
+        return youthInfo;
+    }
+
+    private LocalDate parseDate(String dateText) {
+        if (dateText == null || dateText.isBlank()) {
+            return null;
+        }
+        return LocalDate.parse(dateText);
+    }
+
+    private void createHeader(Sheet sheet) {
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+            headerRow.createCell(i).setCellValue(TEMPLATE_HEADERS[i]);
+        }
+    }
+
+    private void createHiddenSheet(Workbook workbook, String sheetName, String rangeName, List<String> values) {
+        Sheet hiddenSheet = workbook.createSheet(sheetName);
+        for (int i = 0; i < values.size(); i++) {
+            hiddenSheet.createRow(i).createCell(0).setCellValue(values.get(i));
+        }
+        Name namedRange = workbook.createName();
+        namedRange.setNameName(rangeName);
+        namedRange.setRefersToFormula(sheetName + "!$A$1:$A$" + Math.max(values.size(), 1));
+        workbook.setSheetHidden(workbook.getSheetIndex(hiddenSheet), true);
+    }
+
+    private void applyDropDown(Sheet sheet, String rangeName, int columnIndex) {
+        DataValidationHelper helper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint = helper.createFormulaListConstraint(rangeName);
+        CellRangeAddressList addressList = new CellRangeAddressList(1, 500, columnIndex, columnIndex);
+        DataValidation validation = helper.createValidation(constraint, addressList);
+        validation.setSuppressDropDownArrow(true);
+        sheet.addValidationData(validation);
+    }
+
+    private List<String> dictionaryValues(String dictType) {
+        List<DictItem> items = dictionaryDao.findByType(dictType);
+        List<String> values = new ArrayList<>();
+        for (DictItem item : items) {
+            values.add(item.getDictValue());
+        }
+        return values;
+    }
+
+    private List<String> regionPaths() {
+        List<Region> regions = regionDao.findAll();
+        Map<Long, Region> regionMap = new HashMap<>();
+        Map<Long, String> pathCache = new HashMap<>();
+        Set<String> paths = new LinkedHashSet<>();
+        for (Region region : regions) {
+            regionMap.put(region.getId(), region);
+        }
+        for (Region region : regions) {
+            paths.add(buildRegionPath(region, regionMap, pathCache));
+        }
+        return new ArrayList<>(paths);
+    }
+
+    private List<String> schoolNames() {
+        List<School> schools = schoolDao.findAll();
+        List<String> names = new ArrayList<>();
+        for (School school : schools) {
+            names.add(school.getSchoolName());
+        }
+        return names;
+    }
+
+    private List<String> majorNames() {
+        List<MajorCatalog> majors = majorCatalogDao.findAll();
+        List<String> names = new ArrayList<>();
+        for (MajorCatalog major : majors) {
+            names.add(major.getMajorName());
+        }
+        return names;
+    }
+
+    private Map<String, RegionSelectionSupport.RegionSelection> regionPathMap() {
+        List<Region> regions = regionDao.findAll();
+        Map<Long, Region> regionMap = new HashMap<>();
+        Map<Long, String> pathCache = new HashMap<>();
+        Map<String, RegionSelectionSupport.RegionSelection> map = new LinkedHashMap<>();
+        for (Region region : regions) {
+            regionMap.put(region.getId(), region);
+        }
+        for (Region region : regions) {
+            map.put(normalizeRegionPath(buildRegionPath(region, regionMap, pathCache)),
+                    buildRegionSelection(region, regionMap));
+        }
+        return map;
+    }
+
+    private YouthInfo mapRowToYouth(Row row, Map<String, RegionSelectionSupport.RegionSelection> regionPathMap) {
+        String name = requiredText(row.getCell(0), "姓名不能为空");
+        String gender = requiredText(row.getCell(1), "性别不能为空");
+        String ethnicity = requiredText(row.getCell(3), "民族不能为空");
+        String politicalStatus = requiredText(row.getCell(4), "政治面貌不能为空");
+        String nativePlaceName = requiredText(row.getCell(5), "籍贯不能为空");
+        String educationLevel = requiredText(row.getCell(6), "学历不能为空");
+        String schoolName = requiredText(row.getCell(7), "学校不能为空");
+        String schoolLocationName = requiredText(row.getCell(8), "学校所在地不能为空");
+        String major = requiredText(row.getCell(9), "专业不能为空");
+        String employmentDirection = requiredText(row.getCell(11), "就业方向不能为空");
+        String phone = requiredText(row.getCell(12), "联系方式不能为空");
+
+        validateImportDictValue("gender", gender, "性别");
+        validateImportDictValue("ethnicity", ethnicity, "民族");
+        validateImportDictValue("political_status", politicalStatus, "政治面貌");
+        validateImportDictValue("education_level", educationLevel, "学历");
+
+        RegionSelectionSupport.RegionSelection nativeSelection = requireRegionSelection(nativePlaceName, regionPathMap, "籍贯");
+        RegionSelectionSupport.RegionSelection schoolSelection = requireRegionSelection(
+                schoolLocationName, regionPathMap, "学校所在地");
+        School school = requireSchool(schoolName);
+        MajorCatalog majorCatalog = requireMajor(major);
+
+        YouthInfo youthInfo = new YouthInfo();
+        youthInfo.setName(name);
+        youthInfo.setGender(gender);
+        youthInfo.setBirthDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(2)), "出生年月格式不正确"));
+        youthInfo.setEthnicity(ethnicity);
+        youthInfo.setPoliticalStatus(politicalStatus);
+        youthInfo.setNativeProvinceCode(nativeSelection.getProvinceCode());
+        youthInfo.setNativeCityCode(nativeSelection.getCityCode());
+        youthInfo.setNativeCountyCode(nativeSelection.getCountyCode());
+        youthInfo.setEducationLevel(educationLevel);
+        youthInfo.setSchoolName(school.getSchoolName());
+        youthInfo.setSchoolProvinceCode(schoolSelection.getProvinceCode());
+        youthInfo.setSchoolCityCode(schoolSelection.getCityCode());
+        youthInfo.setSchoolCountyCode(schoolSelection.getCountyCode());
+        youthInfo.setMajor(majorCatalog.getMajorName());
+        youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
+        youthInfo.setGraduationDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(10)), "毕业时间格式不正确"));
+        youthInfo.setEmploymentDirection(employmentDirection);
+        youthInfo.setPhone(phone);
+        youthInfo.setEmploymentStatus("待确认");
+        youthInfo.setRemarks("通过 Excel 模板导入");
+        return youthInfo;
+    }
+
+    private RegionSelectionSupport.RegionSelection requireRegionSelection(String rawPath,
+            Map<String, RegionSelectionSupport.RegionSelection> regionPathMap,
+            String fieldLabel) {
+        String normalizedPath = normalizeRegionPath(rawPath);
+        RegionSelectionSupport.RegionSelection selection = regionPathMap.get(normalizedPath);
+        if (selection == null) {
+            throw new IllegalArgumentException(fieldLabel + "不在区域主数据范围内");
+        }
+        return selection;
+    }
+
+    private School requireSchool(String schoolName) {
+        if (schoolName == null || schoolName.isBlank()) {
+            throw new IllegalArgumentException("学校不能为空");
+        }
+        School school = schoolDao.findByName(schoolName.trim());
+        if (school == null) {
+            throw new IllegalArgumentException("学校不在基础数据范围内");
+        }
+        return school;
+    }
+
+    private String validateDictValue(String dictType, String value, String label) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        if (!dictionaryValues(dictType).contains(value)) {
+            throw new IllegalStateException(label + "不在基础数据范围内");
+        }
+        return value;
+    }
+
+    private void validateImportDictValue(String dictType, String value, String label) {
+        if (!dictionaryValues(dictType).contains(value)) {
+            throw new IllegalArgumentException(label + "不在字典范围内");
+        }
+    }
+
+    private MajorCatalog requireMajor(String majorName) {
+        if (majorName == null || majorName.isBlank()) {
+            throw new IllegalArgumentException("专业不能为空");
+        }
+        MajorCatalog majorCatalog = majorCatalogDao.findByName(majorName.trim());
+        if (majorCatalog == null) {
+            throw new IllegalArgumentException("专业不在基础数据范围内");
+        }
+        return majorCatalog;
+    }
+
+    private LocalDate parseOptionalDate(String value, String errorMessage) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        try {
+            return ExcelUtils.parseDate(value);
+        } catch (Exception ex) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+    }
+
+    private String requiredText(Cell cell, String errorMessage) {
+        String value = ExcelUtils.getCellText(cell);
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        return value.trim();
+    }
+
+    private void validateTemplateHeader(Sheet sheet) {
+        Row headerRow = sheet.getRow(0);
+        if (headerRow == null) {
+            throw new IllegalArgumentException("导入模板表头缺失，请使用最新模板");
+        }
+        for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+            String actualHeader = ExcelUtils.getCellText(headerRow.getCell(i)).trim();
+            if (!TEMPLATE_HEADERS[i].equals(actualHeader)) {
+                throw new IllegalArgumentException("导入模板列顺序或表头不正确，请使用最新模板");
+            }
+        }
+        short lastCellNum = headerRow.getLastCellNum();
+        if (lastCellNum > TEMPLATE_HEADERS.length) {
+            for (int i = TEMPLATE_HEADERS.length; i < lastCellNum; i++) {
+                if (!ExcelUtils.getCellText(headerRow.getCell(i)).isBlank()) {
+                    throw new IllegalArgumentException("导入模板列顺序或表头不正确，请使用最新模板");
+                }
+            }
+        }
+    }
+
+    private String buildRegionPath(Region region, Map<Long, Region> regionMap, Map<Long, String> pathCache) {
+        if (region == null) {
+            return "";
+        }
+        String cached = pathCache.get(region.getId());
+        if (cached != null) {
+            return cached;
+        }
+        String path;
+        if (region.getParentId() == null || region.getRegionLevel() == null || region.getRegionLevel() <= 1) {
+            path = region.getRegionName();
+        } else {
+            Region parent = regionMap.get(region.getParentId());
+            if (parent == null) {
+                path = region.getRegionName();
+            } else {
+                path = buildRegionPath(parent, regionMap, pathCache) + REGION_PATH_DELIMITER + region.getRegionName();
+            }
+        }
+        pathCache.put(region.getId(), path);
+        return path;
+    }
+
+    private RegionSelectionSupport.RegionSelection buildRegionSelection(Region region, Map<Long, Region> regionMap) {
+        if (region == null || region.getRegionLevel() == null) {
+            throw new IllegalArgumentException("区域主数据不完整");
+        }
+        if (region.getRegionLevel() == 1) {
+            return new RegionSelectionSupport.RegionSelection(region.getRegionCode(), null, null);
+        }
+        Region cityOrProvince = regionMap.get(region.getParentId());
+        if (cityOrProvince == null) {
+            throw new IllegalArgumentException("区域主数据缺少上级");
+        }
+        if (region.getRegionLevel() == 2) {
+            return new RegionSelectionSupport.RegionSelection(cityOrProvince.getRegionCode(), region.getRegionCode(), null);
+        }
+        Region province = regionMap.get(cityOrProvince.getParentId());
+        if (province == null) {
+            throw new IllegalArgumentException("区域主数据缺少上级");
+        }
+        return new RegionSelectionSupport.RegionSelection(province.getRegionCode(), cityOrProvince.getRegionCode(),
+                region.getRegionCode());
+    }
+
+    private String normalizeRegionPath(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        String[] parts = value.trim().split("\\s*[-/／]\\s*");
+        List<String> normalizedParts = new ArrayList<>();
+        for (String part : parts) {
+            if (!part.isBlank()) {
+                normalizedParts.add(part.trim());
+            }
+        }
+        return String.join(REGION_PATH_DELIMITER, normalizedParts);
+    }
+
+    private boolean isEmptyRow(Row row) {
+        for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+            if (!ExcelUtils.getCellText(row.getCell(i)).isBlank()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String safe(String value) {
+        return value == null ? "" : value;
+    }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+    <div class="panel-header">
+        <div class="drawer-panel-header">
+            <div>
+                <h2 th:text="${formTitle}">新增专业名称</h2>
+                <p>每个专业名称必须绑定一个专业类别。</p>
+            </div>
+            <a class="drawer-close-link" th:href="@{/system/dictionaries(tab='major')}" data-drawer-close>×</a>
+        </div>
+    </div>
+    <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <form th:action="@{${formAction}}" th:object="${majorForm}" method="post" class="edit-form">
+        <label><span>专业名称</span><input type="text" th:field="*{majorName}"></label>
+        <label>
+            <span>专业类别</span>
+            <select th:field="*{categoryDictItemId}">
+                <option value="">请选择</option>
+                <option th:each="item : ${majorCategories}" th:value="${item.id}" th:text="${item.dictLabel}"></option>
+            </select>
+        </label>
+        <div class="form-actions full-width">
+            <a class="ghost-button" th:href="@{/system/dictionaries(tab='major')}" data-drawer-close>取消</a>
+            <button type="submit">保存</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

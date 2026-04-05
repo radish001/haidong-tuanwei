@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.job.dao.JobPostDao">
+
+    <resultMap id="JobPostResultMap" type="com.haidong.tuanwei.job.entity.JobPost">
+        <id property="id" column="id"/>
+        <result property="enterpriseId" column="enterprise_id"/>
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="jobName" column="job_name"/>
+        <result property="jobCategory" column="job_category"/>
+        <result property="educationRequirement" column="education_requirement"/>
+        <result property="experienceRequirement" column="experience_requirement"/>
+        <result property="salaryRange" column="salary_range"/>
+        <result property="recruitCount" column="recruit_count"/>
+        <result property="workProvinceCode" column="work_province_code"/>
+        <result property="workCityCode" column="work_city_code"/>
+        <result property="workCountyCode" column="work_county_code"/>
+        <result property="workRegionName" column="work_region_name"/>
+        <result property="contactPerson" column="contact_person"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="jobDescription" column="job_description"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="searchWhere">
+        where j.deleted = 0
+        <if test="query != null and query.jobName != null and query.jobName != ''">
+            and j.job_name like concat('%', #{query.jobName}, '%')
+        </if>
+        <if test="query != null and query.enterpriseId != null">
+            and j.enterprise_id = #{query.enterpriseId}
+        </if>
+        <if test="query != null and query.educationRequirement != null and query.educationRequirement != ''">
+            and j.education_requirement = #{query.educationRequirement}
+        </if>
+        <if test="query != null and query.experienceRequirement != null and query.experienceRequirement != ''">
+            and j.experience_requirement = #{query.experienceRequirement}
+        </if>
+        <if test="query != null and query.salaryRange != null and query.salaryRange != ''">
+            and j.salary_range = #{query.salaryRange}
+        </if>
+        <if test="query != null and query.workCountyCode != null and query.workCountyCode != ''">
+            and j.work_county_code = #{query.workCountyCode}
+        </if>
+        <if test="query != null and (query.workCountyCode == null or query.workCountyCode == '') and query.workCityCode != null and query.workCityCode != ''">
+            and j.work_city_code = #{query.workCityCode}
+        </if>
+        <if test="query != null and (query.workCountyCode == null or query.workCountyCode == '') and (query.workCityCode == null or query.workCityCode == '') and query.workProvinceCode != null and query.workProvinceCode != ''">
+            and j.work_province_code = #{query.workProvinceCode}
+        </if>
+    </sql>
+
+    <select id="search" resultMap="JobPostResultMap">
+        select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category, j.education_requirement,
+               j.experience_requirement, j.salary_range, j.recruit_count, j.work_province_code,
+               j.work_city_code, j.work_county_code,
+               concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as work_region_name,
+               j.contact_person, j.contact_phone, j.job_description, j.publish_time, j.status
+        from job_post j
+                 left join enterprise_info e on e.id = j.enterprise_id and e.deleted = 0
+                 left join sys_region rp on rp.region_code = j.work_province_code and rp.deleted = 0
+                 left join sys_region rc on rc.region_code = j.work_city_code and rc.deleted = 0
+                 left join sys_region rct on rct.region_code = j.work_county_code and rct.deleted = 0
+        <include refid="searchWhere"/>
+        order by j.id desc
+        <if test="query != null and (query.paged == null or query.paged)">
+            limit #{query.offset}, #{query.safePageSize}
+        </if>
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        from job_post j
+                 left join enterprise_info e on e.id = j.enterprise_id and e.deleted = 0
+        <include refid="searchWhere"/>
+    </select>
+
+    <select id="findById" resultMap="JobPostResultMap">
+        select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category, j.education_requirement,
+               j.experience_requirement, j.salary_range, j.recruit_count, j.work_province_code,
+               j.work_city_code, j.work_county_code,
+               concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as work_region_name,
+               j.contact_person, j.contact_phone, j.job_description, j.publish_time, j.status
+        from job_post j
+                 left join enterprise_info e on e.id = j.enterprise_id and e.deleted = 0
+                 left join sys_region rp on rp.region_code = j.work_province_code and rp.deleted = 0
+                 left join sys_region rc on rc.region_code = j.work_city_code and rc.deleted = 0
+                 left join sys_region rct on rct.region_code = j.work_county_code and rct.deleted = 0
+        where j.id = #{id}
+          and j.deleted = 0
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.job.entity.JobPost" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into job_post (
+            enterprise_id, job_name, job_category, education_requirement, experience_requirement, salary_range,
+            recruit_count, work_province_code, work_city_code, work_county_code, contact_person, contact_phone,
+            job_description, publish_time, status, deleted
+        ) values (
+            #{enterpriseId}, #{jobName}, #{jobCategory}, #{educationRequirement}, #{experienceRequirement},
+            #{salaryRange}, #{recruitCount}, #{workProvinceCode}, #{workCityCode}, #{workCountyCode}, #{contactPerson},
+            #{contactPhone}, #{jobDescription}, #{publishTime}, #{status}, 0
+        )
+    </insert>
+
+    <update id="update" parameterType="com.haidong.tuanwei.job.entity.JobPost">
+        update job_post
+        set enterprise_id = #{enterpriseId},
+            job_name = #{jobName},
+            job_category = #{jobCategory},
+            education_requirement = #{educationRequirement},
+            experience_requirement = #{experienceRequirement},
+            salary_range = #{salaryRange},
+            recruit_count = #{recruitCount},
+            work_province_code = #{workProvinceCode},
+            work_city_code = #{workCityCode},
+            work_county_code = #{workCountyCode},
+            contact_person = #{contactPerson},
+            contact_phone = #{contactPhone},
+            job_description = #{jobDescription},
+            status = #{status}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDelete">
+        update job_post
+        set deleted = 1,
+            update_by = #{updateBy}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDeleteBatch">
+        update job_post
+        set deleted = 1,
+            update_by = #{updateBy}
+        where deleted = 0
+          and id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

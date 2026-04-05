@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>招聘信息</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+        <section class="page-hero">
+            <h2 class="page-hero-title">企业招聘信息库</h2>
+            <p class="page-hero-subtitle">围绕岗位发布、企业关联与联系方式统一展示招聘管理数据。</p>
+        </section>
+        <div class="drawer-page-layout" data-drawer-page>
+        <section class="panel drawer-list-panel">
+            <div class="tab-row">
+                <div class="tab-list">
+                    <a class="tab-link active" th:href="@{/jobs}">招聘信息</a>
+                    <a class="tab-link" th:href="@{/enterprises}">企业信息</a>
+                </div>
+            </div>
+            <div class="panel-header">
+                <div>
+                    <h2>招聘岗位列表</h2>
+                    <p>岗位信息已与企业信息建立关联，可按企业筛选。</p>
+                </div>
+            </div>
+            <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+            <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
+            <div class="youth-toolbar">
+                <form class="filter-form compact-filter" method="get" id="job-list-form" data-ajax-form>
+                    <input type="text" name="jobName" th:value="${query.jobName}" placeholder="岗位名称">
+                    <select name="enterpriseId">
+                        <option value="">全部企业</option>
+                        <option th:each="enterprise : ${enterprises}"
+                                th:value="${enterprise.id}"
+                                th:text="${enterprise.enterpriseName}"
+                                th:selected="${query.enterpriseId != null and query.enterpriseId == enterprise.id}"></option>
+                    </select>
+                    <select name="educationRequirement">
+                        <option value="">学历要求</option>
+                        <option th:each="item : ${educationOptions}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.educationRequirement}"></option>
+                    </select>
+                    <select name="experienceRequirement">
+                        <option value="">经验要求</option>
+                        <option th:each="item : ${experienceOptions}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.experienceRequirement}"></option>
+                    </select>
+                    <select name="salaryRange">
+                        <option value="">薪资待遇</option>
+                        <option th:each="item : ${salaryOptions}"
+                                th:value="${item.dictValue}"
+                                th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.salaryRange}"></option>
+                    </select>
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="工作地区">
+                        <input type="hidden" name="workProvinceCode" th:value="${query.workProvinceCode}" data-region-province>
+                        <input type="hidden" name="workCityCode" th:value="${query.workCityCode}" data-region-city>
+                        <input type="hidden" name="workCountyCode" th:value="${query.workCountyCode}" data-region-county>
+                    </div>
+                    <div class="filter-actions-inline">
+                        <button type="submit">查询</button>
+                        <a class="secondary-button" data-ajax-link th:href="@{/jobs(pageSize=${pageSize})}">重置</a>
+                    </div>
+                </form>
+
+                <div class="panel-actions youth-page-actions">
+                    <a class="ghost-button" data-drawer-link th:href="@{/jobs/new}">新增</a>
+                    <button type="button"
+                            class="secondary-button"
+                            data-batch-delete-button
+                            data-batch-form-id="job-batch-delete-form">删除</button>
+                </div>
+            </div>
+
+            <form id="job-batch-delete-form"
+                  th:action="@{/jobs/batch-delete}"
+                  method="post"
+                  data-confirm-message="确认删除选中的招聘信息吗？"></form>
+
+            <table class="simple-table">
+                <thead>
+                <tr>
+                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                    <th class="index-cell">序号</th>
+                    <th>岗位名称</th>
+                    <th>企业名称</th>
+                    <th>经验要求</th>
+                    <th>学历要求</th>
+                    <th>薪资待遇</th>
+                    <th>工作地区</th>
+                    <th>联系人</th>
+                    <th>联系电话</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, itemStat : ${records}">
+                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                    <td th:text="${item.jobName}">Java开发工程师</td>
+                    <td th:text="${item.enterpriseName}">示例企业</td>
+                    <td th:text="${item.experienceRequirement}">1-3年</td>
+                    <td th:text="${item.educationRequirement}">本科</td>
+                    <td th:text="${item.salaryRange}">8000-12000元</td>
+                    <td th:text="${item.workRegionName}">乐都区</td>
+                    <td th:text="${item.contactPerson}">陈先生</td>
+                    <td th:text="${item.contactPhone}">13800000000</td>
+                    <td class="table-actions">
+                        <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/edit'}">编辑</a>
+                        <form th:action="@{'/jobs/' + ${item.id} + '/delete'}"
+                              method="post"
+                              data-confirm-message="确认删除这条招聘信息吗？">
+                            <button type="submit" class="link-button">删除</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(records)}">
+                    <td class="empty-cell" colspan="11">暂无招聘数据</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination-bar" th:if="${totalCount > 0}">
+                <div class="pagination-meta"
+                     th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
+                <div class="pagination-tools">
+                    <label class="pagination-page-size">
+                        <span>每页</span>
+                        <select name="pageSize" form="job-list-form" data-page-size-select>
+                            <option value="10" th:selected="${pageSize == 10}">10</option>
+                            <option value="20" th:selected="${pageSize == 20}">20</option>
+                            <option value="50" th:selected="${pageSize == 50}">50</option>
+                            <option value="100" th:selected="${pageSize == 100}">100</option>
+                        </select>
+                        <span>条</span>
+                    </label>
+                    <div class="pagination-actions">
+                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
+                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
+                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
+                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
+                        <button class="pagination-link"
+                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                                th:each="pageNumber : ${pageNumbers}"
+                                type="submit"
+                                form="job-list-form"
+                                name="page"
+                                th:value="${pageNumber}"
+                                th:text="${pageNumber}"
+                                th:disabled="${pageNumber == currentPage}">1</button>
+                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
+                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
+                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
+                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
+                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+        <aside class="record-drawer" data-drawer-panel hidden>
+            <div class="panel record-drawer-panel">
+                <div data-drawer-content class="record-drawer-content"></div>
+            </div>
+        </aside>
+        </div>
+    </main>
+</div>
+<script th:src="@{/js/list-pagination.js}"></script>
+<script th:src="@{/js/record-drawer.js}"></script>
+<script th:src="@{/js/region-step-select.js}"></script>
+</body>
+</html>

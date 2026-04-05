@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>青年信息详情</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <section class="drawer-shell">
+            <div class="drawer-placeholder">
+                <div class="drawer-placeholder-copy">
+                    <h2 th:text="${record.name}">张三</h2>
+                    <p th:text="${youthTypeLabel + '分类详情展示'}">分类详情展示</p>
+                </div>
+            </div>
+
+            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+                <div class="panel-header">
+                    <div class="drawer-panel-header">
+                        <div>
+                            <h2 th:text="${record.name + ' 详情'}">青年信息详情</h2>
+                            <p th:text="${youthTypeLabel + '分类详情展示'}">分类详情</p>
+                        </div>
+                        <a class="drawer-close-link" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>×</a>
+                    </div>
+                </div>
+
+                <div class="detail-grid">
+                    <div><span>姓名</span><strong th:text="${record.name}">张三</strong></div>
+                    <div><span>性别</span><strong th:text="${record.gender}">男</strong></div>
+                    <div><span>民族</span><strong th:text="${record.ethnicity}">汉族</strong></div>
+                    <div><span>政治面貌</span><strong th:text="${record.politicalStatus}">群众</strong></div>
+                    <div><span>学历</span><strong th:text="${record.educationLevel}">本科</strong></div>
+                    <div><span>籍贯</span><strong th:text="${record.nativePlaceName}">青海省-海东市-乐都区</strong></div>
+                    <div><span>现居住地</span><strong th:text="${record.currentResidenceName}">青海省-海东市-乐都区</strong></div>
+                    <div><span>学校</span><strong th:text="${record.schoolName}">青海大学</strong></div>
+                    <div><span>学校所在地</span><strong th:text="${record.schoolRegionName}">青海省-海东市</strong></div>
+                    <div><span>专业</span><strong th:text="${record.major}">计算机科学与技术</strong></div>
+                    <div><span>专业类别</span><strong th:text="${record.majorCategory}">工学</strong></div>
+                    <div><span>就业方向</span><strong th:text="${record.employmentDirection}">互联网开发</strong></div>
+                    <div><span>联系方式</span><strong th:text="${record.phone}">13900000001</strong></div>
+                    <div><span>创建时间</span><strong th:text="${record.createTime}">2026-01-01</strong></div>
+                    <div class="full-width"><span>备注</span><strong th:text="${record.remarks}">备注内容</strong></div>
+                </div>
+
+                <div class="form-actions">
+                    <a class="ghost-button" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>返回列表</a>
+                    <a class="ghost-button" data-drawer-link th:href="@{'/youth/' + ${youthType} + '/' + ${record.id} + '/edit'}">编辑</a>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

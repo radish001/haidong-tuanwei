@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政策表单</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+        <section class="drawer-shell">
+            <div class="drawer-placeholder">
+                <div class="drawer-placeholder-copy">
+                    <h2>政策信息</h2>
+                    <p>使用右侧面板维护政策标题、来源、摘要和富文本正文，路由和提交接口保持不变。</p>
+                </div>
+            </div>
+
+            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+                <div class="panel-header">
+                    <div class="drawer-panel-header">
+                        <div>
+                            <h2 th:text="${formTitle}">新增政策文章</h2>
+                            <p>统一富文本编辑面板和基础元数据录入区。</p>
+                        </div>
+                        <a class="drawer-close-link" th:href="@{/policies}" data-drawer-close>×</a>
+                    </div>
+                </div>
+                <form th:action="@{${formAction}}" th:object="${policyForm}" method="post" class="edit-form" id="policy-form">
+                    <label class="full-width"><span>标题</span><input type="text" th:field="*{title}"></label>
+                    <label><span>发布单位</span><input type="text" th:field="*{issuingOrganization}"></label>
+                    <label><span>来源</span><input type="text" th:field="*{policySource}"></label>
+                    <label class="full-width"><span>摘要</span><textarea th:field="*{summary}"></textarea></label>
+                    <label class="full-width">
+                        <span>正文</span>
+                        <input type="hidden" th:field="*{contentHtml}" id="contentHtml">
+                        <div id="policy-editor" class="rich-editor"></div>
+                    </label>
+                    <div class="form-actions full-width">
+                        <a class="ghost-button" th:href="@{/policies}" data-drawer-close>取消</a>
+                        <button type="submit">保存</button>
+                    </div>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+<script>
+    const quill = new Quill('#policy-editor', {
+        theme: 'snow',
+        placeholder: '请输入政策正文',
+        modules: {
+            toolbar: [
+                [{ header: [1, 2, 3, false] }],
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link', 'blockquote'],
+                ['clean']
+            ]
+        }
+    });
+    const hiddenInput = document.getElementById('contentHtml');
+    quill.root.innerHTML = hiddenInput.value || '';
+    document.getElementById('policy-form').addEventListener('submit', function () {
+        hiddenInput.value = quill.root.innerHTML;
+    });
+</script>
+</body>
+</html>

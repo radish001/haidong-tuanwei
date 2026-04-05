@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.SchoolTagDao">
+
+    <resultMap id="SchoolTagResultMap" type="com.haidong.tuanwei.system.entity.SchoolTag">
+        <id property="id" column="id"/>
+        <result property="tagName" column="tag_name"/>
+    </resultMap>
+
+    <select id="search" resultMap="SchoolTagResultMap">
+        select id, tag_name
+        from sys_school_tag
+        where deleted = 0
+        <if test="keyword != null and keyword != ''">
+            and tag_name like concat('%', #{keyword}, '%')
+        </if>
+        order by tag_name
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        from sys_school_tag
+        where deleted = 0
+        <if test="keyword != null and keyword != ''">
+            and tag_name like concat('%', #{keyword}, '%')
+        </if>
+    </select>
+
+    <select id="findAll" resultMap="SchoolTagResultMap">
+        select id, tag_name
+        from sys_school_tag
+        where deleted = 0
+        order by tag_name
+    </select>
+
+    <select id="findById" resultMap="SchoolTagResultMap">
+        select id, tag_name
+        from sys_school_tag
+        where id = #{id}
+          and deleted = 0
+        limit 1
+    </select>
+
+    <select id="findByName" resultMap="SchoolTagResultMap">
+        select id, tag_name
+        from sys_school_tag
+        where tag_name = #{tagName}
+          and deleted = 0
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.SchoolTag" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_school_tag (tag_name, deleted)
+        values (#{tagName}, 0)
+    </insert>
+
+    <update id="update" parameterType="com.haidong.tuanwei.system.entity.SchoolTag">
+        update sys_school_tag
+        set tag_name = #{tagName}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDelete">
+        update sys_school_tag
+        set deleted = 1
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <select id="countSchoolUsage" resultType="long">
+        select count(*)
+        from sys_school_tag_rel
+        where tag_id = #{tagId}
+          and deleted = 0
+    </select>
+</mapper>

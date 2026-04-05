@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+    <div class="panel-header">
+        <div class="drawer-panel-header">
+            <div>
+                <h2 th:text="${formTitle}">新增学校标签</h2>
+                <p>学校标签用于双一流等附加属性管理。</p>
+            </div>
+            <a class="drawer-close-link" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}" data-drawer-close>×</a>
+        </div>
+    </div>
+    <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <form th:action="@{${formAction}}" th:object="${schoolTagForm}" method="post" class="edit-form">
+        <label><span>标签名称</span><input type="text" th:field="*{tagName}"></label>
+        <div class="form-actions full-width">
+            <a class="ghost-button" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}" data-drawer-close>取消</a>
+            <button type="submit">保存</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

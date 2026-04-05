@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header class="topbar" th:fragment="topbar(pageTitle)">
+    <div class="topbar-meta">
+        <span class="console-tag">智能管理中台</span>
+        <div class="topbar-heading">
+            <h1 th:text="${pageTitle}">后台首页</h1>
+            <p>功能已打通，当前优先对齐驾驶舱风格和页面层次。</p>
+        </div>
+    </div>
+    <div class="topbar-actions">
+        <div class="system-status">
+            <span class="status-dot"></span>
+            <span>系统运行中</span>
+        </div>
+        <div class="user-chip" th:if="${currentUser != null}">
+            <span class="user-name" th:text="${currentUser.nickname}">系统管理员</span>
+            <span class="user-role">管理员</span>
+        </div>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="ghost-button ghost-button-strong">退出登录</button>
+        </form>
+    </div>
+</header>
+</body>
+</html>

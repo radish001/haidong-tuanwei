@@ -1,0 +1,183 @@
+package com.haidong.tuanwei.enterprise.controller;
+
+import com.haidong.tuanwei.common.security.AdminUserDetails;
+import com.haidong.tuanwei.common.web.AjaxRequestSupport;
+import com.haidong.tuanwei.common.web.PaginationSupport;
+import com.haidong.tuanwei.enterprise.dto.EnterpriseFormRequest;
+import com.haidong.tuanwei.enterprise.dto.EnterpriseSearchRequest;
+import com.haidong.tuanwei.enterprise.entity.EnterpriseInfo;
+import com.haidong.tuanwei.enterprise.service.EnterpriseService;
+import com.haidong.tuanwei.system.service.DictionaryService;
+import com.haidong.tuanwei.system.service.RegionService;
+import jakarta.validation.Valid;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+@Controller
+@RequiredArgsConstructor
+public class EnterpriseController {
+
+    private final EnterpriseService enterpriseService;
+    private final DictionaryService dictionaryService;
+    private final RegionService regionService;
+
+    @GetMapping("/enterprises")
+    public String enterprises(@ModelAttribute("query") EnterpriseSearchRequest query,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        long totalCount = enterpriseService.count(query);
+        normalizePage(query, totalCount);
+
+        model.addAttribute("pageTitle", "企业信息");
+        model.addAttribute("records", enterpriseService.search(query));
+        model.addAttribute("industryOptions", dictionaryService.getByType("enterprise_industry"));
+        model.addAttribute("natureOptions", dictionaryService.getByType("enterprise_nature"));
+        model.addAttribute("scaleOptions", dictionaryService.getByType("enterprise_scale"));
+        PaginationSupport.apply(model, query.getSafePage(), query.getSafePageSize(), totalCount);
+        return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/list :: listContent" : "enterprise/list";
+    }
+
+    @GetMapping("/enterprises/new")
+    public String newEnterprise(@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        model.addAttribute("pageTitle", "企业信息");
+        model.addAttribute("formTitle", "新增企业信息");
+        model.addAttribute("formAction", "/enterprises");
+        model.addAttribute("enterpriseForm", new EnterpriseFormRequest());
+        populateEnterpriseOptions(model);
+        return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
+    }
+
+    @PostMapping("/enterprises")
+    public String createEnterprise(@Valid @ModelAttribute("enterpriseForm") EnterpriseFormRequest request,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal AdminUserDetails currentUser,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("pageTitle", "企业信息");
+            model.addAttribute("formTitle", "新增企业信息");
+            model.addAttribute("formAction", "/enterprises");
+            populateEnterpriseOptions(model);
+            return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
+        }
+        try {
+            enterpriseService.create(request, currentUser.getId());
+        } catch (IllegalStateException ex) {
+            model.addAttribute("pageTitle", "企业信息");
+            model.addAttribute("formTitle", "新增企业信息");
+            model.addAttribute("formAction", "/enterprises");
+            model.addAttribute("formError", ex.getMessage());
+            populateEnterpriseOptions(model);
+            return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "企业信息新增成功");
+        return "redirect:/enterprises";
+    }
+
+    @GetMapping("/enterprises/{id}/edit")
+    public String editEnterprise(@PathVariable Long id,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        model.addAttribute("pageTitle", "企业信息");
+        model.addAttribute("formTitle", "编辑企业信息");
+        model.addAttribute("formAction", "/enterprises/" + id);
+        model.addAttribute("enterpriseForm", toForm(enterpriseService.getById(id)));
+        populateEnterpriseOptions(model);
+        return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
+    }
+
+    @PostMapping("/enterprises/{id}")
+    public String updateEnterprise(@PathVariable Long id,
+            @Valid @ModelAttribute("enterpriseForm") EnterpriseFormRequest request,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal AdminUserDetails currentUser,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("pageTitle", "企业信息");
+            model.addAttribute("formTitle", "编辑企业信息");
+            model.addAttribute("formAction", "/enterprises/" + id);
+            populateEnterpriseOptions(model);
+            return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
+        }
+        try {
+            enterpriseService.update(id, request, currentUser.getId());
+        } catch (IllegalStateException ex) {
+            model.addAttribute("pageTitle", "企业信息");
+            model.addAttribute("formTitle", "编辑企业信息");
+            model.addAttribute("formAction", "/enterprises/" + id);
+            model.addAttribute("formError", ex.getMessage());
+            populateEnterpriseOptions(model);
+            return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "企业信息更新成功");
+        return "redirect:/enterprises";
+    }
+
+    @PostMapping("/enterprises/{id}/delete")
+    public String deleteEnterprise(@PathVariable Long id,
+            @AuthenticationPrincipal AdminUserDetails currentUser,
+            RedirectAttributes redirectAttributes) {
+        enterpriseService.delete(id, currentUser.getId());
+        redirectAttributes.addFlashAttribute("successMessage", "企业信息删除成功");
+        return "redirect:/enterprises";
+    }
+
+    @PostMapping("/enterprises/batch-delete")
+    public String batchDeleteEnterprise(@RequestParam(value = "ids", required = false) List<Long> ids,
+            @AuthenticationPrincipal AdminUserDetails currentUser,
+            RedirectAttributes redirectAttributes) {
+        int deletedCount = enterpriseService.deleteBatch(ids, currentUser.getId());
+        if (deletedCount > 0) {
+            redirectAttributes.addFlashAttribute("successMessage", "已批量删除 " + deletedCount + " 条企业信息");
+        } else {
+            redirectAttributes.addFlashAttribute("successMessage", "请先选择需要删除的企业信息");
+        }
+        return "redirect:/enterprises";
+    }
+
+    private EnterpriseFormRequest toForm(EnterpriseInfo enterprise) {
+        EnterpriseFormRequest form = new EnterpriseFormRequest();
+        form.setId(enterprise.getId());
+        form.setEnterpriseName(enterprise.getEnterpriseName());
+        form.setIndustry(enterprise.getIndustry());
+        form.setEnterpriseNature(enterprise.getEnterpriseNature());
+        form.setEnterpriseScale(enterprise.getEnterpriseScale());
+        form.setRegionProvinceCode(enterprise.getRegionProvinceCode());
+        form.setRegionCityCode(enterprise.getRegionCityCode());
+        form.setRegionCountyCode(enterprise.getRegionCountyCode());
+        form.setAddress(enterprise.getAddress());
+        form.setContactPerson(enterprise.getContactPerson());
+        form.setContactPhone(enterprise.getContactPhone());
+        form.setDescription(enterprise.getDescription());
+        return form;
+    }
+
+    private void normalizePage(EnterpriseSearchRequest query, long totalCount) {
+        int totalPages = (int) Math.max(1, (totalCount + query.getSafePageSize() - 1) / query.getSafePageSize());
+        if (query.getSafePage() > totalPages) {
+            query.setPage(totalPages);
+        }
+    }
+
+    private void populateEnterpriseOptions(Model model) {
+        model.addAttribute("regions", regionService.getRegionTree());
+        model.addAttribute("industryOptions", dictionaryService.getByType("enterprise_industry"));
+        model.addAttribute("natureOptions", dictionaryService.getByType("enterprise_nature"));
+        model.addAttribute("scaleOptions", dictionaryService.getByType("enterprise_scale"));
+    }
+}

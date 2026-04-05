@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.MajorCatalogDao">
+
+    <resultMap id="MajorCatalogResultMap" type="com.haidong.tuanwei.system.entity.MajorCatalog">
+        <id property="id" column="id"/>
+        <result property="majorName" column="major_name"/>
+        <result property="categoryDictItemId" column="category_dict_item_id"/>
+        <result property="categoryLabel" column="category_label"/>
+    </resultMap>
+
+    <sql id="majorJoin">
+        from sys_major_catalog m
+        join sys_dict_item d on d.id = m.category_dict_item_id
+        where m.deleted = 0
+          and d.deleted = 0
+    </sql>
+
+    <select id="search" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        <include refid="majorJoin"/>
+        <if test="keyword != null and keyword != ''">
+            and (m.major_name like concat('%', #{keyword}, '%')
+            or d.dict_label like concat('%', #{keyword}, '%'))
+        </if>
+        order by m.major_name
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        <include refid="majorJoin"/>
+        <if test="keyword != null and keyword != ''">
+            and (m.major_name like concat('%', #{keyword}, '%')
+            or d.dict_label like concat('%', #{keyword}, '%'))
+        </if>
+    </select>
+
+    <select id="findAll" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        <include refid="majorJoin"/>
+        order by d.sort_no, m.major_name
+    </select>
+
+    <select id="findById" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        <include refid="majorJoin"/>
+          and m.id = #{id}
+        limit 1
+    </select>
+
+    <select id="findByName" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        <include refid="majorJoin"/>
+          and m.major_name = #{majorName}
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.MajorCatalog" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_major_catalog (major_name, category_dict_item_id, deleted)
+        values (#{majorName}, #{categoryDictItemId}, 0)
+    </insert>
+
+    <update id="update" parameterType="com.haidong.tuanwei.system.entity.MajorCatalog">
+        update sys_major_catalog
+        set major_name = #{majorName},
+            category_dict_item_id = #{categoryDictItemId}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDelete">
+        update sys_major_catalog
+        set deleted = 1
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <select id="countByCategoryId" resultType="long">
+        select count(*)
+        from sys_major_catalog
+        where category_dict_item_id = #{categoryDictItemId}
+          and deleted = 0
+    </select>
+
+    <select id="countYouthUsageByMajorName" resultType="long">
+        select count(*)
+        from youth_info
+        where major = #{majorName}
+          and deleted = 0
+    </select>
+
+    <update id="updateYouthReferences">
+        update youth_info
+        set major = #{newMajorName},
+            major_category = #{newMajorCategory}
+        where major = #{oldMajorName}
+          and deleted = 0
+    </update>
+</mapper>

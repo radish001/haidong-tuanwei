@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+    <div class="panel-header">
+        <div class="drawer-panel-header">
+            <div>
+                <h2 th:text="${formTitle}">新增字典项</h2>
+                <p th:text="${sectionTitle + '使用受控的名称和值维护'}">基础字典维护</p>
+            </div>
+            <a class="drawer-close-link" th:href="@{/system/dictionaries}" data-drawer-close>×</a>
+        </div>
+    </div>
+    <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <form th:action="@{${formAction}}" th:object="${dictForm}" method="post" class="edit-form">
+        <label><span>显示名称</span><input type="text" th:field="*{dictLabel}"></label>
+        <label><span>字典值</span><input type="text" th:field="*{dictValue}"></label>
+        <div class="form-actions full-width">
+            <a class="ghost-button" th:href="@{/system/dictionaries}" data-drawer-close>取消</a>
+            <button type="submit">保存</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+    <div class="panel-header">
+        <div class="drawer-panel-header">
+            <div>
+                <h2 th:text="${formTitle}">新增学校</h2>
+                <p>学校需要绑定一个学校类别，并可关联多个学校标签。</p>
+            </div>
+            <a class="drawer-close-link" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close>×</a>
+        </div>
+    </div>
+    <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <form th:action="@{${formAction}}" th:object="${schoolForm}" method="post" class="edit-form">
+        <label><span>学校名称</span><input type="text" th:field="*{schoolName}"></label>
+        <label>
+            <span>学校类别</span>
+            <select th:field="*{categoryDictItemId}">
+                <option value="">请选择</option>
+                <option th:each="item : ${schoolCategories}" th:value="${item.id}" th:text="${item.dictLabel}"></option>
+            </select>
+        </label>
+        <label class="full-width">
+            <span>学校标签</span>
+            <div class="checkbox-group">
+                <label class="checkbox-option" th:each="item : ${schoolTags}">
+                    <input type="checkbox" th:field="*{tagIds}" th:value="${item.id}">
+                    <span th:text="${item.tagName}">双一流</span>
+                </label>
+            </div>
+        </label>
+        <div class="form-actions full-width">
+            <a class="ghost-button" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close>取消</a>
+            <button type="submit">保存</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

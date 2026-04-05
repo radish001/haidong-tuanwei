@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<body>
+<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+    <div class="panel-header">
+        <div class="drawer-panel-header">
+            <div>
+                <h2 th:text="${formTitle}">新增区域</h2>
+                <p>支持省、市、区（县）三级区域的级联维护。</p>
+            </div>
+            <a class="drawer-close-link" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close>×</a>
+        </div>
+    </div>
+    <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+    <form th:action="@{${formAction}}"
+          th:object="${regionForm}"
+          method="post"
+          class="edit-form"
+          data-region-form
+          th:attr="data-selected-parent-id=${regionForm.parentId}">
+        <label>
+            <span>区域层级</span>
+            <select th:field="*{regionLevel}" data-region-level-select>
+                <option value="1">省级</option>
+                <option value="2">市级</option>
+                <option value="3">区县级</option>
+            </select>
+        </label>
+        <label data-region-parent-container>
+            <span>上级区域</span>
+            <select th:field="*{parentId}" data-region-parent-select>
+                <option value="0">顶级区域（无上级）</option>
+                <option th:each="item : ${provinceOptions}"
+                        th:value="${item.id}"
+                        th:text="${item.regionName}"
+                        data-parent-level="1"></option>
+                <option th:each="item : ${cityOptions}"
+                        th:value="${item.id}"
+                        th:text="${item.regionName}"
+                        data-parent-level="2"></option>
+            </select>
+        </label>
+        <label><span>区域编码</span><input type="text" th:field="*{regionCode}"></label>
+        <label><span>区域名称</span><input type="text" th:field="*{regionName}"></label>
+        <div class="form-actions full-width">
+            <a class="ghost-button" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close>取消</a>
+            <button type="submit">保存</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

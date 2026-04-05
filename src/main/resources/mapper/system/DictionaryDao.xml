@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.DictionaryDao">
+
+    <resultMap id="DictItemResultMap" type="com.haidong.tuanwei.system.entity.DictItem">
+        <id property="id" column="id"/>
+        <result property="dictType" column="dict_type"/>
+        <result property="dictLabel" column="dict_label"/>
+        <result property="dictValue" column="dict_value"/>
+        <result property="sortNo" column="sort_no"/>
+    </resultMap>
+
+    <select id="findByType" resultMap="DictItemResultMap">
+        select id, dict_type, dict_label, dict_value, sort_no
+        from sys_dict_item
+        where dict_type = #{dictType}
+          and enabled = 1
+          and deleted = 0
+        order by sort_no, id
+    </select>
+
+    <select id="searchByType" resultMap="DictItemResultMap">
+        select id, dict_type, dict_label, dict_value, sort_no
+        from sys_dict_item
+        where dict_type = #{dictType}
+          and enabled = 1
+          and deleted = 0
+        <if test="keyword != null and keyword != ''">
+            and (dict_label like concat('%', #{keyword}, '%')
+            or dict_value like concat('%', #{keyword}, '%'))
+        </if>
+        order by sort_no, id
+        limit #{offset}, #{limit}
+    </select>
+
+    <select id="countByType" resultType="long">
+        select count(*)
+        from sys_dict_item
+        where dict_type = #{dictType}
+          and enabled = 1
+          and deleted = 0
+        <if test="keyword != null and keyword != ''">
+            and (dict_label like concat('%', #{keyword}, '%')
+            or dict_value like concat('%', #{keyword}, '%'))
+        </if>
+    </select>
+
+    <select id="findAll" resultMap="DictItemResultMap">
+        select id, dict_type, dict_label, dict_value, sort_no
+        from sys_dict_item
+        where deleted = 0
+        order by dict_type, sort_no, id
+    </select>
+
+    <select id="findById" resultMap="DictItemResultMap">
+        select id, dict_type, dict_label, dict_value, sort_no
+        from sys_dict_item
+        where id = #{id}
+          and deleted = 0
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.DictItem" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
+        values (#{dictType}, #{dictLabel}, #{dictValue}, #{sortNo}, 1, 0)
+    </insert>
+
+    <update id="update" parameterType="com.haidong.tuanwei.system.entity.DictItem">
+        update sys_dict_item
+        set dict_label = #{dictLabel},
+            dict_value = #{dictValue}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDelete">
+        update sys_dict_item
+        set deleted = 1
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <select id="countEthnicityUsage" resultType="long">
+        select count(*)
+        from youth_info
+        where deleted = 0
+          and ethnicity = #{dictValue}
+    </select>
+
+    <select id="countPoliticalStatusUsage" resultType="long">
+        select count(*)
+        from youth_info
+        where deleted = 0
+          and political_status = #{dictValue}
+    </select>
+
+    <select id="countEducationLevelUsage" resultType="long">
+        select
+            (select count(*) from youth_info where deleted = 0 and education_level = #{dictValue})
+            +
+            (select count(*) from job_post where deleted = 0 and education_requirement = #{dictValue})
+    </select>
+
+    <select id="countGenderUsage" resultType="long">
+        select count(*)
+        from youth_info
+        where deleted = 0
+          and gender = #{dictValue}
+    </select>
+
+    <select id="countEnterpriseScaleUsage" resultType="long">
+        select count(*)
+        from enterprise_info
+        where deleted = 0
+          and enterprise_scale = #{dictValue}
+    </select>
+
+    <select id="countEnterpriseNatureUsage" resultType="long">
+        select count(*)
+        from enterprise_info
+        where deleted = 0
+          and enterprise_nature = #{dictValue}
+    </select>
+
+    <select id="countEnterpriseIndustryUsage" resultType="long">
+        select count(*)
+        from enterprise_info
+        where deleted = 0
+          and industry = #{dictValue}
+    </select>
+
+    <select id="countExperienceRequirementUsage" resultType="long">
+        select count(*)
+        from job_post
+        where deleted = 0
+          and experience_requirement = #{dictValue}
+    </select>
+
+    <select id="countSalaryRangeUsage" resultType="long">
+        select count(*)
+        from job_post
+        where deleted = 0
+          and salary_range = #{dictValue}
+    </select>
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.policy.dao.PolicyArticleDao">
+
+    <resultMap id="PolicyArticleResultMap" type="com.haidong.tuanwei.policy.entity.PolicyArticle">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="issuingOrganization" column="issuing_organization"/>
+        <result property="policySource" column="policy_source"/>
+        <result property="summary" column="summary"/>
+        <result property="contentHtml" column="content_html"/>
+        <result property="publishTime" column="publish_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="searchWhere">
+        where deleted = 0
+        <if test="query != null and query.title != null and query.title != ''">
+            and title like concat('%', #{query.title}, '%')
+        </if>
+        <if test="query != null and query.issuingOrganization != null and query.issuingOrganization != ''">
+            and issuing_organization like concat('%', #{query.issuingOrganization}, '%')
+        </if>
+        <if test="query != null and query.status != null">
+            and status = #{query.status}
+        </if>
+    </sql>
+
+    <select id="search" resultMap="PolicyArticleResultMap">
+        select id, title, issuing_organization, policy_source, summary, content_html, publish_time, status
+        from policy_article
+        <include refid="searchWhere"/>
+        order by id desc
+        <if test="query != null and (query.paged == null or query.paged)">
+            limit #{query.offset}, #{query.safePageSize}
+        </if>
+    </select>
+
+    <select id="count" resultType="long">
+        select count(*)
+        from policy_article
+        <include refid="searchWhere"/>
+    </select>
+
+    <select id="findById" resultMap="PolicyArticleResultMap">
+        select id, title, issuing_organization, policy_source, summary, content_html, publish_time, status
+        from policy_article
+        where id = #{id}
+          and deleted = 0
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.policy.entity.PolicyArticle" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into policy_article (title, issuing_organization, policy_source, summary, content_html, publish_time,
+                                    status, deleted)
+        values (#{title}, #{issuingOrganization}, #{policySource}, #{summary}, #{contentHtml}, #{publishTime},
+                #{status}, 0)
+    </insert>
+
+    <update id="update" parameterType="com.haidong.tuanwei.policy.entity.PolicyArticle">
+        update policy_article
+        set title = #{title},
+            issuing_organization = #{issuingOrganization},
+            policy_source = #{policySource},
+            summary = #{summary},
+            content_html = #{contentHtml},
+            publish_time = #{publishTime}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="updateStatus">
+        update policy_article
+        set status = #{status},
+            publish_time = current_timestamp,
+            update_by = #{updateBy}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDelete">
+        update policy_article
+        set deleted = 1,
+            update_by = #{updateBy}
+        where id = #{id}
+          and deleted = 0
+    </update>
+
+    <update id="softDeleteBatch">
+        update policy_article
+        set deleted = 1,
+            update_by = #{updateBy}
+        where deleted = 0
+          and id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>
