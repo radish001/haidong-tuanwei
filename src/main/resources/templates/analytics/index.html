@@ -239,7 +239,11 @@
                 trigger: 'axis',
                 axisPointer: {type: 'shadow'},
                 formatter(params) {
-                    return params.map(item => `${item.name}：${Math.abs(item.value)}`).join('<br>');
+                    const rows = new Map();
+                    params.forEach((item) => {
+                        rows.set(item.name, `${item.name}：${Math.abs(item.value)}`);
+                    });
+                    return Array.from(rows.values()).join('<br>');
                 }
             },
             grid: {left: 30, right: 30, top: 60, bottom: 40},
