@@ -1,6 +1,7 @@
 package com.haidong.tuanwei.system.service.impl;
 
 import com.haidong.tuanwei.system.dao.DictionaryDao;
+import com.haidong.tuanwei.job.dao.JobPostDao;
 import com.haidong.tuanwei.system.dao.MajorCatalogDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.system.dao.SchoolTagDao;
@@ -24,6 +25,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final SchoolTagDao schoolTagDao;
     private final SchoolDao schoolDao;
     private final DictionaryDao dictionaryDao;
+    private final JobPostDao jobPostDao;
 
     @Override
     public List<MajorCatalog> searchMajors(String keyword, int page, int pageSize) {
@@ -49,12 +51,18 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void createMajor(MajorForm request) {
-        if (majorCatalogDao.findByName(request.getMajorName()) != null) {
+        String majorCode = request.getMajorCode().trim();
+        String majorName = request.getMajorName().trim();
+        if (majorCatalogDao.findByCode(majorCode) != null) {
+            throw new IllegalStateException("专业编码已存在");
+        }
+        if (majorCatalogDao.findByName(majorName) != null) {
             throw new IllegalStateException("专业名称已存在");
         }
         DictItem category = requireDictItem(request.getCategoryDictItemId(), "major_category");
         MajorCatalog majorCatalog = new MajorCatalog();
-        majorCatalog.setMajorName(request.getMajorName().trim());
+        majorCatalog.setMajorCode(majorCode);
+        majorCatalog.setMajorName(majorName);
         majorCatalog.setCategoryDictItemId(category.getId());
         majorCatalogDao.insert(majorCatalog);
     }
@@ -62,23 +70,31 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void updateMajor(Long id, MajorForm request) {
         MajorCatalog existing = requireMajor(id);
-        MajorCatalog duplicate = majorCatalogDao.findByName(request.getMajorName().trim());
+        String majorCode = request.getMajorCode().trim();
+        String majorName = request.getMajorName().trim();
+        MajorCatalog duplicateByCode = majorCatalogDao.findByCode(majorCode);
+        if (duplicateByCode != null && !duplicateByCode.getId().equals(id)) {
+            throw new IllegalStateException("专业编码已存在");
+        }
+        MajorCatalog duplicate = majorCatalogDao.findByName(majorName);
         if (duplicate != null && !duplicate.getId().equals(id)) {
             throw new IllegalStateException("专业名称已存在");
         }
         DictItem category = requireDictItem(request.getCategoryDictItemId(), "major_category");
-        String oldMajorName = existing.getMajorName();
-        existing.setMajorName(request.getMajorName().trim());
+        existing.setMajorCode(majorCode);
+        existing.setMajorName(majorName);
         existing.setCategoryDictItemId(category.getId());
         majorCatalogDao.update(existing);
-        majorCatalogDao.updateYouthReferences(oldMajorName, existing.getMajorName(), category.getDictLabel());
     }
 
     @Override
     public void deleteMajor(Long id) {
         MajorCatalog existing = requireMajor(id);
-        if (majorCatalogDao.countYouthUsageByMajorName(existing.getMajorName()) > 0) {
+        if (majorCatalogDao.countYouthUsageByMajorCode(existing.getMajorCode()) > 0) {
             throw new IllegalStateException("该专业名称已被青年信息使用，无法删除");
+        }
+        if (jobPostDao.countMajorUsage(existing.getMajorCode()) > 0) {
+            throw new IllegalStateException("该专业名称已被招聘岗位使用，无法删除");
         }
         majorCatalogDao.softDelete(id);
     }
@@ -132,6 +148,9 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (schoolTagDao.countSchoolUsage(id) > 0) {
             throw new IllegalStateException("该学校标签存在关联学校，无法删除");
         }
+        if (jobPostDao.countSchoolTagUsage(id) > 0) {
+            throw new IllegalStateException("该学校标签已被招聘岗位使用，无法删除");
+        }
         schoolTagDao.softDelete(id);
     }
 
@@ -167,12 +186,18 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     public void createSchool(SchoolForm request) {
-        if (schoolDao.findByName(request.getSchoolName().trim()) != null) {
+        String schoolCode = request.getSchoolCode().trim();
+        String schoolName = request.getSchoolName().trim();
+        if (schoolDao.findByCode(schoolCode) != null) {
+            throw new IllegalStateException("学校编码已存在");
+        }
+        if (schoolDao.findByName(schoolName) != null) {
             throw new IllegalStateException("学校名称已存在");
         }
         DictItem category = requireDictItem(request.getCategoryDictItemId(), "school_category");
         School school = new School();
-        school.setSchoolName(request.getSchoolName().trim());
+        school.setSchoolCode(schoolCode);
+        school.setSchoolName(schoolName);
         school.setCategoryDictItemId(category.getId());
         schoolDao.insert(school);
         replaceSchoolTags(school.getId(), request.getTagIds());
@@ -181,23 +206,28 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Override
     public void updateSchool(Long id, SchoolForm request) {
         School existing = requireSchool(id);
-        School duplicate = schoolDao.findByName(request.getSchoolName().trim());
+        String schoolCode = request.getSchoolCode().trim();
+        String schoolName = request.getSchoolName().trim();
+        School duplicateByCode = schoolDao.findByCode(schoolCode);
+        if (duplicateByCode != null && !duplicateByCode.getId().equals(id)) {
+            throw new IllegalStateException("学校编码已存在");
+        }
+        School duplicate = schoolDao.findByName(schoolName);
         if (duplicate != null && !duplicate.getId().equals(id)) {
             throw new IllegalStateException("学校名称已存在");
         }
         DictItem category = requireDictItem(request.getCategoryDictItemId(), "school_category");
-        String oldSchoolName = existing.getSchoolName();
-        existing.setSchoolName(request.getSchoolName().trim());
+        existing.setSchoolCode(schoolCode);
+        existing.setSchoolName(schoolName);
         existing.setCategoryDictItemId(category.getId());
         schoolDao.update(existing);
         replaceSchoolTags(id, request.getTagIds());
-        schoolDao.updateYouthReferences(oldSchoolName, existing.getSchoolName());
     }
 
     @Override
     public void deleteSchool(Long id) {
         School existing = requireSchool(id);
-        if (schoolDao.countYouthUsageBySchoolName(existing.getSchoolName()) > 0) {
+        if (schoolDao.countYouthUsageBySchoolCode(existing.getSchoolCode()) > 0) {
             throw new IllegalStateException("该学校存在关联青年信息，无法删除");
         }
         schoolDao.softDelete(id);

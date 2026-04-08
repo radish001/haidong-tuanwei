@@ -46,8 +46,8 @@ public class YouthInfoServiceImpl implements YouthInfoService {
 
     private static final String REGION_PATH_DELIMITER = " / ";
     private static final String[] TEMPLATE_HEADERS = {
-            "姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学校",
-            "学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"
+            "姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学位",
+            "学校", "学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"
     };
 
     private final YouthInfoDao youthInfoDao;
@@ -112,7 +112,8 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             List<String> ethnicityOptions = dictionaryValues("ethnicity");
             List<String> politicalOptions = dictionaryValues("political_status");
             List<String> regionOptions = regionPaths();
-            List<String> educationOptions = dictionaryValues("education_level");
+            List<String> educationOptions = dictionaryLabels("education_level");
+            List<String> degreeOptions = dictionaryLabels("degree");
             List<String> schoolOptions = schoolNames();
             List<String> majorOptions = majorNames();
 
@@ -121,18 +122,20 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             createHiddenSheet(workbook, "hidden_4", "politicalOptions", politicalOptions);
             createHiddenSheet(workbook, "hidden_5", "nativePlaceOptions", regionOptions);
             createHiddenSheet(workbook, "hidden_6", "educationOptions", educationOptions);
-            createHiddenSheet(workbook, "hidden_7", "schoolOptions", schoolOptions);
-            createHiddenSheet(workbook, "hidden_8", "schoolRegionOptions", regionOptions);
-            createHiddenSheet(workbook, "hidden_9", "majorOptions", majorOptions);
+            createHiddenSheet(workbook, "hidden_7", "degreeOptions", degreeOptions);
+            createHiddenSheet(workbook, "hidden_8", "schoolOptions", schoolOptions);
+            createHiddenSheet(workbook, "hidden_9", "schoolRegionOptions", regionOptions);
+            createHiddenSheet(workbook, "hidden_10", "majorOptions", majorOptions);
 
             applyDropDown(mainSheet, "genderOptions", 1);
             applyDropDown(mainSheet, "ethnicityOptions", 3);
             applyDropDown(mainSheet, "politicalOptions", 4);
             applyDropDown(mainSheet, "nativePlaceOptions", 5);
             applyDropDown(mainSheet, "educationOptions", 6);
-            applyDropDown(mainSheet, "schoolOptions", 7);
-            applyDropDown(mainSheet, "schoolRegionOptions", 8);
-            applyDropDown(mainSheet, "majorOptions", 9);
+            applyDropDown(mainSheet, "degreeOptions", 7);
+            applyDropDown(mainSheet, "schoolOptions", 8);
+            applyDropDown(mainSheet, "schoolRegionOptions", 9);
+            applyDropDown(mainSheet, "majorOptions", 10);
 
             for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
                 mainSheet.autoSizeColumn(i);
@@ -210,14 +213,15 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 row.createCell(4).setCellValue(safe(item.getPoliticalStatus()));
                 row.createCell(5).setCellValue(regionSelectionSupport.buildExcelPath(
                         item.getNativeProvinceCode(), item.getNativeCityCode(), item.getNativeCountyCode()));
-                row.createCell(6).setCellValue(safe(item.getEducationLevel()));
-                row.createCell(7).setCellValue(safe(item.getSchoolName()));
-                row.createCell(8).setCellValue(regionSelectionSupport.buildExcelPath(
+                row.createCell(6).setCellValue(safe(item.getEducationLevelName()));
+                row.createCell(7).setCellValue(safe(item.getDegreeName()));
+                row.createCell(8).setCellValue(safe(item.getSchoolName()));
+                row.createCell(9).setCellValue(regionSelectionSupport.buildExcelPath(
                         item.getSchoolProvinceCode(), item.getSchoolCityCode(), item.getSchoolCountyCode()));
-                row.createCell(9).setCellValue(safe(item.getMajor()));
-                row.createCell(10).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
-                row.createCell(11).setCellValue(safe(item.getEmploymentDirection()));
-                row.createCell(12).setCellValue(safe(item.getPhone()));
+                row.createCell(10).setCellValue(safe(item.getMajor()));
+                row.createCell(11).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
+                row.createCell(12).setCellValue(safe(item.getEmploymentDirection()));
+                row.createCell(13).setCellValue(safe(item.getPhone()));
             }
             for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
                 sheet.autoSizeColumn(i);
@@ -240,15 +244,18 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setNativeProvinceCode(nativeSelection.getProvinceCode());
         youthInfo.setNativeCityCode(nativeSelection.getCityCode());
         youthInfo.setNativeCountyCode(nativeSelection.getCountyCode());
-        youthInfo.setEducationLevel(validateDictValue("education_level", request.getEducationLevel(), "学历层次"));
-        School school = requireSchool(request.getSchoolName());
+        youthInfo.setEducationCode(validateDictValue("education_level", request.getEducationLevel(), "学历"));
+        youthInfo.setDegreeCode(validateDictValue("degree", request.getDegreeCode(), "学位"));
+        School school = requireSchoolByCode(request.getSchoolCode());
+        youthInfo.setSchoolCode(school.getSchoolCode());
         youthInfo.setSchoolName(school.getSchoolName());
         RegionSelectionSupport.RegionSelection schoolSelection = regionSelectionSupport.normalize(
                 request.getSchoolProvinceCode(), request.getSchoolCityCode(), request.getSchoolCountyCode(), "学校所在地");
         youthInfo.setSchoolProvinceCode(schoolSelection.getProvinceCode());
         youthInfo.setSchoolCityCode(schoolSelection.getCityCode());
         youthInfo.setSchoolCountyCode(schoolSelection.getCountyCode());
-        MajorCatalog majorCatalog = requireMajor(request.getMajor());
+        MajorCatalog majorCatalog = requireMajorByCode(request.getMajorCode());
+        youthInfo.setMajorCode(majorCatalog.getMajorCode());
         youthInfo.setMajor(majorCatalog.getMajorName());
         youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
         youthInfo.setGraduationDate(parseDate(request.getGraduationDate()));
@@ -312,6 +319,24 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         return values;
     }
 
+    private List<String> dictionaryLabels(String dictType) {
+        List<DictItem> items = dictionaryDao.findByType(dictType);
+        List<String> labels = new ArrayList<>();
+        for (DictItem item : items) {
+            labels.add(item.getDictLabel());
+        }
+        return labels;
+    }
+
+    private Map<String, String> dictionaryLabelToValueMap(String dictType) {
+        List<DictItem> items = dictionaryDao.findByType(dictType);
+        Map<String, String> map = new LinkedHashMap<>();
+        for (DictItem item : items) {
+            map.put(item.getDictLabel(), item.getDictValue());
+        }
+        return map;
+    }
+
     private List<String> regionPaths() {
         List<Region> regions = regionDao.findAll();
         Map<Long, Region> regionMap = new HashMap<>();
@@ -366,40 +391,45 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         String politicalStatus = requiredText(row.getCell(4), "政治面貌不能为空");
         String nativePlaceName = requiredText(row.getCell(5), "籍贯不能为空");
         String educationLevel = requiredText(row.getCell(6), "学历不能为空");
-        String schoolName = requiredText(row.getCell(7), "学校不能为空");
-        String schoolLocationName = requiredText(row.getCell(8), "学校所在地不能为空");
-        String major = requiredText(row.getCell(9), "专业不能为空");
-        String employmentDirection = requiredText(row.getCell(11), "就业方向不能为空");
-        String phone = requiredText(row.getCell(12), "联系方式不能为空");
+        String degree = requiredText(row.getCell(7), "学位不能为空");
+        String schoolName = requiredText(row.getCell(8), "学校不能为空");
+        String schoolLocationName = requiredText(row.getCell(9), "学校所在地不能为空");
+        String major = requiredText(row.getCell(10), "专业不能为空");
+        String employmentDirection = requiredText(row.getCell(12), "就业方向不能为空");
+        String phone = requiredText(row.getCell(13), "联系方式不能为空");
 
-        validateImportDictValue("gender", gender, "性别");
-        validateImportDictValue("ethnicity", ethnicity, "民族");
-        validateImportDictValue("political_status", politicalStatus, "政治面貌");
-        validateImportDictValue("education_level", educationLevel, "学历");
+        String genderCode = validateImportDictLabel("gender", gender, "性别");
+        String ethnicityCode = validateImportDictLabel("ethnicity", ethnicity, "民族");
+        String politicalStatusCode = validateImportDictLabel("political_status", politicalStatus, "政治面貌");
+        String educationCode = validateImportDictLabel("education_level", educationLevel, "学历");
+        String degreeCode = validateImportDictLabel("degree", degree, "学位");
 
         RegionSelectionSupport.RegionSelection nativeSelection = requireRegionSelection(nativePlaceName, regionPathMap, "籍贯");
         RegionSelectionSupport.RegionSelection schoolSelection = requireRegionSelection(
                 schoolLocationName, regionPathMap, "学校所在地");
-        School school = requireSchool(schoolName);
-        MajorCatalog majorCatalog = requireMajor(major);
+        School school = requireSchoolByName(schoolName);
+        MajorCatalog majorCatalog = requireMajorByName(major);
 
         YouthInfo youthInfo = new YouthInfo();
         youthInfo.setName(name);
-        youthInfo.setGender(gender);
+        youthInfo.setGender(genderCode);
         youthInfo.setBirthDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(2)), "出生年月格式不正确"));
-        youthInfo.setEthnicity(ethnicity);
-        youthInfo.setPoliticalStatus(politicalStatus);
+        youthInfo.setEthnicity(ethnicityCode);
+        youthInfo.setPoliticalStatus(politicalStatusCode);
         youthInfo.setNativeProvinceCode(nativeSelection.getProvinceCode());
         youthInfo.setNativeCityCode(nativeSelection.getCityCode());
         youthInfo.setNativeCountyCode(nativeSelection.getCountyCode());
-        youthInfo.setEducationLevel(educationLevel);
+        youthInfo.setEducationCode(educationCode);
+        youthInfo.setDegreeCode(degreeCode);
+        youthInfo.setSchoolCode(school.getSchoolCode());
         youthInfo.setSchoolName(school.getSchoolName());
         youthInfo.setSchoolProvinceCode(schoolSelection.getProvinceCode());
         youthInfo.setSchoolCityCode(schoolSelection.getCityCode());
         youthInfo.setSchoolCountyCode(schoolSelection.getCountyCode());
+        youthInfo.setMajorCode(majorCatalog.getMajorCode());
         youthInfo.setMajor(majorCatalog.getMajorName());
         youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
-        youthInfo.setGraduationDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(10)), "毕业时间格式不正确"));
+        youthInfo.setGraduationDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(11)), "毕业时间格式不正确"));
         youthInfo.setEmploymentDirection(employmentDirection);
         youthInfo.setPhone(phone);
         youthInfo.setEmploymentStatus("待确认");
@@ -418,7 +448,18 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         return selection;
     }
 
-    private School requireSchool(String schoolName) {
+    private School requireSchoolByCode(String schoolCode) {
+        if (schoolCode == null || schoolCode.isBlank()) {
+            throw new IllegalStateException("学校不能为空");
+        }
+        School school = schoolDao.findByCode(schoolCode.trim());
+        if (school == null) {
+            throw new IllegalStateException("学校不在基础数据范围内");
+        }
+        return school;
+    }
+
+    private School requireSchoolByName(String schoolName) {
         if (schoolName == null || schoolName.isBlank()) {
             throw new IllegalArgumentException("学校不能为空");
         }
@@ -439,13 +480,26 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         return value;
     }
 
-    private void validateImportDictValue(String dictType, String value, String label) {
-        if (!dictionaryValues(dictType).contains(value)) {
-            throw new IllegalArgumentException(label + "不在字典范围内");
+    private String validateImportDictLabel(String dictType, String labelText, String fieldLabel) {
+        String dictValue = dictionaryLabelToValueMap(dictType).get(labelText);
+        if (dictValue == null) {
+            throw new IllegalArgumentException(fieldLabel + "不在字典范围内");
         }
+        return dictValue;
     }
 
-    private MajorCatalog requireMajor(String majorName) {
+    private MajorCatalog requireMajorByCode(String majorCode) {
+        if (majorCode == null || majorCode.isBlank()) {
+            throw new IllegalStateException("专业不能为空");
+        }
+        MajorCatalog majorCatalog = majorCatalogDao.findByCode(majorCode.trim());
+        if (majorCatalog == null) {
+            throw new IllegalStateException("专业不在基础数据范围内");
+        }
+        return majorCatalog;
+    }
+
+    private MajorCatalog requireMajorByName(String majorName) {
         if (majorName == null || majorName.isBlank()) {
             throw new IllegalArgumentException("专业不能为空");
         }

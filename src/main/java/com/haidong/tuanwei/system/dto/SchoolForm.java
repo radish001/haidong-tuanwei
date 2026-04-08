@@ -11,6 +11,9 @@ public class SchoolForm {
 
     private Long id;
 
+    @NotBlank(message = "学校编码不能为空")
+    private String schoolCode;
+
     @NotBlank(message = "学校名称不能为空")
     private String schoolName;
 

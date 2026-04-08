@@ -1,5 +1,6 @@
 package com.haidong.tuanwei.system.service.impl;
 
+import com.haidong.tuanwei.job.dao.JobPostDao;
 import com.haidong.tuanwei.system.dao.DictionaryDao;
 import com.haidong.tuanwei.system.dao.MajorCatalogDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
@@ -20,6 +21,7 @@ public class DictionaryServiceImpl implements DictionaryService {
             "ethnicity",
             "political_status",
             "education_level",
+            "degree",
             "major_category",
             "school_category",
             "enterprise_scale",
@@ -31,6 +33,7 @@ public class DictionaryServiceImpl implements DictionaryService {
     private final DictionaryDao dictionaryDao;
     private final MajorCatalogDao majorCatalogDao;
     private final SchoolDao schoolDao;
+    private final JobPostDao jobPostDao;
 
     @Override
     public List<DictItem> getByType(String dictType) {
@@ -91,11 +94,15 @@ public class DictionaryServiceImpl implements DictionaryService {
             case "political_status" ->
                     buildBlockMessage(dictionaryDao.countPoliticalStatusUsage(existing.getDictValue()), "该政治面貌已被青年信息使用，无法删除");
             case "education_level" ->
-                    buildBlockMessage(dictionaryDao.countEducationLevelUsage(existing.getDictValue()), "该学历层次已被业务数据使用，无法删除");
+                    buildBlockMessage(dictionaryDao.countEducationLevelUsage(existing.getDictValue()), "该学历已被业务数据使用，无法删除");
+            case "degree" ->
+                    buildBlockMessage(dictionaryDao.countDegreeUsage(existing.getDictValue()), "该学位已被青年信息使用，无法删除");
             case "major_category" ->
                     buildBlockMessage(majorCatalogDao.countByCategoryId(existing.getId()), "该专业类别存在关联专业名称，无法删除");
             case "school_category" ->
-                    buildBlockMessage(schoolDao.countByCategoryId(existing.getId()), "该学校类别存在关联学校，无法删除");
+                    buildBlockMessage(
+                            schoolDao.countByCategoryId(existing.getId()) + jobPostDao.countSchoolCategoryUsage(existing.getId()),
+                            "该学校类别存在关联学校或招聘岗位，无法删除");
             case "enterprise_scale" ->
                     buildBlockMessage(dictionaryDao.countEnterpriseScaleUsage(existing.getDictValue()), "该企业规模已被企业信息使用，无法删除");
             case "enterprise_nature" ->

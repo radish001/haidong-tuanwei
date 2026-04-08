@@ -4,6 +4,7 @@
     const DRAWER_CONTENT_SELECTOR = "[data-drawer-content]";
     const DRAWER_LINK_SELECTOR = "a[data-drawer-link]";
     const DRAWER_CLOSE_SELECTOR = "[data-drawer-close]";
+    const PAGE_SIZE_SELECTOR = "select[data-page-size-select]";
     const POLICY_EDITOR_SELECTOR = "#policy-editor";
     const POLICY_FORM_SELECTOR = "#policy-form";
     const POLICY_INPUT_SELECTOR = "#contentHtml";
@@ -89,6 +90,12 @@
     };
 
     const initDynamicDrawerContent = async (container) => {
+        if (window.AlertBanner && typeof window.AlertBanner.init === "function") {
+            window.AlertBanner.init(container);
+        }
+        if (window.JobFormMultiSelect && typeof window.JobFormMultiSelect.init === "function") {
+            window.JobFormMultiSelect.init(container);
+        }
         await initPolicyEditor(container);
         initYouthForm(container);
         if (window.SystemRegionForm && typeof window.SystemRegionForm.init === "function") {
@@ -110,11 +117,27 @@
                 <div class="panel-header">
                     <div>
                         <h2>加载中</h2>
-                        <p>正在打开右侧详情面板...</p>
+                        <p>正在加载内容...</p>
                     </div>
                 </div>
             </section>
         `;
+    };
+
+    const buildGetUrl = (form, submitter) => {
+        const url = new URL(form.action || window.location.href, window.location.origin);
+        const formData = submitter ? new FormData(form, submitter) : new FormData(form);
+        const params = new URLSearchParams();
+
+        for (const [key, value] of formData.entries()) {
+            const normalizedValue = typeof value === "string" ? value.trim() : value;
+            if (normalizedValue !== "") {
+                params.append(key, normalizedValue);
+            }
+        }
+
+        url.search = params.toString();
+        return url.toString();
     };
 
     const openDrawer = async (page, url) => {
@@ -207,13 +230,19 @@
         }
 
         event.preventDefault();
-        const response = await fetch(form.action, {
-            method: (form.method || "post").toUpperCase(),
+        const method = (form.method || "post").toUpperCase();
+        const requestUrl = method === "GET" ? buildGetUrl(form, event.submitter) : form.action;
+        const requestOptions = {
+            method,
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
-            },
-            body: new FormData(form)
-        });
+            }
+        };
+        if (method !== "GET") {
+            requestOptions.body = new FormData(form);
+        }
+
+        const response = await fetch(requestUrl, requestOptions);
 
         if (response.redirected) {
             closeDrawer(page);
@@ -232,5 +261,20 @@
 
         drawerContent.innerHTML = await response.text();
         await initDynamicDrawerContent(drawerContent);
+    });
+
+    document.addEventListener("change", (event) => {
+        const select = event.target.closest(PAGE_SIZE_SELECTOR);
+        if (!(select instanceof HTMLSelectElement)) {
+            return;
+        }
+
+        const form = select.closest("form");
+        const page = form instanceof HTMLFormElement ? form.closest(DRAWER_PAGE_SELECTOR) : null;
+        if (!(form instanceof HTMLFormElement) || !page) {
+            return;
+        }
+
+        form.requestSubmit();
     });
 })();

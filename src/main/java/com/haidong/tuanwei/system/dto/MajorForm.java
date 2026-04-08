@@ -9,6 +9,9 @@ public class MajorForm {
 
     private Long id;
 
+    @NotBlank(message = "专业编码不能为空")
+    private String majorCode;
+
     @NotBlank(message = "专业名称不能为空")
     private String majorName;
 

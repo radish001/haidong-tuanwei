@@ -9,6 +9,26 @@
         <result property="value" column="item_value"/>
     </resultMap>
 
+    <resultMap id="TagSchoolStatResultMap" type="com.haidong.tuanwei.analytics.dto.TagSchoolStat">
+        <result property="tagName" column="tag_name"/>
+        <result property="schoolName" column="school_name"/>
+        <result property="value" column="item_value"/>
+    </resultMap>
+
+    <sql id="haidongNativeCondition">
+        (
+            yi.native_city_code = #{haidongCityCode}
+            or yi.native_county_code in (
+                select county.region_code
+                from sys_region county
+                join sys_region city on county.parent_id = city.id
+                where county.deleted = 0
+                  and city.deleted = 0
+                  and city.region_code = #{haidongCityCode}
+            )
+        )
+    </sql>
+
     <select id="countByColumn" resultMap="ChartItemResultMap">
         select ${column} as name, count(*) as item_value
         from youth_info
@@ -38,5 +58,64 @@
                      when year(current_date) - year(birth_date) between 26 and 30 then '26-30岁'
                      else '30岁以上'
                  end
+    </select>
+
+    <select id="countByEducationLevel" resultMap="ChartItemResultMap">
+        select coalesce(d.dict_label, yi.education_level) as name, count(*) as item_value
+        from youth_info yi
+        left join sys_dict_item d on d.dict_type = 'education_level'
+            and d.dict_value = yi.education_level
+            and d.enabled = 1
+            and d.deleted = 0
+        where yi.deleted = 0
+          and yi.youth_type = #{youthType}
+          and yi.education_level is not null
+          and yi.education_level != ''
+        group by yi.education_level, d.dict_label
+        order by item_value desc
+    </select>
+
+    <select id="countBySchoolCategory" resultMap="ChartItemResultMap">
+        select d.dict_label as name, count(yi.id) as item_value
+        from sys_dict_item d
+        left join sys_school s on s.category_dict_item_id = d.id and s.deleted = 0
+        left join youth_info yi on yi.school_code = s.school_code
+            and yi.deleted = 0
+            and yi.youth_type = #{youthType}
+        where d.deleted = 0
+          and d.enabled = 1
+          and d.dict_type = 'school_category'
+        group by d.id, d.dict_label, d.sort_no
+        order by d.sort_no, d.id
+    </select>
+
+    <select id="countByMajorCategory" resultMap="ChartItemResultMap">
+        select d.dict_label as name, count(yi.id) as item_value
+        from sys_dict_item d
+        left join sys_major_catalog m on m.category_dict_item_id = d.id and m.deleted = 0
+        left join youth_info yi on yi.major_code = m.major_code
+            and yi.deleted = 0
+            and yi.youth_type = #{youthType}
+        where d.deleted = 0
+          and d.enabled = 1
+          and d.dict_type = 'major_category'
+        group by d.id, d.dict_label, d.sort_no
+        order by d.sort_no, d.id
+    </select>
+
+    <select id="countHaidongNativeSchoolsByTag" resultMap="TagSchoolStatResultMap">
+        select t.tag_name,
+               s.school_name,
+               count(yi.id) as item_value
+        from sys_school_tag t
+        join sys_school_tag_rel rel on rel.tag_id = t.id and rel.deleted = 0
+        join sys_school s on s.id = rel.school_id and s.deleted = 0
+        join youth_info yi on yi.school_code = s.school_code
+            and yi.deleted = 0
+            and yi.youth_type = #{youthType}
+            and <include refid="haidongNativeCondition"/>
+        where t.deleted = 0
+        group by t.id, t.tag_name, s.id, s.school_name
+        order by t.tag_name, item_value desc, s.school_name
     </select>
 </mapper>

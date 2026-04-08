@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>后台登录</title>
+    <title>登录</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="login-body">
@@ -11,8 +11,8 @@
     <section class="login-panel">
         <div class="login-header">
             <div class="brand-mark large">HD</div>
-            <h1>海东青年就业创业平台</h1>
-            <p>管理员登录后可访问青年信息、企业招聘、政策管理和数据分析模块。</p>
+            <h1>海东市联络服务青年就业创业信息平台</h1>
+            <p>登录后进入平台业务管理页面。</p>
         </div>
 
         <div class="alert error-alert" th:if="${param.error}">
@@ -25,19 +25,16 @@
         <form th:action="@{/login}" method="post" class="login-form">
             <label>
                 <span>用户名</span>
-                <input type="text" name="username" value="admin" autocomplete="username">
+                <input type="text" name="username" autocomplete="username">
             </label>
             <label>
                 <span>密码</span>
-                <input type="password" name="password" value="123456" autocomplete="current-password">
+                <input type="password" name="password" autocomplete="current-password">
             </label>
-            <button type="submit">登录后台</button>
+            <button type="submit">登录</button>
         </form>
-
-        <div class="login-tip">
-            默认账号：<code>admin</code> / <code>123456</code>
-        </div>
     </section>
 </main>
+<script th:src="@{/js/alert-banner.js}"></script>
 </body>
 </html>

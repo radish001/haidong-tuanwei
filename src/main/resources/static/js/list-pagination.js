@@ -110,6 +110,9 @@
         if (!root) {
             return;
         }
+        if (window.AlertBanner && typeof window.AlertBanner.init === "function") {
+            window.AlertBanner.init(root);
+        }
         if (window.RegionStepSelect && typeof window.RegionStepSelect.init === "function") {
             await window.RegionStepSelect.init(root);
         }

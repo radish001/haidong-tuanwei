@@ -224,6 +224,7 @@ public class YouthController {
         model.addAttribute("ethnicities", dictionaryService.getByType("ethnicity"));
         model.addAttribute("politicalStatuses", dictionaryService.getByType("political_status"));
         model.addAttribute("educationLevels", dictionaryService.getByType("education_level"));
+        model.addAttribute("degrees", dictionaryService.getByType("degree"));
         model.addAttribute("majorCategories", dictionaryService.getByType("major_category"));
         model.addAttribute("regions", regionService.getRegionTree());
         model.addAttribute("schools", masterDataService.getAllSchools());
@@ -241,12 +242,13 @@ public class YouthController {
         form.setNativeProvinceCode(youthInfo.getNativeProvinceCode());
         form.setNativeCityCode(youthInfo.getNativeCityCode());
         form.setNativeCountyCode(youthInfo.getNativeCountyCode());
-        form.setEducationLevel(youthInfo.getEducationLevel());
-        form.setSchoolName(youthInfo.getSchoolName());
+        form.setEducationLevel(youthInfo.getEducationCode());
+        form.setDegreeCode(youthInfo.getDegreeCode());
+        form.setSchoolCode(youthInfo.getSchoolCode());
         form.setSchoolProvinceCode(youthInfo.getSchoolProvinceCode());
         form.setSchoolCityCode(youthInfo.getSchoolCityCode());
         form.setSchoolCountyCode(youthInfo.getSchoolCountyCode());
-        form.setMajor(youthInfo.getMajor());
+        form.setMajorCode(youthInfo.getMajorCode());
         form.setMajorCategory(youthInfo.getMajorCategory());
         form.setGraduationDate(youthInfo.getGraduationDate() == null ? null : youthInfo.getGraduationDate().toString());
         form.setEmploymentDirection(youthInfo.getEmploymentDirection());

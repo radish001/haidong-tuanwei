@@ -15,7 +15,7 @@
         <section class="panel">
             <div class="panel-header">
                 <h2>区域树</h2>
-                <p>已打通区域数据查询，并支持基础新增能力，后续可继续扩展编辑与三级联动。</p>
+                <p>用于查看和维护省、市、区县区域数据。</p>
             </div>
             <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
             <form th:action="@{/system/regions}" th:object="${regionForm}" method="post" class="filter-form">
@@ -39,5 +39,6 @@
         </section>
     </main>
 </div>
+<script th:src="@{/js/alert-banner.js}"></script>
 </body>
 </html>

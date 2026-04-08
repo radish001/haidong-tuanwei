@@ -10,9 +10,12 @@ import lombok.Data;
 public class YouthAnalyticsView {
 
     private List<ChartItem> ageDistribution;
+    private List<ChartItem> schoolCategoryDistribution;
+    private List<ChartItem> majorCategoryDistribution;
     private List<ChartItem> genderDistribution;
     private List<ChartItem> educationDistribution;
     private List<ChartItem> ethnicityDistribution;
     private List<ChartItem> politicalStatusDistribution;
     private List<ChartItem> entrepreneurshipDemandDistribution;
+    private List<TagChartView> haidongSchoolTagDistributions;
 }

@@ -21,11 +21,12 @@ public class YouthFormRequest {
     private String nativeCityCode;
     private String nativeCountyCode;
     private String educationLevel;
-    private String schoolName;
+    private String degreeCode;
+    private String schoolCode;
     private String schoolProvinceCode;
     private String schoolCityCode;
     private String schoolCountyCode;
-    private String major;
+    private String majorCode;
     private String majorCategory;
     private String graduationDate;
     private String employmentDirection;

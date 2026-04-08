@@ -7,7 +7,7 @@
         <div class="brand-mark">HD</div>
         <div class="brand-copy">
             <div class="brand-title">海东市联络服务青年就业创业信息平台</div>
-            <div class="brand-subtitle">Youth Employment Console</div>
+            <div class="brand-subtitle">业务管理平台</div>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
                       th:text="${menu.icon != null ? #strings.substring(menu.icon, 0, 1).toUpperCase() : '•'}">H</span>
                 <span class="menu-text" th:text="${menu.menuName}"></span>
             </a>
-            <div class="submenu" th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息'}">
+            <div class="submenu" th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息' and menu.menuName != '数据分析' and menu.menuName != '系统设置'}">
                 <a class="submenu-link"
                    th:each="child : ${menu.children}"
                    th:classappend="${currentPath == child.menuPath} ? ' active' : ''"

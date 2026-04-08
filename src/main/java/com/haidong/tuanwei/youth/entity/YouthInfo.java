@@ -18,12 +18,17 @@ public class YouthInfo {
     private String nativeCityCode;
     private String nativeCountyCode;
     private String nativePlaceName;
-    private String educationLevel;
+    private String educationCode;
+    private String educationLevelName;
+    private String degreeCode;
+    private String degreeName;
+    private String schoolCode;
     private String schoolName;
     private String schoolProvinceCode;
     private String schoolCityCode;
     private String schoolCountyCode;
     private String schoolRegionName;
+    private String majorCode;
     private String major;
     private String majorCategory;
     private LocalDate graduationDate;

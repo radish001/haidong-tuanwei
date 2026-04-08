@@ -18,6 +18,8 @@
           class="edit-form"
           data-region-form
           th:attr="data-selected-parent-id=${regionForm.parentId}">
+        <label><span>区域编码</span><input type="text" th:field="*{regionCode}"></label>
+        <label><span>区域名称</span><input type="text" th:field="*{regionName}"></label>
         <label>
             <span>区域层级</span>
             <select th:field="*{regionLevel}" data-region-level-select>
@@ -40,8 +42,6 @@
                         data-parent-level="2"></option>
             </select>
         </label>
-        <label><span>区域编码</span><input type="text" th:field="*{regionCode}"></label>
-        <label><span>区域名称</span><input type="text" th:field="*{regionName}"></label>
         <div class="form-actions full-width">
             <a class="ghost-button" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close>取消</a>
             <button type="submit">保存</button>

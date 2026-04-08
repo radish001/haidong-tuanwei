@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>后台首页</title>
+    <title>首页</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
@@ -16,9 +16,8 @@
 
         <section class="page-hero">
             <h2 class="page-hero-title">海东市联络服务青年就业创业信息平台</h2>
-            <p class="page-hero-subtitle">统一驾驶舱首页，集中呈现青年分类分布、政策信息与企业招聘动态。</p>
             <div class="page-hero-actions">
-                <a class="ghost-button" th:href="@{/analytics/college}">就业创业总览</a>
+                <a class="ghost-button" th:href="@{/analytics/college}">在校大学生分析</a>
                 <a class="ghost-button" th:href="@{/enterprises}">企业招聘信息</a>
             </div>
         </section>
@@ -27,26 +26,22 @@
             <article class="map-card panel">
                 <div class="panel-header map-card-header">
                     <div>
-                        <h2>中国地图</h2>
-                        <p>在校大学生分布，按学校所在省统计。</p>
+                        <h2>海东市在校大学生分布</h2>
                     </div>
                 </div>
                 <div id="chinaCollegeMap" class="map-visual real-map"></div>
                 <div class="map-legend">
-                    <span>统计口径：学校所在省</span>
                     <strong id="chinaCollegeMapSummary">0 人 / 0 省级区域</strong>
                 </div>
             </article>
             <article class="map-card panel">
                 <div class="panel-header map-card-header">
                     <div>
-                        <h2>海东地图</h2>
-                        <p>海东市在校大学生分布，按籍贯区县统计。</p>
+                        <h2>海东市各区县在校大学生分布</h2>
                     </div>
                 </div>
                 <div id="haidongCollegeMap" class="map-visual real-map"></div>
                 <div class="map-legend">
-                    <span>统计口径：籍贯区县</span>
                     <strong id="haidongCollegeMapSummary">0 人 / 0 区县</strong>
                 </div>
             </article>
@@ -56,22 +51,22 @@
             <article class="stat-card">
                 <span class="stat-label">青年总数</span>
                 <strong th:text="${stats.youthCount}">0</strong>
-                <div class="stat-meta">四类青年统一总表</div>
+                <div class="stat-meta">在库青年信息总量</div>
             </article>
             <article class="stat-card">
                 <span class="stat-label">企业总数</span>
                 <strong th:text="${stats.enterpriseCount}">0</strong>
-                <div class="stat-meta">企业信息实时维护</div>
+                <div class="stat-meta">在库企业主体数量</div>
             </article>
             <article class="stat-card">
                 <span class="stat-label">岗位总数</span>
                 <strong th:text="${stats.jobCount}">0</strong>
-                <div class="stat-meta">岗位与企业关联管理</div>
+                <div class="stat-meta">在库岗位信息数量</div>
             </article>
             <article class="stat-card">
                 <span class="stat-label">政策总数</span>
                 <strong th:text="${stats.policyCount}">0</strong>
-                <div class="stat-meta">富文本政策资讯</div>
+                <div class="stat-meta">已录入政策数量</div>
             </article>
         </section>
 
@@ -79,8 +74,7 @@
             <article class="panel">
                 <div class="panel-header">
                     <div>
-                        <h2>青年就业创业信息</h2>
-                        <p>最新维护的政策摘要与重点信息。</p>
+                        <h2>政策信息</h2>
                     </div>
                     <a class="ghost-button" th:href="@{/policies}">更多</a>
                 </div>
@@ -94,9 +88,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="item : ${recentPolicies}">
-                        <td th:text="${item['title']}">示例政策</td>
+                        <td th:text="${item['title']}">政策标题</td>
                         <td th:text="${item['issuing_organization']}">发文单位</td>
-                        <td th:text="${item['publish_time']}">2026-01-01</td>
+                        <td th:text="${item['publish_time']}">发布时间</td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(recentPolicies)}">
                         <td class="empty-cell" colspan="3">暂无政策摘要</td>
@@ -108,8 +102,7 @@
             <article class="panel">
                 <div class="panel-header">
                     <div>
-                        <h2>企业招聘信息</h2>
-                        <p>岗位与企业的最新发布情况。</p>
+                        <h2>招聘信息</h2>
                     </div>
                     <a class="ghost-button" th:href="@{/jobs}">更多</a>
                 </div>
@@ -123,9 +116,9 @@
                     </thead>
                     <tbody>
                     <tr th:each="item : ${recentJobs}">
-                        <td th:text="${item['job_name']}">Java开发工程师</td>
-                        <td th:text="${item['enterprise_name']}">示例企业</td>
-                        <td th:text="${item['contact_person']}">陈先生</td>
+                        <td th:text="${item['job_name']}">岗位名称</td>
+                        <td th:text="${item['enterprise_name']}">企业名称</td>
+                        <td th:text="${item['contact_person']}">联系人</td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(recentJobs)}">
                         <td class="empty-cell" colspan="3">暂无招聘摘要</td>
@@ -205,6 +198,10 @@
         const maxValue = Math.max(...data.map(item => item.value), 0);
         const hasData = data.length > 0 && maxValue > 0;
         chart.setOption({
+            animation: true,
+            animationDuration: 1200,
+            animationEasing: 'cubicOut',
+            animationDurationUpdate: 700,
             tooltip: {
                 trigger: 'item',
                 formatter: params => `${params.name}<br/>${params.value || 0} 人`
@@ -236,6 +233,8 @@
                 type: 'map',
                 map: mapName,
                 roam: false,
+                animationDuration: 1400,
+                animationEasing: 'quarticOut',
                 zoom: options.zoom,
                 layoutCenter: options.layoutCenter || ['50%', '50%'],
                 layoutSize: options.layoutSize,

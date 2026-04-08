@@ -1,6 +1,8 @@
 package com.haidong.tuanwei.youth.dto;
 
 import lombok.Data;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class YouthSearchRequest {
@@ -10,6 +12,7 @@ public class YouthSearchRequest {
     private String ethnicity;
     private String politicalStatus;
     private String educationLevel;
+    private String degreeCode;
     private String nativeProvinceCode;
     private String nativeCityCode;
     private String nativeCountyCode;
@@ -20,8 +23,12 @@ public class YouthSearchRequest {
     private String schoolCityCode;
     private String schoolCountyCode;
     private String ageRange;
-    private String schoolName;
+    private String schoolCode;
     private String majorCategory;
+    private List<String> educationCodes = new ArrayList<>();
+    private List<String> majorCodes = new ArrayList<>();
+    private List<Long> schoolCategoryIds = new ArrayList<>();
+    private List<Long> schoolTagIds = new ArrayList<>();
     private Integer page = 1;
     private Integer pageSize = 10;
     private Boolean paged = true;

@@ -7,6 +7,8 @@ public class MajorCatalog {
 
     private Long id;
 
+    private String majorCode;
+
     private String majorName;
 
     private Long categoryDictItemId;

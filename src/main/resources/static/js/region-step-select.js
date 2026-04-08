@@ -243,8 +243,8 @@
                 <button type="button" class="region-panel-trigger is-placeholder" data-region-trigger>
                     <span data-region-trigger-text>${getPlaceholder(container)}</span>
                     <span class="region-panel-trigger-actions">
-                        <span class="region-panel-clear" data-region-clear hidden>×</span>
-                        <span class="region-panel-caret">v</span>
+                        <span class="region-panel-clear" data-region-clear hidden aria-hidden="true"></span>
+                        <span class="region-panel-caret" aria-hidden="true"></span>
                     </span>
                 </button>
             </div>

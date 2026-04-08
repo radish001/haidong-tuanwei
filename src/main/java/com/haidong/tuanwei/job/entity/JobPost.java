@@ -1,6 +1,8 @@
 package com.haidong.tuanwei.job.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -12,6 +14,9 @@ public class JobPost {
     private String jobName;
     private String jobCategory;
     private String educationRequirement;
+    private String majorRequirementSummary;
+    private String schoolCategorySummary;
+    private String schoolTagSummary;
     private String experienceRequirement;
     private String salaryRange;
     private Integer recruitCount;
@@ -24,4 +29,8 @@ public class JobPost {
     private String jobDescription;
     private LocalDateTime publishTime;
     private Integer status;
+    private List<String> educationRequirements = new ArrayList<>();
+    private List<String> majorCodes = new ArrayList<>();
+    private List<Long> schoolCategoryIds = new ArrayList<>();
+    private List<Long> schoolTagIds = new ArrayList<>();
 }

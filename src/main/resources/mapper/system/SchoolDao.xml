@@ -6,6 +6,7 @@
 
     <resultMap id="SchoolResultMap" type="com.haidong.tuanwei.system.entity.School">
         <id property="id" column="id"/>
+        <result property="schoolCode" column="school_code"/>
         <result property="schoolName" column="school_name"/>
         <result property="categoryDictItemId" column="category_dict_item_id"/>
         <result property="categoryLabel" column="category_label"/>
@@ -21,14 +22,15 @@
     </sql>
 
     <select id="search" resultMap="SchoolResultMap">
-        select s.id, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
+        select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
                group_concat(distinct t.tag_name order by t.tag_name separator '、') as tag_summary
         <include refid="schoolBaseQuery"/>
         <if test="keyword != null and keyword != ''">
-            and (s.school_name like concat('%', #{keyword}, '%')
+            and (s.school_code like concat('%', #{keyword}, '%')
+            or s.school_name like concat('%', #{keyword}, '%')
             or d.dict_label like concat('%', #{keyword}, '%'))
         </if>
-        group by s.id, s.school_name, s.category_dict_item_id, d.dict_label
+        group by s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label
         order by s.school_name
         limit #{offset}, #{limit}
     </select>
@@ -39,34 +41,44 @@
         join sys_dict_item d on d.id = s.category_dict_item_id and d.deleted = 0
         where s.deleted = 0
         <if test="keyword != null and keyword != ''">
-            and (s.school_name like concat('%', #{keyword}, '%')
+            and (s.school_code like concat('%', #{keyword}, '%')
+            or s.school_name like concat('%', #{keyword}, '%')
             or d.dict_label like concat('%', #{keyword}, '%'))
         </if>
     </select>
 
     <select id="findAll" resultMap="SchoolResultMap">
-        select s.id, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
+        select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
                group_concat(distinct t.tag_name order by t.tag_name separator '、') as tag_summary
         <include refid="schoolBaseQuery"/>
-        group by s.id, s.school_name, s.category_dict_item_id, d.dict_label
+        group by s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label
         order by s.school_name
     </select>
 
     <select id="findById" resultMap="SchoolResultMap">
-        select s.id, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
+        select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
                group_concat(distinct t.tag_name order by t.tag_name separator '、') as tag_summary
         <include refid="schoolBaseQuery"/>
           and s.id = #{id}
-        group by s.id, s.school_name, s.category_dict_item_id, d.dict_label
+        group by s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label
+        limit 1
+    </select>
+
+    <select id="findByCode" resultMap="SchoolResultMap">
+        select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
+               group_concat(distinct t.tag_name order by t.tag_name separator '、') as tag_summary
+        <include refid="schoolBaseQuery"/>
+          and s.school_code = #{schoolCode}
+        group by s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label
         limit 1
     </select>
 
     <select id="findByName" resultMap="SchoolResultMap">
-        select s.id, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
+        select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label,
                group_concat(distinct t.tag_name order by t.tag_name separator '、') as tag_summary
         <include refid="schoolBaseQuery"/>
           and s.school_name = #{schoolName}
-        group by s.id, s.school_name, s.category_dict_item_id, d.dict_label
+        group by s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label
         limit 1
     </select>
 
@@ -80,13 +92,14 @@
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.School" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_school (school_name, category_dict_item_id, deleted)
-        values (#{schoolName}, #{categoryDictItemId}, 0)
+        insert into sys_school (school_code, school_name, category_dict_item_id, deleted)
+        values (#{schoolCode}, #{schoolName}, #{categoryDictItemId}, 0)
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.School">
         update sys_school
-        set school_name = #{schoolName},
+        set school_code = #{schoolCode},
+            school_name = #{schoolName},
             category_dict_item_id = #{categoryDictItemId}
         where id = #{id}
           and deleted = 0
@@ -118,17 +131,10 @@
           and deleted = 0
     </select>
 
-    <select id="countYouthUsageBySchoolName" resultType="long">
+    <select id="countYouthUsageBySchoolCode" resultType="long">
         select count(*)
         from youth_info
-        where school_name = #{schoolName}
+        where school_code = #{schoolCode}
           and deleted = 0
     </select>
-
-    <update id="updateYouthReferences">
-        update youth_info
-        set school_name = #{newSchoolName}
-        where school_name = #{oldSchoolName}
-          and deleted = 0
-    </update>
 </mapper>

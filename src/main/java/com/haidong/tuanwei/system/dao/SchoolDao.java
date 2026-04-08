@@ -16,6 +16,8 @@ public interface SchoolDao {
 
     School findById(@Param("id") Long id);
 
+    School findByCode(@Param("schoolCode") String schoolCode);
+
     School findByName(@Param("schoolName") String schoolName);
 
     List<Long> findTagIdsBySchoolId(@Param("schoolId") Long schoolId);
@@ -32,8 +34,5 @@ public interface SchoolDao {
 
     long countByCategoryId(@Param("categoryDictItemId") Long categoryDictItemId);
 
-    long countYouthUsageBySchoolName(@Param("schoolName") String schoolName);
-
-    int updateYouthReferences(@Param("oldSchoolName") String oldSchoolName,
-            @Param("newSchoolName") String newSchoolName);
+    long countYouthUsageBySchoolCode(@Param("schoolCode") String schoolCode);
 }

@@ -13,6 +13,7 @@
     </div>
     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
     <form th:action="@{${formAction}}" th:object="${schoolForm}" method="post" class="edit-form">
+        <label><span>学校编码</span><input type="text" th:field="*{schoolCode}"></label>
         <label><span>学校名称</span><input type="text" th:field="*{schoolName}"></label>
         <label>
             <span>学校类别</span>

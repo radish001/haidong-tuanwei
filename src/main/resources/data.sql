@@ -94,15 +94,97 @@ insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, 
 select 'political_status', '群众', '群众', 3, 1, 0
 where not exists (select 1 from sys_dict_item where dict_type = 'political_status' and dict_value = '群众');
 
+update sys_dict_item
+set dict_value = 'ZK'
+where dict_type = 'education_level'
+  and dict_label = '专科'
+  and dict_value != 'ZK';
+
+update sys_dict_item
+set dict_value = 'BK'
+where dict_type = 'education_level'
+  and dict_label = '本科'
+  and dict_value != 'BK';
+
+update sys_dict_item
+set dict_value = 'SSYJS'
+where dict_type = 'education_level'
+  and dict_label = '硕士研究生'
+  and dict_value != 'SSYJS';
+
 insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
-select 'education_level', '专科', '专科', 1, 1, 0
-where not exists (select 1 from sys_dict_item where dict_type = 'education_level' and dict_value = '专科');
+select 'education_level', '专科', 'ZK', 1, 1, 0
+where not exists (select 1 from sys_dict_item where dict_type = 'education_level' and dict_value = 'ZK');
 insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
-select 'education_level', '本科', '本科', 2, 1, 0
-where not exists (select 1 from sys_dict_item where dict_type = 'education_level' and dict_value = '本科');
+select 'education_level', '本科', 'BK', 2, 1, 0
+where not exists (select 1 from sys_dict_item where dict_type = 'education_level' and dict_value = 'BK');
 insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
-select 'education_level', '硕士研究生', '硕士研究生', 3, 1, 0
-where not exists (select 1 from sys_dict_item where dict_type = 'education_level' and dict_value = '硕士研究生');
+select 'education_level', '硕士研究生', 'SSYJS', 3, 1, 0
+where not exists (select 1 from sys_dict_item where dict_type = 'education_level' and dict_value = 'SSYJS');
+
+update sys_dict_item
+set dict_value = 'WXW'
+where dict_type = 'degree'
+  and dict_label = '无'
+  and dict_value != 'WXW';
+
+update sys_dict_item
+set dict_value = 'XS'
+where dict_type = 'degree'
+  and dict_label = '学士'
+  and dict_value != 'XS';
+
+update sys_dict_item
+set dict_value = 'SS'
+where dict_type = 'degree'
+  and dict_label = '硕士'
+  and dict_value != 'SS';
+
+insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
+select 'degree', '无', 'WXW', 1, 1, 0
+where not exists (select 1 from sys_dict_item where dict_type = 'degree' and dict_value = 'WXW');
+insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
+select 'degree', '学士', 'XS', 2, 1, 0
+where not exists (select 1 from sys_dict_item where dict_type = 'degree' and dict_value = 'XS');
+insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
+select 'degree', '硕士', 'SS', 3, 1, 0
+where not exists (select 1 from sys_dict_item where dict_type = 'degree' and dict_value = 'SS');
+
+update youth_info
+set education_level = 'ZK'
+where education_level = '专科';
+
+update youth_info
+set education_level = 'BK'
+where education_level = '本科';
+
+update youth_info
+set education_level = 'SSYJS'
+where education_level = '硕士研究生';
+
+update youth_info
+set degree_code = 'WXW'
+where degree_code = '无';
+
+update youth_info
+set degree_code = 'XS'
+where degree_code = '学士';
+
+update youth_info
+set degree_code = 'SS'
+where degree_code = '硕士';
+
+update job_post
+set education_requirement = 'ZK'
+where education_requirement = '专科';
+
+update job_post
+set education_requirement = 'BK'
+where education_requirement = '本科';
+
+update job_post
+set education_requirement = 'SSYJS'
+where education_requirement = '硕士研究生';
 
 insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
 select 'experience_requirement', '不限', '不限', 1, 1, 0
@@ -366,19 +448,29 @@ insert into sys_region (id, parent_id, region_code, region_name, region_level, s
 select 1008, 2, '630225', '循化撒拉族自治县', 3, 6, 0
 where not exists (select 1 from sys_region where region_code = '630225');
 
-insert into sys_major_catalog (major_name, category_dict_item_id, create_by, update_by, deleted)
-select '计算机科学与技术', id, 1, 1, 0
+update sys_major_catalog
+set major_code = '080901'
+where major_name = '计算机科学与技术'
+  and (major_code is null or major_code = '');
+
+insert into sys_major_catalog (major_code, major_name, category_dict_item_id, create_by, update_by, deleted)
+select '080901', '计算机科学与技术', id, 1, 1, 0
 from sys_dict_item
 where dict_type = 'major_category'
   and dict_value = '工学'
-  and not exists (select 1 from sys_major_catalog where major_name = '计算机科学与技术');
+  and not exists (select 1 from sys_major_catalog where major_code = '080901' or major_name = '计算机科学与技术');
 
-insert into sys_major_catalog (major_name, category_dict_item_id, create_by, update_by, deleted)
-select '电子商务', id, 1, 1, 0
+update sys_major_catalog
+set major_code = '120801'
+where major_name = '电子商务'
+  and (major_code is null or major_code = '');
+
+insert into sys_major_catalog (major_code, major_name, category_dict_item_id, create_by, update_by, deleted)
+select '120801', '电子商务', id, 1, 1, 0
 from sys_dict_item
 where dict_type = 'major_category'
   and dict_value = '管理学'
-  and not exists (select 1 from sys_major_catalog where major_name = '电子商务');
+  and not exists (select 1 from sys_major_catalog where major_code = '120801' or major_name = '电子商务');
 
 insert into sys_school_tag (tag_name, create_by, update_by, deleted)
 select '双一流', 1, 1, 0
@@ -390,40 +482,65 @@ insert into sys_school_tag (tag_name, create_by, update_by, deleted)
 select '211', 1, 1, 0
 where not exists (select 1 from sys_school_tag where tag_name = '211');
 
-insert into sys_school (school_name, category_dict_item_id, create_by, update_by, deleted)
-select '青海大学', d.id, 1, 1, 0
+update sys_school
+set school_code = '10743'
+where school_name = '青海大学'
+  and (school_code is null or school_code = '');
+
+insert into sys_school (school_code, school_name, category_dict_item_id, create_by, update_by, deleted)
+select '10743', '青海大学', d.id, 1, 1, 0
 from sys_dict_item d
 where d.dict_type = 'school_category'
   and d.dict_value = '双一流'
-  and not exists (select 1 from sys_school where school_name = '青海大学');
+  and not exists (select 1 from sys_school where school_code = '10743' or school_name = '青海大学');
 
-insert into sys_school (school_name, category_dict_item_id, create_by, update_by, deleted)
-select '青海职业技术大学', d.id, 1, 1, 0
+update sys_school
+set school_code = 'QHZY001'
+where school_name = '青海职业技术大学'
+  and (school_code is null or school_code = '');
+
+insert into sys_school (school_code, school_name, category_dict_item_id, create_by, update_by, deleted)
+select 'QHZY001', '青海职业技术大学', d.id, 1, 1, 0
 from sys_dict_item d
 where d.dict_type = 'school_category'
   and d.dict_value = '专科'
-  and not exists (select 1 from sys_school where school_name = '青海职业技术大学');
+  and not exists (select 1 from sys_school where school_code = 'QHZY001' or school_name = '青海职业技术大学');
 
-insert into sys_school (school_name, category_dict_item_id, create_by, update_by, deleted)
-select '兰州大学', d.id, 1, 1, 0
+update sys_school
+set school_code = '10730'
+where school_name = '兰州大学'
+  and (school_code is null or school_code = '');
+
+insert into sys_school (school_code, school_name, category_dict_item_id, create_by, update_by, deleted)
+select '10730', '兰州大学', d.id, 1, 1, 0
 from sys_dict_item d
 where d.dict_type = 'school_category'
   and d.dict_value = '双一流'
-  and not exists (select 1 from sys_school where school_name = '兰州大学');
+  and not exists (select 1 from sys_school where school_code = '10730' or school_name = '兰州大学');
 
-insert into sys_school (school_name, category_dict_item_id, create_by, update_by, deleted)
-select '西安交通大学', d.id, 1, 1, 0
+update sys_school
+set school_code = '10698'
+where school_name = '西安交通大学'
+  and (school_code is null or school_code = '');
+
+insert into sys_school (school_code, school_name, category_dict_item_id, create_by, update_by, deleted)
+select '10698', '西安交通大学', d.id, 1, 1, 0
 from sys_dict_item d
 where d.dict_type = 'school_category'
   and d.dict_value = '双一流'
-  and not exists (select 1 from sys_school where school_name = '西安交通大学');
+  and not exists (select 1 from sys_school where school_code = '10698' or school_name = '西安交通大学');
 
-insert into sys_school (school_name, category_dict_item_id, create_by, update_by, deleted)
-select '复旦大学', d.id, 1, 1, 0
+update sys_school
+set school_code = '10246'
+where school_name = '复旦大学'
+  and (school_code is null or school_code = '');
+
+insert into sys_school (school_code, school_name, category_dict_item_id, create_by, update_by, deleted)
+select '10246', '复旦大学', d.id, 1, 1, 0
 from sys_dict_item d
 where d.dict_type = 'school_category'
   and d.dict_value = '双一流'
-  and not exists (select 1 from sys_school where school_name = '复旦大学');
+  and not exists (select 1 from sys_school where school_code = '10246' or school_name = '复旦大学');
 
 insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
 select s.id, t.id, 1, 1, 0
@@ -435,86 +552,245 @@ where s.school_name = '青海大学'
       where rel.school_id = s.id and rel.tag_id = t.id
   );
 
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '青海大学'
+  and t.tag_name = '211'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '兰州大学'
+  and t.tag_name = '双一流'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '兰州大学'
+  and t.tag_name = '985'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '兰州大学'
+  and t.tag_name = '211'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '西安交通大学'
+  and t.tag_name = '双一流'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '西安交通大学'
+  and t.tag_name = '985'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '西安交通大学'
+  and t.tag_name = '211'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '复旦大学'
+  and t.tag_name = '双一流'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '复旦大学'
+  and t.tag_name = '985'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
+insert into sys_school_tag_rel (school_id, tag_id, create_by, update_by, deleted)
+select s.id, t.id, 1, 1, 0
+from sys_school s, sys_school_tag t
+where s.school_name = '复旦大学'
+  and t.tag_name = '211'
+  and not exists (
+      select 1 from sys_school_tag_rel rel
+      where rel.school_id = s.id and rel.tag_id = t.id
+  );
+
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'COLLEGE', '李明轩', '男', '2003-09-01', '汉族', '共青团员', '630000', '630200', '630203',
-       '本科', '青海大学', '630000', '630200', null, '计算机科学与技术', '工学', '2027-06-30',
+       'BK', 'XS', '10743', '青海大学', '630000', '630200', null, '080901', '计算机科学与技术', '工学', '2027-06-30',
        '互联网开发', '13900000001', '630000', '630200', '630203', '在校', null, null,
        '否', null, null, '示例在校大学生', 1, 1, 0
 where not exists (select 1 from youth_info where name = '李明轩' and phone = '13900000001');
 
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'COLLEGE', '张启航', '男', '2002-03-14', '汉族', '中共党员', '630000', '630200', '630202',
-       '本科', '兰州大学', '620000', null, null, '计算机科学与技术', '工学', '2026-06-30',
+       'BK', 'XS', '10730', '兰州大学', '620000', null, null, '080901', '计算机科学与技术', '工学', '2026-06-30',
        '软件工程', '13900000003', '620000', null, null, '在校', null, null,
        '否', null, null, '示例全国分布数据-甘肃', 1, 1, 0
 where not exists (select 1 from youth_info where name = '张启航' and phone = '13900000003');
 
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'COLLEGE', '马成龙', '男', '2001-11-06', '回族', '共青团员', '630000', '630200', '630222',
-       '本科', '西安交通大学', '610000', null, null, '电子商务', '管理学', '2025-06-30',
+       'BK', 'XS', '10698', '西安交通大学', '610000', null, null, '120801', '电子商务', '管理学', '2025-06-30',
        '运营管理', '13900000004', '610000', null, null, '在校', null, null,
        '否', null, null, '示例全国分布数据-陕西', 1, 1, 0
 where not exists (select 1 from youth_info where name = '马成龙' and phone = '13900000004');
 
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'COLLEGE', '韩文静', '女', '2002-08-19', '土族', '群众', '630000', '630200', '630223',
-       '本科', '复旦大学', '310000', null, null, '电子商务', '管理学', '2026-06-30',
+       'BK', 'XS', '10246', '复旦大学', '310000', null, null, '120801', '电子商务', '管理学', '2026-06-30',
        '市场分析', '13900000005', '310000', null, null, '在校', null, null,
        '否', null, null, '示例全国分布数据-上海', 1, 1, 0
 where not exists (select 1 from youth_info where name = '韩文静' and phone = '13900000005');
 
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'COLLEGE', '王海宁', '男', '2003-01-22', '撒拉族', '共青团员', '630000', '630200', '630224',
-       '本科', '青海大学', '630000', '630200', null, '计算机科学与技术', '工学', '2027-06-30',
+       'BK', 'XS', '10743', '青海大学', '630000', '630200', null, '080901', '计算机科学与技术', '工学', '2027-06-30',
        '人工智能', '13900000006', '630000', '630200', '630224', '在校', null, null,
        '否', null, null, '示例海东分布数据-化隆', 1, 1, 0
 where not exists (select 1 from youth_info where name = '王海宁' and phone = '13900000006');
 
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'COLLEGE', '马晓璇', '女', '2002-05-09', '回族', '群众', '630000', '630200', '630225',
-       '本科', '兰州大学', '620000', null, null, '电子商务', '管理学', '2026-06-30',
+       'BK', 'XS', '10730', '兰州大学', '620000', null, null, '120801', '电子商务', '管理学', '2026-06-30',
        '数字媒体', '13900000007', '620000', null, null, '在校', null, null,
        '否', null, null, '示例海东分布数据-循化', 1, 1, 0
 where not exists (select 1 from youth_info where name = '马晓璇' and phone = '13900000007');
 
 insert into youth_info (
     youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
-    education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category, graduation_date,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
+    employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
+    entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
+)
+select 'COLLEGE', '赵星宇', '男', '2003-02-18', '汉族', '共青团员', '630000', '630200', '630202',
+       'BK', 'XS', '10743', '青海大学', '630000', '630200', null, '080901', '计算机科学与技术', '工学', '2027-06-30',
+       '后端开发', '13900000008', '630000', '630200', '630202', '在校', null, null,
+       '否', null, null, '扩展示例在校大学生-乐都', 1, 1, 0
+where not exists (select 1 from youth_info where name = '赵星宇' and phone = '13900000008');
+
+insert into youth_info (
+    youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
+    employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
+    entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
+)
+select 'COLLEGE', '周雨彤', '女', '2002-07-11', '土族', '中共党员', '630000', '630200', '630203',
+       'BK', 'XS', '10730', '兰州大学', '620000', null, null, '080901', '计算机科学与技术', '工学', '2026-06-30',
+       '数据分析', '13900000009', '620000', null, null, '在校', null, null,
+       '否', null, null, '扩展示例在校大学生-平安', 1, 1, 0
+where not exists (select 1 from youth_info where name = '周雨彤' and phone = '13900000009');
+
+insert into youth_info (
+    youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
+    employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
+    entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
+)
+select 'COLLEGE', '陈思源', '男', '2003-10-03', '回族', '群众', '630000', '630200', '630222',
+       'BK', 'XS', '10246', '复旦大学', '310000', null, null, '120801', '电子商务', '管理学', '2027-06-30',
+       '产品运营', '13900000010', '310000', null, null, '在校', null, null,
+       '否', null, null, '扩展示例在校大学生-民和', 1, 1, 0
+where not exists (select 1 from youth_info where name = '陈思源' and phone = '13900000010');
+
+insert into youth_info (
+    youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
+    employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
+    entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
+)
+select 'COLLEGE', '李若涵', '女', '2004-04-26', '汉族', '共青团员', '630000', '630200', '630224',
+       'ZK', 'WXW', 'QHZY001', '青海职业技术大学', '630000', '630200', null, '120801', '电子商务', '管理学', '2026-06-30',
+       '新媒体运营', '13900000011', '630000', '630200', '630224', '在校', null, null,
+       '否', null, null, '扩展示例在校大学生-化隆', 1, 1, 0
+where not exists (select 1 from youth_info where name = '李若涵' and phone = '13900000011');
+
+insert into youth_info (
+    youth_type, name, gender, birth_date, ethnicity, political_status, native_province_code, native_city_code, native_county_code,
+    education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+    major_code, major, major_category, graduation_date,
     employment_direction, phone, residence_province_code, residence_city_code, residence_county_code, employment_status, current_job, employment_company,
     entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by, deleted
 )
 select 'ENTREPRENEUR', '王海霞', '女', '1998-05-12', '土族', '群众', '630000', '630200', '630202',
-       '专科', '青海职业技术大学', '630000', '630200', null, '电子商务', '管理学', '2020-06-30',
+       'ZK', 'WXW', 'QHZY001', '青海职业技术大学', '630000', '630200', null, '120801', '电子商务', '管理学', '2020-06-30',
        '创业', '13900000002', '630000', '630200', '630202', '创业中', '个体经营', '海东市青年创业服务中心',
        '是', '助农电商', '资金支持, 创业培训', '示例创业青年', 1, 1, 0
 where not exists (select 1 from youth_info where name = '王海霞' and phone = '13900000002');
@@ -532,10 +808,66 @@ insert into job_post (
     recruit_count, work_province_code, work_city_code, work_county_code, contact_person, contact_phone, job_description,
     publish_time, status, create_by, update_by, deleted
 )
-select 1, 'Java开发工程师', '研发', '本科', '1-3年', '8000-12000元',
+select 1, 'Java开发工程师', '研发', 'BK', '1-3年', '8000-12000元',
        3, '630000', '630200', '630202', '陈先生', '13810000001', '负责后台管理系统开发与维护。',
        current_timestamp, 1, 1, 1, 0
 where not exists (select 1 from job_post where job_name = 'Java开发工程师' and enterprise_id = 1);
+
+insert into job_post (
+    enterprise_id, job_name, job_category, education_requirement, experience_requirement, salary_range,
+    recruit_count, work_province_code, work_city_code, work_county_code, contact_person, contact_phone, job_description,
+    publish_time, status, create_by, update_by, deleted
+)
+select 1, '海东青年储备岗', '储备', null, '不限', '5000-8000元',
+       12, '630000', '630200', '630202', '陈先生', '13810000001', '面向多专业、多学历在校大学生的综合储备岗位，用于演示岗位匹配学生列表。',
+       current_timestamp, 1, 1, 1, 0
+where not exists (select 1 from job_post where job_name = '海东青年储备岗' and enterprise_id = 1);
+
+insert into job_post_education_rel (job_post_id, education_code, create_by)
+select j.id, 'BK', 1
+from job_post j
+where j.job_name = 'Java开发工程师'
+  and j.enterprise_id = 1
+  and not exists (
+      select 1 from job_post_education_rel rel
+      where rel.job_post_id = j.id
+        and rel.education_code = 'BK'
+  );
+
+insert into job_post_major_rel (job_post_id, major_code, create_by)
+select j.id, '080901', 1
+from job_post j
+where j.job_name = 'Java开发工程师'
+  and j.enterprise_id = 1
+  and not exists (
+      select 1 from job_post_major_rel rel
+      where rel.job_post_id = j.id
+        and rel.major_code = '080901'
+  );
+
+insert into job_post_school_category_rel (job_post_id, category_dict_item_id, create_by)
+select j.id, d.id, 1
+from job_post j
+join sys_dict_item d on d.dict_type = 'school_category' and d.dict_value = '双一流' and d.deleted = 0
+where j.job_name = 'Java开发工程师'
+  and j.enterprise_id = 1
+  and not exists (
+      select 1 from job_post_school_category_rel rel
+      where rel.job_post_id = j.id
+        and rel.category_dict_item_id = d.id
+  );
+
+insert into job_post_school_tag_rel (job_post_id, tag_id, create_by)
+select j.id, t.id, 1
+from job_post j
+join sys_school_tag t on t.tag_name = '双一流' and t.deleted = 0
+where j.job_name = 'Java开发工程师'
+  and j.enterprise_id = 1
+  and not exists (
+      select 1 from job_post_school_tag_rel rel
+      where rel.job_post_id = j.id
+        and rel.tag_id = t.id
+  );
 
 insert into policy_article (
     title, issuing_organization, policy_source, summary, content_html, publish_time, status, create_by, update_by, deleted

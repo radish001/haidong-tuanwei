@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>基础数据管理</title>
+    <title>系统设置</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="admin-body">
@@ -13,8 +13,7 @@
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
 
         <section class="page-hero">
-            <h2 class="page-hero-title">基础数据管理</h2>
-            <p class="page-hero-subtitle">固定六大类基础数据工作台，统一维护公共字典、专业、学校、企业字典和区域数据。</p>
+            <h2 class="page-hero-title">系统设置</h2>
         </section>
 
         <div class="drawer-page-layout" data-drawer-page>
@@ -33,7 +32,6 @@
                 <div class="panel-header">
                     <div>
                         <h2 th:text="${viewTitle}">基础数据</h2>
-                        <p th:text="${viewSubtitle}">统一维护受控基础数据。</p>
                     </div>
                 </div>
 
@@ -41,207 +39,216 @@
                     <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
                     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-                    <div class="tab-row" th:if="${query.tab == 'common' or query.tab == 'school-category' or query.tab == 'enterprise'}">
-                        <div class="tab-list">
-                            <th:block th:if="${query.tab == 'common'}">
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'gender'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='gender')}">性别</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'ethnicity'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='ethnicity')}">民族</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'political_status'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='political_status')}">政治面貌</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'education_level'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='education_level')}">学历层次</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'region'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='region')}">区域数据</a>
-                            </th:block>
-                            <th:block th:if="${query.tab == 'school-category'}">
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'school_category'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school_category')}">学校类别</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'school-tag'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}">学校标签</a>
-                            </th:block>
-                            <th:block th:if="${query.tab == 'enterprise'}">
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_scale'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_scale')}">企业规模</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_nature'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_nature')}">企业性质</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_industry'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_industry')}">企业行业</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'experience_requirement'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='experience_requirement')}">经验要求</a>
-                                <a class="tab-link" data-ajax-link th:classappend="${query.section == 'salary_range'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='salary_range')}">薪资待遇</a>
-                            </th:block>
-                        </div>
-                    </div>
-
-                    <div class="youth-toolbar">
-                        <form class="filter-form compact-filter" method="get" id="dictionary-list-form" data-ajax-form>
-                            <input type="hidden" name="tab" th:value="${query.tab}">
-                            <input type="hidden" name="section" th:value="${query.section}">
-                            <th:block th:if="${viewKind == 'region'}">
-                                <select name="regionLevel">
-                                    <option value="1" th:selected="${query.regionLevel == 1}">省级</option>
-                                    <option value="2" th:selected="${query.regionLevel == 2}">市级</option>
-                                    <option value="3" th:selected="${query.regionLevel == 3}">区县级</option>
-                                </select>
-                                <select name="parentId" th:if="${query.regionLevel > 1}">
-                                    <option value="">上级区域</option>
-                                    <option th:each="item : ${parentRegionOptions}"
-                                            th:value="${item.id}"
-                                            th:text="${item.regionName}"
-                                            th:selected="${item.id == query.parentId}"></option>
-                                </select>
-                            </th:block>
-                            <input type="text" name="keyword" th:value="${query.keyword}" placeholder="名称/关键字">
-                            <div class="filter-actions-inline">
-                                <button type="submit">查询</button>
-                                <a class="secondary-button"
-                                   data-ajax-link
-                                   th:href="@{/system/dictionaries(tab=${query.tab}, section=${query.section})}">重置</a>
+                    <div class="system-content-shell">
+                        <div class="tab-row" th:if="${query.tab == 'common' or query.tab == 'school-category' or query.tab == 'enterprise'}">
+                            <div class="tab-list">
+                                <th:block th:if="${query.tab == 'common'}">
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'gender'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='gender')}">性别</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'ethnicity'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='ethnicity')}">民族</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'political_status'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='political_status')}">政治面貌</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'education_level'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='education_level')}">学历</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'degree'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='degree')}">学位</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'region'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='region')}">区域数据</a>
+                                </th:block>
+                                <th:block th:if="${query.tab == 'school-category'}">
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'school_category'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school_category')}">学校类别</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'school-tag'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}">学校标签</a>
+                                </th:block>
+                                <th:block th:if="${query.tab == 'enterprise'}">
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_scale'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_scale')}">企业规模</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_nature'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_nature')}">企业性质</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_industry'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_industry')}">企业行业</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'experience_requirement'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='experience_requirement')}">经验要求</a>
+                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'salary_range'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='salary_range')}">薪资待遇</a>
+                                </th:block>
                             </div>
-                        </form>
-
-                        <div class="panel-actions youth-page-actions">
-                            <a class="ghost-button" data-drawer-link th:href="@{${createUrl}}">新增</a>
                         </div>
-                    </div>
 
-                    <table class="simple-table">
-                        <thead>
-                        <tr th:if="${viewKind == 'dict'}">
-                            <th class="index-cell">序号</th>
-                            <th>显示名称</th>
-                            <th>字典值</th>
-                            <th>操作</th>
-                        </tr>
-                        <tr th:if="${viewKind == 'major'}">
-                            <th class="index-cell">序号</th>
-                            <th>专业名称</th>
-                            <th>专业类别</th>
-                            <th>操作</th>
-                        </tr>
-                        <tr th:if="${viewKind == 'school-tag'}">
-                            <th class="index-cell">序号</th>
-                            <th>标签名称</th>
-                            <th>操作</th>
-                        </tr>
-                        <tr th:if="${viewKind == 'school'}">
-                            <th class="index-cell">序号</th>
-                            <th>学校名称</th>
-                            <th>学校类别</th>
-                            <th>学校标签</th>
-                            <th>操作</th>
-                        </tr>
-                        <tr th:if="${viewKind == 'region'}">
-                            <th class="index-cell">序号</th>
-                            <th>区域编码</th>
-                            <th>区域名称</th>
-                            <th>层级</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:if="${viewKind == 'dict'}" th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                            <td th:text="${item.dictLabel}">示例</td>
-                            <td th:text="${item.dictValue}">示例</td>
-                            <td class="table-actions">
-                                <a data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
-                                <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"
-                                      method="post"
-                                      data-confirm-message="确认删除这条基础字典数据吗？">
-                                    <button type="submit" class="link-button">删除</button>
-                                </form>
-                            </td>
-                        </tr>
+                        <div class="youth-toolbar system-toolbar">
+                            <form class="filter-form compact-filter" method="get" id="dictionary-list-form" data-ajax-form>
+                                <input type="hidden" name="tab" th:value="${query.tab}">
+                                <input type="hidden" name="section" th:value="${query.section}">
+                                <th:block th:if="${viewKind == 'region'}">
+                                    <select name="regionLevel">
+                                        <option value="1" th:selected="${query.regionLevel == 1}">省级</option>
+                                        <option value="2" th:selected="${query.regionLevel == 2}">市级</option>
+                                        <option value="3" th:selected="${query.regionLevel == 3}">区县级</option>
+                                    </select>
+                                    <select name="parentId" th:if="${query.regionLevel > 1}">
+                                        <option value="">上级区域</option>
+                                        <option th:each="item : ${parentRegionOptions}"
+                                                th:value="${item.id}"
+                                                th:text="${item.regionName}"
+                                                th:selected="${item.id == query.parentId}"></option>
+                                    </select>
+                                </th:block>
+                                <input type="text" name="keyword" th:value="${query.keyword}" placeholder="名称/关键字">
+                                <div class="filter-actions-inline">
+                                    <button type="submit">查询</button>
+                                    <a class="secondary-button"
+                                       data-ajax-link
+                                       th:href="@{/system/dictionaries(tab=${query.tab}, section=${query.section})}">重置</a>
+                                </div>
+                            </form>
+                        </div>
 
-                        <tr th:if="${viewKind == 'major'}" th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                            <td th:text="${item.majorName}">计算机科学与技术</td>
-                            <td th:text="${item.categoryLabel}">工学</td>
-                            <td class="table-actions">
-                                <a data-drawer-link th:href="@{/system/majors/{id}/edit(id=${item.id})}">编辑</a>
-                                <form th:action="@{/system/majors/{id}/delete(id=${item.id})}"
-                                      method="post"
-                                      data-confirm-message="确认删除这条专业名称吗？">
-                                    <button type="submit" class="link-button">删除</button>
-                                </form>
-                            </td>
-                        </tr>
+                        <div class="system-table-wrap">
+                            <div class="panel-actions system-table-actions">
+                                <a class="ghost-button" data-drawer-link th:href="@{${createUrl}}">新增</a>
+                            </div>
+                            <table class="simple-table system-simple-table">
+                            <thead>
+                            <tr th:if="${viewKind == 'dict'}">
+                                <th class="index-cell">序号</th>
+                                <th class="code-column" th:text="${query.section == 'education_level' ? '学历编码' : (query.section == 'degree' ? '学位编码' : '字典值')}">字典值</th>
+                                <th class="name-column" th:text="${query.section == 'education_level' ? '学历名称' : (query.section == 'degree' ? '学位名称' : '显示名称')}">显示名称</th>
+                                <th class="action-column">操作</th>
+                            </tr>
+                            <tr th:if="${viewKind == 'major'}">
+                                <th class="index-cell">序号</th>
+                                <th class="code-column">专业编码</th>
+                                <th class="name-column">专业名称</th>
+                                <th>专业类别</th>
+                                <th class="action-column">操作</th>
+                            </tr>
+                            <tr th:if="${viewKind == 'school-tag'}">
+                                <th class="index-cell">序号</th>
+                                <th class="name-column">标签名称</th>
+                                <th class="action-column">操作</th>
+                            </tr>
+                            <tr th:if="${viewKind == 'school'}">
+                                <th class="index-cell">序号</th>
+                                <th class="code-column">学校编码</th>
+                                <th class="name-column">学校名称</th>
+                                <th>学校类别</th>
+                                <th>学校标签</th>
+                                <th class="action-column">操作</th>
+                            </tr>
+                            <tr th:if="${viewKind == 'region'}">
+                                <th class="index-cell">序号</th>
+                                <th class="code-column">区域编码</th>
+                                <th class="name-column">区域名称</th>
+                                <th>层级</th>
+                                <th class="action-column">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${viewKind == 'dict'}" th:each="item, itemStat : ${records}">
+                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                <td class="code-cell" th:text="${item.dictValue}">编码</td>
+                                <td class="name-cell" th:text="${item.dictLabel}">名称</td>
+                                <td class="table-actions">
+                                    <a data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
+                                    <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"
+                                          method="post"
+                                          data-confirm-message="确认删除这条基础字典数据吗？">
+                                        <button type="submit" class="link-button">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                        <tr th:if="${viewKind == 'school-tag'}" th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                            <td th:text="${item.tagName}">双一流</td>
-                            <td class="table-actions">
-                                <a data-drawer-link th:href="@{/system/school-tags/{id}/edit(id=${item.id})}">编辑</a>
-                                <form th:action="@{/system/school-tags/{id}/delete(id=${item.id})}"
-                                      method="post"
-                                      data-confirm-message="确认删除这条学校标签吗？">
-                                    <button type="submit" class="link-button">删除</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr th:if="${viewKind == 'major'}" th:each="item, itemStat : ${records}">
+                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                <td class="code-cell" th:text="${item.majorCode}">080901</td>
+                                <td class="name-cell" th:text="${item.majorName}">计算机科学与技术</td>
+                                <td th:text="${item.categoryLabel}">工学</td>
+                                <td class="table-actions">
+                                    <a data-drawer-link th:href="@{/system/majors/{id}/edit(id=${item.id})}">编辑</a>
+                                    <form th:action="@{/system/majors/{id}/delete(id=${item.id})}"
+                                          method="post"
+                                          data-confirm-message="确认删除这条专业名称吗？">
+                                        <button type="submit" class="link-button">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                        <tr th:if="${viewKind == 'school'}" th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                            <td th:text="${item.schoolName}">青海大学</td>
-                            <td th:text="${item.categoryLabel}">双一流</td>
-                            <td th:text="${item.tagSummary}">双一流</td>
-                            <td class="table-actions">
-                                <a data-drawer-link th:href="@{/system/schools/{id}/edit(id=${item.id})}">编辑</a>
-                                <form th:action="@{/system/schools/{id}/delete(id=${item.id})}"
-                                      method="post"
-                                      data-confirm-message="确认删除这所学校吗？">
-                                    <button type="submit" class="link-button">删除</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr th:if="${viewKind == 'school-tag'}" th:each="item, itemStat : ${records}">
+                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                <td class="name-cell" th:text="${item.tagName}">双一流</td>
+                                <td class="table-actions">
+                                    <a data-drawer-link th:href="@{/system/school-tags/{id}/edit(id=${item.id})}">编辑</a>
+                                    <form th:action="@{/system/school-tags/{id}/delete(id=${item.id})}"
+                                          method="post"
+                                          data-confirm-message="确认删除这条学校标签吗？">
+                                        <button type="submit" class="link-button">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                        <tr th:if="${viewKind == 'region'}" th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                            <td th:text="${item.regionCode}">630200</td>
-                            <td th:text="${item.regionName}">海东市</td>
-                            <td th:text="${item.regionLevel == 1 ? '省级' : (item.regionLevel == 2 ? '市级' : '区县级')}">省级</td>
-                            <td class="table-actions">
-                                <a data-drawer-link th:href="@{/system/regions/{id}/edit(id=${item.id})}">编辑</a>
-                                <form th:action="@{/system/regions/{id}/delete(id=${item.id}, regionLevel=${query.regionLevel}, parentId=${query.parentId})}"
-                                      method="post"
-                                      data-confirm-message="确认删除这条区域数据吗？">
-                                    <button type="submit" class="link-button">删除</button>
-                                </form>
-                            </td>
-                        </tr>
+                            <tr th:if="${viewKind == 'school'}" th:each="item, itemStat : ${records}">
+                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                <td class="code-cell" th:text="${item.schoolCode}">10674</td>
+                                <td class="name-cell" th:text="${item.schoolName}">青海大学</td>
+                                <td th:text="${item.categoryLabel}">双一流</td>
+                                <td th:text="${item.tagSummary}">双一流</td>
+                                <td class="table-actions">
+                                    <a data-drawer-link th:href="@{/system/schools/{id}/edit(id=${item.id})}">编辑</a>
+                                    <form th:action="@{/system/schools/{id}/delete(id=${item.id})}"
+                                          method="post"
+                                          data-confirm-message="确认删除这所学校吗？">
+                                        <button type="submit" class="link-button">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                        <tr th:if="${#lists.isEmpty(records)}">
-                            <td class="empty-cell" colspan="6">当前条件下暂无数据</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                            <tr th:if="${viewKind == 'region'}" th:each="item, itemStat : ${records}">
+                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                <td class="code-cell" th:text="${item.regionCode}">630200</td>
+                                <td class="name-cell" th:text="${item.regionName}">海东市</td>
+                                <td th:text="${item.regionLevel == 1 ? '省级' : (item.regionLevel == 2 ? '市级' : '区县级')}">省级</td>
+                                <td class="table-actions">
+                                    <a data-drawer-link th:href="@{/system/regions/{id}/edit(id=${item.id})}">编辑</a>
+                                    <form th:action="@{/system/regions/{id}/delete(id=${item.id}, regionLevel=${query.regionLevel}, parentId=${query.parentId})}"
+                                          method="post"
+                                          data-confirm-message="确认删除这条区域数据吗？">
+                                        <button type="submit" class="link-button">删除</button>
+                                    </form>
+                                </td>
+                            </tr>
 
-                    <div class="pagination-bar" th:if="${totalCount > 0}">
-                        <div class="pagination-meta"
-                             th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
-                        <div class="pagination-tools">
-                            <label class="pagination-page-size">
-                                <span>每页</span>
-                                <select name="pageSize" form="dictionary-list-form" data-page-size-select>
-                                    <option value="10" th:selected="${pageSize == 10}">10</option>
-                                    <option value="20" th:selected="${pageSize == 20}">20</option>
-                                    <option value="50" th:selected="${pageSize == 50}">50</option>
-                                    <option value="100" th:selected="${pageSize == 100}">100</option>
-                                </select>
-                                <span>条</span>
-                            </label>
-                            <div class="pagination-actions">
-                                <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                        th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
-                                <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                        th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
-                                <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
-                                <button class="pagination-link"
-                                        th:classappend="${pageNumber == currentPage} ? ' active'"
-                                        th:each="pageNumber : ${pageNumbers}"
-                                        type="submit"
-                                        form="dictionary-list-form"
-                                        name="page"
-                                        th:value="${pageNumber}"
-                                        th:text="${pageNumber}"
-                                        th:disabled="${pageNumber == currentPage}">1</button>
-                                <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
-                                <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                        th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
-                                <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                        th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                            <tr th:if="${#lists.isEmpty(records)}">
+                                <td class="empty-cell"
+                                    th:attr="colspan=${viewKind == 'school' ? 6 : (viewKind == 'major' or viewKind == 'region' ? 5 : (viewKind == 'dict' ? 4 : 3))}">当前条件下暂无数据</td>
+                            </tr>
+                            </tbody>
+                            </table>
+
+                            <div class="pagination-bar" th:if="${totalCount > 0}">
+                                <div class="pagination-meta"
+                                     th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
+                                <div class="pagination-tools">
+                                    <label class="pagination-page-size">
+                                        <span>每页</span>
+                                        <select name="pageSize" form="dictionary-list-form" data-page-size-select>
+                                            <option value="10" th:selected="${pageSize == 10}">10</option>
+                                            <option value="20" th:selected="${pageSize == 20}">20</option>
+                                            <option value="50" th:selected="${pageSize == 50}">50</option>
+                                            <option value="100" th:selected="${pageSize == 100}">100</option>
+                                        </select>
+                                        <span>条</span>
+                                    </label>
+                                    <div class="pagination-actions">
+                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
+                                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
+                                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
+                                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
+                                        <button class="pagination-link"
+                                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                                                th:each="pageNumber : ${pageNumbers}"
+                                                type="submit"
+                                                form="dictionary-list-form"
+                                                name="page"
+                                                th:value="${pageNumber}"
+                                                th:text="${pageNumber}"
+                                                th:disabled="${pageNumber == currentPage}">1</button>
+                                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
+                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
+                                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
+                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
+                                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -258,5 +265,6 @@
 <script th:src="@{/js/list-pagination.js}"></script>
 <script th:src="@{/js/record-drawer.js}"></script>
 <script th:src="@{/js/system-region-form.js}"></script>
+<script th:src="@{/js/alert-banner.js}"></script>
 </body>
 </html>

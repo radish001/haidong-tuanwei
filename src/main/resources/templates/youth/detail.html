@@ -15,8 +15,8 @@
         <section class="drawer-shell">
             <div class="drawer-placeholder">
                 <div class="drawer-placeholder-copy">
-                    <h2 th:text="${record.name}">张三</h2>
-                    <p th:text="${youthTypeLabel + '分类详情展示'}">分类详情展示</p>
+                    <h2 th:text="${record.name}">青年姓名</h2>
+                    <p>青年信息详情</p>
                 </div>
             </div>
 
@@ -25,18 +25,19 @@
                     <div class="drawer-panel-header">
                         <div>
                             <h2 th:text="${record.name + ' 详情'}">青年信息详情</h2>
-                            <p th:text="${youthTypeLabel + '分类详情展示'}">分类详情</p>
+                            <p>青年信息详情</p>
                         </div>
                         <a class="drawer-close-link" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>×</a>
                     </div>
                 </div>
 
                 <div class="detail-grid">
-                    <div><span>姓名</span><strong th:text="${record.name}">张三</strong></div>
+                    <div><span>姓名</span><strong th:text="${record.name}">青年姓名</strong></div>
                     <div><span>性别</span><strong th:text="${record.gender}">男</strong></div>
                     <div><span>民族</span><strong th:text="${record.ethnicity}">汉族</strong></div>
                     <div><span>政治面貌</span><strong th:text="${record.politicalStatus}">群众</strong></div>
-                    <div><span>学历</span><strong th:text="${record.educationLevel}">本科</strong></div>
+                    <div><span>学历</span><strong th:text="${record.educationLevelName}">本科</strong></div>
+                    <div><span>学位</span><strong th:text="${record.degreeName}">学士</strong></div>
                     <div><span>籍贯</span><strong th:text="${record.nativePlaceName}">青海省-海东市-乐都区</strong></div>
                     <div><span>现居住地</span><strong th:text="${record.currentResidenceName}">青海省-海东市-乐都区</strong></div>
                     <div><span>学校</span><strong th:text="${record.schoolName}">青海大学</strong></div>

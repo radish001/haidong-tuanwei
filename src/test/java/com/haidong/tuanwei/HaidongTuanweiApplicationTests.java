@@ -65,6 +65,8 @@ class HaidongTuanweiApplicationTests {
 				.andExpect(status().isOk());
 		mockMvc.perform(get("/jobs").session((org.springframework.mock.web.MockHttpSession) session))
 				.andExpect(status().isOk());
+		mockMvc.perform(get("/jobs/1/matches").session((org.springframework.mock.web.MockHttpSession) session))
+				.andExpect(status().isOk());
 		mockMvc.perform(get("/policies").session((org.springframework.mock.web.MockHttpSession) session))
 				.andExpect(status().isOk());
 		mockMvc.perform(get("/analytics/college").session((org.springframework.mock.web.MockHttpSession) session))
@@ -114,7 +116,7 @@ class HaidongTuanweiApplicationTests {
 			assertThat(sheet.getLastRowNum()).isEqualTo(1);
 			assertThat(sheet.getRow(1).getCell(0).getStringCellValue()).isEqualTo("集成测试青年");
 			assertThat(sheet.getRow(1).getCell(5).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
-			assertThat(sheet.getRow(1).getCell(8).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
+			assertThat(sheet.getRow(1).getCell(9).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
 		}
 	}
 
@@ -150,8 +152,8 @@ class HaidongTuanweiApplicationTests {
 		try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 			Sheet sheet = workbook.createSheet("青年信息导入模板");
 			Row headerRow = sheet.createRow(0);
-			String[] headers = {"姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学校",
-					"学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"};
+			String[] headers = {"姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学位",
+					"学校", "学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"};
 			for (int i = 0; i < headers.length; i++) {
 				headerRow.createCell(i).setCellValue(headers[i]);
 			}
@@ -163,12 +165,13 @@ class HaidongTuanweiApplicationTests {
 			row.createCell(4).setCellValue("共青团员");
 			row.createCell(5).setCellValue(nativePlace);
 			row.createCell(6).setCellValue("本科");
-			row.createCell(7).setCellValue("青海大学");
-			row.createCell(8).setCellValue(schoolRegion);
-			row.createCell(9).setCellValue("计算机科学与技术");
-			row.createCell(10).setCellValue("2026-06-30");
-			row.createCell(11).setCellValue("互联网开发");
-			row.createCell(12).setCellValue(phone);
+			row.createCell(7).setCellValue("学士");
+			row.createCell(8).setCellValue("青海大学");
+			row.createCell(9).setCellValue(schoolRegion);
+			row.createCell(10).setCellValue("计算机科学与技术");
+			row.createCell(11).setCellValue("2026-06-30");
+			row.createCell(12).setCellValue("互联网开发");
+			row.createCell(13).setCellValue(phone);
 			workbook.write(outputStream);
 			return outputStream.toByteArray();
 		}

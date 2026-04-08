@@ -10,7 +10,6 @@
         <result property="enterpriseName" column="enterprise_name"/>
         <result property="jobName" column="job_name"/>
         <result property="jobCategory" column="job_category"/>
-        <result property="educationRequirement" column="education_requirement"/>
         <result property="experienceRequirement" column="experience_requirement"/>
         <result property="salaryRange" column="salary_range"/>
         <result property="recruitCount" column="recruit_count"/>
@@ -34,7 +33,12 @@
             and j.enterprise_id = #{query.enterpriseId}
         </if>
         <if test="query != null and query.educationRequirement != null and query.educationRequirement != ''">
-            and j.education_requirement = #{query.educationRequirement}
+            and exists (
+                select 1
+                from job_post_education_rel jer
+                where jer.job_post_id = j.id
+                  and jer.education_code = #{query.educationRequirement}
+            )
         </if>
         <if test="query != null and query.experienceRequirement != null and query.experienceRequirement != ''">
             and j.experience_requirement = #{query.experienceRequirement}
@@ -54,7 +58,7 @@
     </sql>
 
     <select id="search" resultMap="JobPostResultMap">
-        select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category, j.education_requirement,
+        select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category,
                j.experience_requirement, j.salary_range, j.recruit_count, j.work_province_code,
                j.work_city_code, j.work_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as work_region_name,
@@ -79,7 +83,7 @@
     </select>
 
     <select id="findById" resultMap="JobPostResultMap">
-        select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category, j.education_requirement,
+        select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category,
                j.experience_requirement, j.salary_range, j.recruit_count, j.work_province_code,
                j.work_city_code, j.work_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as work_region_name,
@@ -145,4 +149,96 @@
             #{id}
         </foreach>
     </update>
+
+    <select id="findEducationCodesByJobId" resultType="string">
+        select education_code
+        from job_post_education_rel
+        where job_post_id = #{jobPostId}
+        order by id
+    </select>
+
+    <select id="findMajorCodesByJobId" resultType="string">
+        select major_code
+        from job_post_major_rel
+        where job_post_id = #{jobPostId}
+        order by id
+    </select>
+
+    <select id="findSchoolCategoryIdsByJobId" resultType="long">
+        select category_dict_item_id
+        from job_post_school_category_rel
+        where job_post_id = #{jobPostId}
+        order by id
+    </select>
+
+    <select id="findSchoolTagIdsByJobId" resultType="long">
+        select tag_id
+        from job_post_school_tag_rel
+        where job_post_id = #{jobPostId}
+        order by id
+    </select>
+
+    <delete id="deleteEducationRelations">
+        delete from job_post_education_rel
+        where job_post_id = #{jobPostId}
+    </delete>
+
+    <delete id="deleteMajorRelations">
+        delete from job_post_major_rel
+        where job_post_id = #{jobPostId}
+    </delete>
+
+    <delete id="deleteSchoolCategoryRelations">
+        delete from job_post_school_category_rel
+        where job_post_id = #{jobPostId}
+    </delete>
+
+    <delete id="deleteSchoolTagRelations">
+        delete from job_post_school_tag_rel
+        where job_post_id = #{jobPostId}
+    </delete>
+
+    <insert id="insertEducationRelation">
+        insert into job_post_education_rel (job_post_id, education_code, create_by)
+        values (#{jobPostId}, #{educationCode}, #{createBy})
+    </insert>
+
+    <insert id="insertMajorRelation">
+        insert into job_post_major_rel (job_post_id, major_code, create_by)
+        values (#{jobPostId}, #{majorCode}, #{createBy})
+    </insert>
+
+    <insert id="insertSchoolCategoryRelation">
+        insert into job_post_school_category_rel (job_post_id, category_dict_item_id, create_by)
+        values (#{jobPostId}, #{categoryDictItemId}, #{createBy})
+    </insert>
+
+    <insert id="insertSchoolTagRelation">
+        insert into job_post_school_tag_rel (job_post_id, tag_id, create_by)
+        values (#{jobPostId}, #{tagId}, #{createBy})
+    </insert>
+
+    <select id="countMajorUsage" resultType="long">
+        select count(*)
+        from job_post_major_rel rel
+        join job_post j on j.id = rel.job_post_id
+        where rel.major_code = #{majorCode}
+          and j.deleted = 0
+    </select>
+
+    <select id="countSchoolCategoryUsage" resultType="long">
+        select count(*)
+        from job_post_school_category_rel rel
+        join job_post j on j.id = rel.job_post_id
+        where rel.category_dict_item_id = #{categoryDictItemId}
+          and j.deleted = 0
+    </select>
+
+    <select id="countSchoolTagUsage" resultType="long">
+        select count(*)
+        from job_post_school_tag_rel rel
+        join job_post j on j.id = rel.job_post_id
+        where rel.tag_id = #{tagId}
+          and j.deleted = 0
+    </select>
 </mapper>

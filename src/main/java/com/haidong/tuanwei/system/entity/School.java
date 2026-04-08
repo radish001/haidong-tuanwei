@@ -9,6 +9,8 @@ public class School {
 
     private Long id;
 
+    private String schoolCode;
+
     private String schoolName;
 
     private Long categoryDictItemId;

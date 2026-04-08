@@ -13,7 +13,7 @@
     </div>
     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
     <form th:action="@{${formAction}}" th:object="${schoolTagForm}" method="post" class="edit-form">
-        <label><span>标签名称</span><input type="text" th:field="*{tagName}"></label>
+        <label class="full-width"><span>标签名称</span><input type="text" th:field="*{tagName}"></label>
         <div class="form-actions full-width">
             <a class="ghost-button" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}" data-drawer-close>取消</a>
             <button type="submit">保存</button>

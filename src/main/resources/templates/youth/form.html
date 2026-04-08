@@ -15,7 +15,7 @@
             <div class="drawer-placeholder">
                 <div class="drawer-placeholder-copy">
                     <h2 th:text="${youthTypeLabel}">在校大学生</h2>
-                    <p>当前页面保持原有保存流程不变，仅在视觉上调整为右侧编辑面板，便于与目标设计稿保持一致。</p>
+                    <p>用于维护青年基础信息。</p>
                 </div>
             </div>
 
@@ -24,7 +24,7 @@
                     <div class="drawer-panel-header">
                         <div>
                             <h2 th:text="${formTitle}">新增青年信息</h2>
-                            <p th:text="${youthTypeLabel + '分类下的基础表单维护'}">青年基础表单维护</p>
+                            <p>填写并维护青年信息。</p>
                         </div>
                         <a class="drawer-close-link" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>×</a>
                     </div>
@@ -54,7 +54,8 @@
                             <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="籍贯">
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                        <span>籍贯</span>
                         <input type="hidden" th:field="*{nativeProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{nativeCityCode}" data-region-city>
                         <input type="hidden" th:field="*{nativeCountyCode}" data-region-county>
@@ -67,25 +68,33 @@
                         </select>
                     </label>
                     <label>
+                        <span>学位</span>
+                        <select th:field="*{degreeCode}">
+                            <option value="">请选择</option>
+                            <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                        </select>
+                    </label>
+                    <label>
                         <span>学校</span>
-                        <select th:field="*{schoolName}">
+                        <select th:field="*{schoolCode}">
                             <option value="">请选择</option>
                             <option th:each="item : ${schools}"
-                                    th:value="${item.schoolName}"
+                                    th:value="${item.schoolCode}"
                                     th:text="${item.schoolName + ' / ' + item.categoryLabel}"></option>
                         </select>
                     </label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="学校所在地">
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                        <span>学校所在地</span>
                         <input type="hidden" th:field="*{schoolProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{schoolCityCode}" data-region-city>
                         <input type="hidden" th:field="*{schoolCountyCode}" data-region-county>
                     </div>
                     <label>
                         <span>专业</span>
-                        <select th:field="*{major}">
+                        <select th:field="*{majorCode}">
                             <option value="">请选择</option>
                             <option th:each="item : ${majors}"
-                                    th:value="${item.majorName}"
+                                    th:value="${item.majorCode}"
                                     th:text="${item.majorName + ' / ' + item.categoryLabel}"
                                     th:attr="data-category-label=${item.categoryLabel}"></option>
                         </select>
@@ -94,7 +103,8 @@
                     <label><span>毕业时间</span><input type="date" th:field="*{graduationDate}"></label>
                     <label><span>就业方向</span><input type="text" th:field="*{employmentDirection}"></label>
                     <label><span>联系方式</span><input type="text" th:field="*{phone}"></label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="现居住地">
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                        <span>现居住地</span>
                         <input type="hidden" th:field="*{residenceProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{residenceCityCode}" data-region-city>
                         <input type="hidden" th:field="*{residenceCountyCode}" data-region-county>
@@ -119,7 +129,7 @@
 <script th:src="@{/js/region-step-select.js}"></script>
 <script>
     (() => {
-        const majorSelect = document.querySelector('select[name="major"]');
+        const majorSelect = document.querySelector('select[name="majorCode"]');
         const majorCategoryInput = document.querySelector('input[name="majorCategory"]');
         if (!majorSelect || !majorCategoryInput) {
             return;

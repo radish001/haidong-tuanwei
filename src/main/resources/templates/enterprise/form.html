@@ -15,7 +15,7 @@
             <div class="drawer-placeholder">
                 <div class="drawer-placeholder-copy">
                     <h2>企业信息</h2>
-                    <p>右侧面板用于维护企业基础资料，继续沿用现有表单提交和页面跳转逻辑。</p>
+                    <p>用于维护企业基础资料和联系信息。</p>
                 </div>
             </div>
 
@@ -52,7 +52,8 @@
                             <option th:each="item : ${scaleOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="所在地区">
+                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                        <span>所在地区</span>
                         <input type="hidden" th:field="*{regionProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{regionCityCode}" data-region-city>
                         <input type="hidden" th:field="*{regionCountyCode}" data-region-county>

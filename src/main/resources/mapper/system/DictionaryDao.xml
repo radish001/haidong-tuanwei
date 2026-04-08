@@ -102,6 +102,17 @@
             (select count(*) from youth_info where deleted = 0 and education_level = #{dictValue})
             +
             (select count(*) from job_post where deleted = 0 and education_requirement = #{dictValue})
+            +
+            (select count(*) from job_post_education_rel rel
+             join job_post j on j.id = rel.job_post_id
+             where j.deleted = 0 and rel.education_code = #{dictValue})
+    </select>
+
+    <select id="countDegreeUsage" resultType="long">
+        select count(*)
+        from youth_info
+        where deleted = 0
+          and degree_code = #{dictValue}
     </select>
 
     <select id="countGenderUsage" resultType="long">

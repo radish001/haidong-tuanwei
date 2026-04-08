@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequiredArgsConstructor
 public class AnalyticsController {
 
+    private static final String COLLEGE_TYPE = "college";
+
     private final YouthAnalyticsService youthAnalyticsService;
     private final ObjectMapper objectMapper;
 
@@ -23,18 +25,25 @@ public class AnalyticsController {
         model.addAttribute("pageTitle", "数据分析");
         model.addAttribute("youthType", type);
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
+        model.addAttribute("isCollegeAnalytics", COLLEGE_TYPE.equals(type));
         YouthAnalyticsView analytics = youthAnalyticsService.getAnalytics(YouthTypeHelper.code(type));
         model.addAttribute("ageDistributionJson", toJson(analytics.getAgeDistribution()));
+        model.addAttribute("schoolCategoryDistributionJson", toJson(analytics.getSchoolCategoryDistribution()));
+        model.addAttribute("majorCategoryDistributionJson", toJson(analytics.getMajorCategoryDistribution()));
         model.addAttribute("genderDistributionJson", toJson(analytics.getGenderDistribution()));
         model.addAttribute("educationDistributionJson", toJson(analytics.getEducationDistribution()));
         model.addAttribute("ethnicityDistributionJson", toJson(analytics.getEthnicityDistribution()));
         model.addAttribute("politicalStatusDistributionJson", toJson(analytics.getPoliticalStatusDistribution()));
         model.addAttribute("entrepreneurshipDemandDistributionJson",
                 toJson(analytics.getEntrepreneurshipDemandDistribution()));
+        model.addAttribute("haidongSchoolTagDistributionJson", toJson(analytics.getHaidongSchoolTagDistributions()));
         return "analytics/index";
     }
 
     private String toJson(Object value) {
+        if (value == null) {
+            return "[]";
+        }
         try {
             return objectMapper.writeValueAsString(value);
         } catch (JsonProcessingException e) {

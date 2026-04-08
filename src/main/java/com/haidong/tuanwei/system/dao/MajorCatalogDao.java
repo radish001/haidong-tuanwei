@@ -16,6 +16,8 @@ public interface MajorCatalogDao {
 
     MajorCatalog findById(@Param("id") Long id);
 
+    MajorCatalog findByCode(@Param("majorCode") String majorCode);
+
     MajorCatalog findByName(@Param("majorName") String majorName);
 
     int insert(MajorCatalog majorCatalog);
@@ -26,9 +28,5 @@ public interface MajorCatalogDao {
 
     long countByCategoryId(@Param("categoryDictItemId") Long categoryDictItemId);
 
-    long countYouthUsageByMajorName(@Param("majorName") String majorName);
-
-    int updateYouthReferences(@Param("oldMajorName") String oldMajorName,
-            @Param("newMajorName") String newMajorName,
-            @Param("newMajorCategory") String newMajorCategory);
+    long countYouthUsageByMajorCode(@Param("majorCode") String majorCode);
 }

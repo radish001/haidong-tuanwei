@@ -6,6 +6,7 @@
 
     <resultMap id="MajorCatalogResultMap" type="com.haidong.tuanwei.system.entity.MajorCatalog">
         <id property="id" column="id"/>
+        <result property="majorCode" column="major_code"/>
         <result property="majorName" column="major_name"/>
         <result property="categoryDictItemId" column="category_dict_item_id"/>
         <result property="categoryLabel" column="category_label"/>
@@ -19,10 +20,11 @@
     </sql>
 
     <select id="search" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
         <include refid="majorJoin"/>
         <if test="keyword != null and keyword != ''">
-            and (m.major_name like concat('%', #{keyword}, '%')
+            and (m.major_code like concat('%', #{keyword}, '%')
+            or m.major_name like concat('%', #{keyword}, '%')
             or d.dict_label like concat('%', #{keyword}, '%'))
         </if>
         order by m.major_name
@@ -33,26 +35,34 @@
         select count(*)
         <include refid="majorJoin"/>
         <if test="keyword != null and keyword != ''">
-            and (m.major_name like concat('%', #{keyword}, '%')
+            and (m.major_code like concat('%', #{keyword}, '%')
+            or m.major_name like concat('%', #{keyword}, '%')
             or d.dict_label like concat('%', #{keyword}, '%'))
         </if>
     </select>
 
     <select id="findAll" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
         <include refid="majorJoin"/>
         order by d.sort_no, m.major_name
     </select>
 
     <select id="findById" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
         <include refid="majorJoin"/>
           and m.id = #{id}
         limit 1
     </select>
 
+    <select id="findByCode" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        <include refid="majorJoin"/>
+          and m.major_code = #{majorCode}
+        limit 1
+    </select>
+
     <select id="findByName" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
         <include refid="majorJoin"/>
           and m.major_name = #{majorName}
         limit 1
@@ -60,13 +70,14 @@
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.MajorCatalog" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_major_catalog (major_name, category_dict_item_id, deleted)
-        values (#{majorName}, #{categoryDictItemId}, 0)
+        insert into sys_major_catalog (major_code, major_name, category_dict_item_id, deleted)
+        values (#{majorCode}, #{majorName}, #{categoryDictItemId}, 0)
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.MajorCatalog">
         update sys_major_catalog
-        set major_name = #{majorName},
+        set major_code = #{majorCode},
+            major_name = #{majorName},
             category_dict_item_id = #{categoryDictItemId}
         where id = #{id}
           and deleted = 0
@@ -86,18 +97,10 @@
           and deleted = 0
     </select>
 
-    <select id="countYouthUsageByMajorName" resultType="long">
+    <select id="countYouthUsageByMajorCode" resultType="long">
         select count(*)
         from youth_info
-        where major = #{majorName}
+        where major_code = #{majorCode}
           and deleted = 0
     </select>
-
-    <update id="updateYouthReferences">
-        update youth_info
-        set major = #{newMajorName},
-            major_category = #{newMajorCategory}
-        where major = #{oldMajorName}
-          and deleted = 0
-    </update>
 </mapper>

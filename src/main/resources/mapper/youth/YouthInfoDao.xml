@@ -16,12 +16,17 @@
         <result property="nativeCityCode" column="native_city_code"/>
         <result property="nativeCountyCode" column="native_county_code"/>
         <result property="nativePlaceName" column="native_place_name"/>
-        <result property="educationLevel" column="education_level"/>
+        <result property="educationCode" column="education_level"/>
+        <result property="educationLevelName" column="education_level_name"/>
+        <result property="degreeCode" column="degree_code"/>
+        <result property="degreeName" column="degree_name"/>
+        <result property="schoolCode" column="school_code"/>
         <result property="schoolName" column="school_name"/>
         <result property="schoolProvinceCode" column="school_province_code"/>
         <result property="schoolCityCode" column="school_city_code"/>
         <result property="schoolCountyCode" column="school_county_code"/>
         <result property="schoolRegionName" column="school_region_name"/>
+        <result property="majorCode" column="major_code"/>
         <result property="major" column="major"/>
         <result property="majorCategory" column="major_category"/>
         <result property="graduationDate" column="graduation_date"/>
@@ -59,6 +64,15 @@
         <if test="query != null and query.educationLevel != null and query.educationLevel != ''">
             and y.education_level = #{query.educationLevel}
         </if>
+        <if test="query != null and query.educationCodes != null and !query.educationCodes.isEmpty()">
+            and y.education_level in
+            <foreach collection="query.educationCodes" item="educationCode" open="(" separator="," close=")">
+                #{educationCode}
+            </foreach>
+        </if>
+        <if test="query != null and query.degreeCode != null and query.degreeCode != ''">
+            and y.degree_code = #{query.degreeCode}
+        </if>
         <if test="query != null and query.nativeCountyCode != null and query.nativeCountyCode != ''">
             and y.native_county_code = #{query.nativeCountyCode}
         </if>
@@ -86,11 +100,36 @@
         <if test="query != null and (query.schoolCountyCode == null or query.schoolCountyCode == '') and (query.schoolCityCode == null or query.schoolCityCode == '') and query.schoolProvinceCode != null and query.schoolProvinceCode != ''">
             and y.school_province_code = #{query.schoolProvinceCode}
         </if>
-        <if test="query != null and query.schoolName != null and query.schoolName != ''">
-            and y.school_name = #{query.schoolName}
+        <if test="query != null and query.schoolCode != null and query.schoolCode != ''">
+            and y.school_code = #{query.schoolCode}
+        </if>
+        <if test="query != null and query.majorCodes != null and !query.majorCodes.isEmpty()">
+            and y.major_code in
+            <foreach collection="query.majorCodes" item="majorCode" open="(" separator="," close=")">
+                #{majorCode}
+            </foreach>
         </if>
         <if test="query != null and query.majorCategory != null and query.majorCategory != ''">
-            and y.major_category = #{query.majorCategory}
+            and mc.dict_value = #{query.majorCategory}
+        </if>
+        <if test="query != null and query.schoolCategoryIds != null and !query.schoolCategoryIds.isEmpty()">
+            and s.category_dict_item_id in
+            <foreach collection="query.schoolCategoryIds" item="schoolCategoryId" open="(" separator="," close=")">
+                #{schoolCategoryId}
+            </foreach>
+        </if>
+        <if test="query != null and query.schoolTagIds != null and !query.schoolTagIds.isEmpty()">
+            and exists (
+                select 1
+                from sys_school ss
+                join sys_school_tag_rel str on str.school_id = ss.id and str.deleted = 0
+                where ss.school_code = y.school_code
+                  and ss.deleted = 0
+                  and str.tag_id in
+                  <foreach collection="query.schoolTagIds" item="schoolTagId" open="(" separator="," close=")">
+                      #{schoolTagId}
+                  </foreach>
+            )
         </if>
     </sql>
 
@@ -98,15 +137,30 @@
         select y.id, y.youth_type, y.name, y.gender, y.birth_date, y.ethnicity, y.political_status,
                y.native_province_code, y.native_city_code, y.native_county_code,
                concat_ws('-', np.region_name, nc.region_name, nct.region_name) as native_place_name,
-               y.education_level, y.school_name, y.school_province_code, y.school_city_code, y.school_county_code,
+               y.education_level,
+               coalesce(ed.dict_label, y.education_level) as education_level_name,
+               y.degree_code,
+               coalesce(dd.dict_label, y.degree_code) as degree_name,
+               y.school_code,
+               coalesce(s.school_name, y.school_name) as school_name,
+               y.school_province_code, y.school_city_code, y.school_county_code,
                concat_ws('-', sp.region_name, sc.region_name, sct.region_name) as school_region_name,
-               y.major, y.major_category,
+               y.major_code,
+               coalesce(m.major_name, y.major) as major,
+               coalesce(mc.dict_label, y.major_category) as major_category,
                y.graduation_date, y.employment_direction, y.phone,
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as current_residence_name,
                y.employment_status, y.current_job, y.employment_company,
                y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
         from youth_info y
+        left join sys_dict_item ed on ed.dict_type = 'education_level' and ed.dict_value = y.education_level
+            and ed.enabled = 1 and ed.deleted = 0
+        left join sys_dict_item dd on dd.dict_type = 'degree' and dd.dict_value = y.degree_code
+            and dd.enabled = 1 and dd.deleted = 0
+        left join sys_school s on s.school_code = y.school_code and s.deleted = 0
+        left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
+        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
         left join sys_region np on np.region_code = y.native_province_code and np.deleted = 0
         left join sys_region nc on nc.region_code = y.native_city_code and nc.deleted = 0
         left join sys_region nct on nct.region_code = y.native_county_code and nct.deleted = 0
@@ -126,6 +180,9 @@
     <select id="count" resultType="long">
         select count(*)
         from youth_info y
+        left join sys_school s on s.school_code = y.school_code and s.deleted = 0
+        left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
+        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
         <include refid="searchWhere"/>
     </select>
 
@@ -133,15 +190,30 @@
         select y.id, y.youth_type, y.name, y.gender, y.birth_date, y.ethnicity, y.political_status,
                y.native_province_code, y.native_city_code, y.native_county_code,
                concat_ws('-', np.region_name, nc.region_name, nct.region_name) as native_place_name,
-               y.education_level, y.school_name, y.school_province_code, y.school_city_code, y.school_county_code,
+               y.education_level,
+               coalesce(ed.dict_label, y.education_level) as education_level_name,
+               y.degree_code,
+               coalesce(dd.dict_label, y.degree_code) as degree_name,
+               y.school_code,
+               coalesce(s.school_name, y.school_name) as school_name,
+               y.school_province_code, y.school_city_code, y.school_county_code,
                concat_ws('-', sp.region_name, sc.region_name, sct.region_name) as school_region_name,
-               y.major, y.major_category,
+               y.major_code,
+               coalesce(m.major_name, y.major) as major,
+               coalesce(mc.dict_label, y.major_category) as major_category,
                y.graduation_date, y.employment_direction, y.phone,
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as current_residence_name,
                y.employment_status, y.current_job, y.employment_company,
                y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
         from youth_info y
+        left join sys_dict_item ed on ed.dict_type = 'education_level' and ed.dict_value = y.education_level
+            and ed.enabled = 1 and ed.deleted = 0
+        left join sys_dict_item dd on dd.dict_type = 'degree' and dd.dict_value = y.degree_code
+            and dd.enabled = 1 and dd.deleted = 0
+        left join sys_school s on s.school_code = y.school_code and s.deleted = 0
+        left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
+        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
         left join sys_region np on np.region_code = y.native_province_code and np.deleted = 0
         left join sys_region nc on nc.region_code = y.native_city_code and nc.deleted = 0
         left join sys_region nct on nct.region_code = y.native_county_code and nct.deleted = 0
@@ -161,7 +233,8 @@
         insert into youth_info (
             youth_type, name, gender, birth_date, ethnicity, political_status,
             native_province_code, native_city_code, native_county_code,
-            education_level, school_name, school_province_code, school_city_code, school_county_code, major, major_category,
+            education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
+            major_code, major, major_category,
             graduation_date, employment_direction, phone, residence_province_code, residence_city_code, residence_county_code,
             employment_status, current_job, employment_company,
             entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by,
@@ -169,7 +242,8 @@
         ) values (
             #{youthType}, #{name}, #{gender}, #{birthDate}, #{ethnicity}, #{politicalStatus},
             #{nativeProvinceCode}, #{nativeCityCode}, #{nativeCountyCode},
-            #{educationLevel}, #{schoolName}, #{schoolProvinceCode}, #{schoolCityCode}, #{schoolCountyCode}, #{major}, #{majorCategory},
+            #{educationCode}, #{degreeCode}, #{schoolCode}, #{schoolName}, #{schoolProvinceCode}, #{schoolCityCode},
+            #{schoolCountyCode}, #{majorCode}, #{major}, #{majorCategory},
             #{graduationDate}, #{employmentDirection}, #{phone}, #{residenceProvinceCode}, #{residenceCityCode}, #{residenceCountyCode}, #{employmentStatus}, #{currentJob},
             #{employmentCompany}, #{entrepreneurshipStatus}, #{entrepreneurshipProject}, #{entrepreneurshipDemand},
             #{remarks}, #{createBy}, #{updateBy}, 0
@@ -186,11 +260,14 @@
             native_province_code = #{nativeProvinceCode},
             native_city_code = #{nativeCityCode},
             native_county_code = #{nativeCountyCode},
-            education_level = #{educationLevel},
+            education_level = #{educationCode},
+            degree_code = #{degreeCode},
+            school_code = #{schoolCode},
             school_name = #{schoolName},
             school_province_code = #{schoolProvinceCode},
             school_city_code = #{schoolCityCode},
             school_county_code = #{schoolCountyCode},
+            major_code = #{majorCode},
             major = #{major},
             major_category = #{majorCategory},
             graduation_date = #{graduationDate},

@@ -12,8 +12,7 @@
     <main class="content">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
-            <h2 class="page-hero-title">企业招聘信息库</h2>
-            <p class="page-hero-subtitle">集中呈现企业信息、招聘关联与重点联系资料，整体风格与驾驶舱布局统一。</p>
+            <h2 class="page-hero-title">企业招聘信息</h2>
         </section>
         <div class="drawer-page-layout" data-drawer-page>
         <section class="panel drawer-list-panel">
@@ -26,7 +25,6 @@
             <div class="panel-header">
                 <div>
                     <h2>企业信息列表</h2>
-                    <p>支持按企业名称、行业筛选，并维护企业基础资料。</p>
                 </div>
             </div>
             <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
@@ -100,12 +98,12 @@
                 <tr th:each="item, itemStat : ${records}">
                     <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
                     <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.enterpriseName}">示例企业</td>
+                    <td th:text="${item.enterpriseName}">企业名称</td>
                     <td th:text="${item.enterpriseScale}">500-999人</td>
                     <td th:text="${item.industry}">智能硬件</td>
                     <td th:text="${item.enterpriseNature}">民营企业</td>
                     <td th:text="${item.regionName}">乐都区</td>
-                    <td th:text="${item.contactPerson}">陈先生</td>
+                    <td th:text="${item.contactPerson}">联系人</td>
                     <td th:text="${item.contactPhone}">13800000000</td>
                     <td class="table-actions">
                         <a data-drawer-link th:href="@{'/enterprises/' + ${item.id} + '/edit'}">编辑</a>
@@ -172,5 +170,6 @@
 <script th:src="@{/js/list-pagination.js}"></script>
 <script th:src="@{/js/record-drawer.js}"></script>
 <script th:src="@{/js/region-step-select.js}"></script>
+<script th:src="@{/js/alert-banner.js}"></script>
 </body>
 </html>

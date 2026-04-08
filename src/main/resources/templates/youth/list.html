@@ -14,9 +14,6 @@
 
         <section class="page-hero">
             <h2 class="page-hero-title">青年信息库</h2>
-            <p class="page-hero-subtitle">
-                在校大学生信息检索、导入导出与表单维护
-            </p>
         </section>
         <div class="drawer-page-layout" data-drawer-page>
         <section class="panel drawer-list-panel">
@@ -31,7 +28,6 @@
             <div class="panel-header">
                 <div>
                     <h2>在校大学生列表</h2>
-                    <p>统一驾驶舱风格下展示在校大学生筛选、导入导出和明细维护。</p>
                 </div>
             </div>
 
@@ -64,17 +60,22 @@
                                 th:selected="${item.dictValue == query.politicalStatus}"></option>
                     </select>
                     <select name="educationLevel">
-                        <option value="">学历层次</option>
+                        <option value="">学历</option>
                         <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
                                 th:selected="${item.dictValue == query.educationLevel}"></option>
                     </select>
+                    <select name="degreeCode">
+                        <option value="">学位</option>
+                        <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
+                                th:selected="${item.dictValue == query.degreeCode}"></option>
+                    </select>
                     <input type="text" name="name" th:value="${query.name}" placeholder="姓名">
-                    <select name="schoolName">
+                    <select name="schoolCode">
                         <option value="">就读院校</option>
                         <option th:each="item : ${schools}"
-                                th:value="${item.schoolName}"
+                                th:value="${item.schoolCode}"
                                 th:text="${item.schoolName}"
-                                th:selected="${item.schoolName == query.schoolName}"></option>
+                                th:selected="${item.schoolCode == query.schoolCode}"></option>
                     </select>
                     <select name="majorCategory">
                         <option value="">专业类别</option>
@@ -149,7 +150,7 @@
                 <tr th:each="item, itemStat : ${records}">
                     <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
                     <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.name}">张三</td>
+                    <td th:text="${item.name}">姓名</td>
                     <td th:text="${item.gender}">男</td>
                     <td th:text="${item.birthDate}">2001-01-01</td>
                     <td th:text="${item.politicalStatus}">共青团员</td>
@@ -169,7 +170,7 @@
                     </td>
                 </tr>
                 <tr th:if="${#lists.isEmpty(records)}">
-                    <td class="empty-cell" colspan="12">当前分类下暂无数据</td>
+                    <td class="empty-cell" colspan="12">暂无在校大学生数据</td>
                 </tr>
                 </tbody>
             </table>
@@ -225,7 +226,7 @@
                 <div class="modal-header">
                     <div>
                         <h3>导入导出</h3>
-                        <p>支持导出当前筛选结果、下载导入模板，并通过拖拽区域上传 Excel 文件。</p>
+                        <p>支持导出当前筛选结果、下载导入模板和上传 Excel 文件。</p>
                     </div>
                     <button type="button" class="modal-close" aria-label="关闭" data-modal-close="youth-import-export-modal">×</button>
                 </div>
@@ -237,6 +238,7 @@
                         <input type="hidden" name="ethnicity" th:value="${query.ethnicity}">
                         <input type="hidden" name="politicalStatus" th:value="${query.politicalStatus}">
                         <input type="hidden" name="educationLevel" th:value="${query.educationLevel}">
+                        <input type="hidden" name="degreeCode" th:value="${query.degreeCode}">
                         <input type="hidden" name="nativeProvinceCode" th:value="${query.nativeProvinceCode}">
                         <input type="hidden" name="nativeCityCode" th:value="${query.nativeCityCode}">
                         <input type="hidden" name="nativeCountyCode" th:value="${query.nativeCountyCode}">
@@ -246,7 +248,7 @@
                         <input type="hidden" name="schoolProvinceCode" th:value="${query.schoolProvinceCode}">
                         <input type="hidden" name="schoolCityCode" th:value="${query.schoolCityCode}">
                         <input type="hidden" name="schoolCountyCode" th:value="${query.schoolCountyCode}">
-                        <input type="hidden" name="schoolName" th:value="${query.schoolName}">
+                        <input type="hidden" name="schoolCode" th:value="${query.schoolCode}">
                         <input type="hidden" name="majorCategory" th:value="${query.majorCategory}">
                         <button type="submit">导出</button>
                     </form>
@@ -272,6 +274,7 @@
 <script th:src="@{/js/list-pagination.js}"></script>
 <script th:src="@{/js/record-drawer.js}"></script>
 <script th:src="@{/js/region-step-select.js}"></script>
+<script th:src="@{/js/alert-banner.js}"></script>
 <script>
     (() => {
         const modal = document.getElementById('youth-import-export-modal');

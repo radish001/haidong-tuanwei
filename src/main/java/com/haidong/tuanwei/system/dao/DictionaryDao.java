@@ -31,6 +31,8 @@ public interface DictionaryDao {
 
     long countEducationLevelUsage(@Param("dictValue") String dictValue);
 
+    long countDegreeUsage(@Param("dictValue") String dictValue);
+
     long countGenderUsage(@Param("dictValue") String dictValue);
 
     long countEnterpriseScaleUsage(@Param("dictValue") String dictValue);

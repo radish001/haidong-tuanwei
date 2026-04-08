@@ -14,7 +14,6 @@
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
             <h2 class="page-hero-title">数据分析</h2>
-            <p class="page-hero-subtitle" th:text="${youthTypeLabel + '分类统计分析看板'}">在校大学生分类统计分析看板</p>
         </section>
         <section class="panel">
             <div class="tab-row">
@@ -22,24 +21,31 @@
                     <a class="tab-link"
                        th:classappend="${youthType == 'college'} ? ' active' : ''"
                        th:href="@{/analytics/college}">在校大学生</a>
-                    <a class="tab-link"
-                       th:classappend="${youthType == 'graduate'} ? ' active' : ''"
-                       th:href="@{/analytics/graduate}">毕业未就业</a>
-                    <a class="tab-link"
-                       th:classappend="${youthType == 'rural'} ? ' active' : ''"
-                       th:href="@{/analytics/rural}">农村社区待业</a>
-                    <a class="tab-link"
-                       th:classappend="${youthType == 'entrepreneur'} ? ' active' : ''"
-                       th:href="@{/analytics/entrepreneur}">创业青年</a>
                 </div>
             </div>
             <div class="panel-header">
                 <div>
-                    <h2 th:text="${youthTypeLabel + '分析看板'}">在校大学生分析看板</h2>
-                    <p>当前页面汇总年龄、学历、性别、民族、政治面貌和创业需求分布。</p>
+                    <h2 th:text="${isCollegeAnalytics ? '在校大学生分析看板' : '统计分析看板'}">在校大学生分析看板</h2>
                 </div>
             </div>
-            <div class="analytics-grid">
+            <div th:if="${isCollegeAnalytics}">
+                <div class="analytics-grid analytics-grid-college">
+                    <div class="panel"><div id="schoolCategoryChart" class="chart-box"></div></div>
+                    <div class="panel analytics-span-two"><div id="majorCategoryChart" class="chart-box tall"></div></div>
+                    <div class="panel"><div id="ethnicityChart" class="chart-box"></div></div>
+                    <div class="panel"><div id="educationChart" class="chart-box"></div></div>
+                    <div class="panel"><div id="genderChart" class="chart-box"></div></div>
+                </div>
+                <section class="analytics-topic-panel">
+                    <div class="panel-header analytics-topic-header">
+                        <div>
+                            <h3>海东籍顶尖高校分析</h3>
+                        </div>
+                    </div>
+                    <div id="haidongTagCharts" class="tag-chart-grid"></div>
+                </section>
+            </div>
+            <div th:unless="${isCollegeAnalytics}" class="analytics-grid">
                 <div class="panel"><div id="ageChart" class="chart-box tall"></div></div>
                 <div class="panel"><div id="educationChart" class="chart-box tall"></div></div>
                 <div class="panel"><div id="ethnicityChart" class="chart-box"></div></div>
@@ -51,12 +57,16 @@
     </main>
 </div>
 <script th:inline="javascript">
+    const isCollegeAnalytics = /*[[${isCollegeAnalytics}]]*/ false;
     const ageData = /*[[${ageDistributionJson}]]*/ '[]';
+    const schoolCategoryData = /*[[${schoolCategoryDistributionJson}]]*/ '[]';
+    const majorCategoryData = /*[[${majorCategoryDistributionJson}]]*/ '[]';
     const genderData = /*[[${genderDistributionJson}]]*/ '[]';
     const educationData = /*[[${educationDistributionJson}]]*/ '[]';
     const ethnicityData = /*[[${ethnicityDistributionJson}]]*/ '[]';
     const politicalData = /*[[${politicalStatusDistributionJson}]]*/ '[]';
     const demandData = /*[[${entrepreneurshipDemandDistributionJson}]]*/ '[]';
+    const haidongTagData = /*[[${haidongSchoolTagDistributionJson}]]*/ '[]';
 
     function parseData(raw) {
         return JSON.parse(raw || '[]');
@@ -73,6 +83,10 @@
             tooltip: {trigger: 'item'},
             textStyle: {color: '#8ea3cc'}
         };
+    }
+
+    function attachResize(chart) {
+        window.addEventListener('resize', () => chart.resize());
     }
 
     function renderAreaChart(elementId, title, rawData) {
@@ -108,7 +122,7 @@
                 }
             }]
         }));
-        window.addEventListener('resize', () => chart.resize());
+        attachResize(chart);
     }
 
     function renderHorizontalBar(elementId, title, rawData) {
@@ -140,18 +154,64 @@
                 barMaxWidth: 18
             }]
         }));
-        window.addEventListener('resize', () => chart.resize());
+        attachResize(chart);
     }
 
-    function renderPieChart(elementId, title, rawData, donut) {
+    function renderVerticalBar(elementId, title, rawData) {
         const data = parseData(rawData);
         const chart = echarts.init(document.getElementById(elementId));
         chart.setOption(Object.assign(baseOption(title), {
-            legend: {bottom: 0, textStyle: {color: '#8ea3cc'}},
+            tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
+            grid: {left: 40, right: 24, top: 60, bottom: 70},
+            xAxis: {
+                type: 'category',
+                data: data.map(item => item.name),
+                axisLabel: {
+                    color: '#8ea3cc',
+                    interval: 0,
+                    rotate: 35
+                }
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {color: '#8ea3cc'},
+                splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
+            },
+            series: [{
+                type: 'bar',
+                data: data.map(item => item.value),
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        {offset: 0, color: '#7be7ff'},
+                        {offset: 1, color: '#2d7fff'}
+                    ]),
+                    borderRadius: [8, 8, 0, 0]
+                },
+                barMaxWidth: 28
+            }]
+        }));
+        attachResize(chart);
+    }
+
+    function renderPieChart(elementId, title, rawData, donut, options = {}) {
+        const data = parseData(rawData);
+        const chart = echarts.init(document.getElementById(elementId));
+        const legendBottom = options.legendBottom ?? -6;
+        const seriesCenter = options.seriesCenter ?? ['50%', '42%'];
+        const seriesRadius = options.seriesRadius ?? (donut ? ['42%', '60%'] : '60%');
+        const titleTop = options.titleTop ?? 4;
+        chart.setOption(Object.assign(baseOption(title), {
+            title: {
+                text: title,
+                left: 'center',
+                top: titleTop,
+                textStyle: {color: '#e7f0ff', fontSize: 16, fontWeight: 700}
+            },
+            legend: {bottom: legendBottom, textStyle: {color: '#8ea3cc'}},
             series: [{
                 type: 'pie',
-                radius: donut ? ['48%', '68%'] : '68%',
-                center: ['50%', '46%'],
+                radius: seriesRadius,
+                center: seriesCenter,
                 label: {color: '#dce7ff'},
                 itemStyle: {
                     borderColor: '#071738',
@@ -166,15 +226,187 @@
                 }))
             }]
         }));
-        window.addEventListener('resize', () => chart.resize());
+        attachResize(chart);
     }
 
+    function renderMirrorBar(elementId, title, rawData) {
+        const data = parseData(rawData);
+        const categories = data.map(item => item.name);
+        const values = data.map(item => item.value);
+        const chart = echarts.init(document.getElementById(elementId));
+        chart.setOption(Object.assign(baseOption(title), {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {type: 'shadow'},
+                formatter(params) {
+                    return params.map(item => `${item.name}：${Math.abs(item.value)}`).join('<br>');
+                }
+            },
+            grid: {left: 30, right: 30, top: 60, bottom: 40},
+            xAxis: [
+                {
+                    type: 'value',
+                    inverse: true,
+                    position: 'top',
+                    axisLabel: {show: false},
+                    splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
+                },
+                {
+                    type: 'value',
+                    position: 'bottom',
+                    axisLabel: {
+                        color: '#8ea3cc',
+                        formatter(value) {
+                            return Math.abs(value);
+                        }
+                    },
+                    splitLine: {show: false}
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'category',
+                    inverse: true,
+                    data: categories,
+                    axisLabel: {show: false},
+                    axisTick: {show: false},
+                    axisLine: {show: false}
+                },
+                {
+                    type: 'category',
+                    inverse: true,
+                    position: 'center',
+                    data: categories,
+                    axisLabel: {color: '#dce7ff', fontWeight: 600},
+                    axisTick: {show: false},
+                    axisLine: {show: false}
+                },
+                {
+                    type: 'category',
+                    inverse: true,
+                    data: categories,
+                    axisLabel: {show: false},
+                    axisTick: {show: false},
+                    axisLine: {show: false}
+                }
+            ],
+            series: [
+                {
+                    type: 'bar',
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                    data: values.map(value => -value),
+                    itemStyle: {color: '#4dc3ff', borderRadius: [8, 0, 0, 8]},
+                    barMaxWidth: 22
+                },
+                {
+                    type: 'bar',
+                    xAxisIndex: 1,
+                    yAxisIndex: 2,
+                    data: values,
+                    itemStyle: {color: '#66e3b5', borderRadius: [0, 8, 8, 0]},
+                    barMaxWidth: 22
+                }
+            ]
+        }));
+        attachResize(chart);
+    }
+
+    function renderTagCharts(containerId, rawData) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            return;
+        }
+        container.querySelectorAll('.tag-chart-box').forEach(chartNode => {
+            const instance = echarts.getInstanceByDom(chartNode);
+            if (instance) {
+                instance.dispose();
+            }
+        });
+        const tagCharts = parseData(rawData);
+        if (!tagCharts.length) {
+            container.innerHTML = '<div class="panel tag-chart-empty">暂无学校标签专题数据</div>';
+            return;
+        }
+        container.innerHTML = '';
+        tagCharts.forEach((item, index) => {
+            const panel = document.createElement('div');
+            panel.className = 'panel tag-chart-panel';
+            const chartEl = document.createElement('div');
+            chartEl.className = 'chart-box tag-chart-box';
+            chartEl.id = `tagChart-${index}`;
+            panel.appendChild(chartEl);
+            container.appendChild(panel);
+            const entries = item.data || [];
+            const colorPalette = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6'];
+            requestAnimationFrame(() => {
+                const chart = echarts.init(chartEl);
+                chart.setOption(Object.assign(baseOption(item.title), {
+                    title: {
+                        text: item.title,
+                        left: 'center',
+                        top: 18,
+                        textStyle: {color: '#e7f0ff', fontSize: 16, fontWeight: 700}
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        formatter(params) {
+                            return `${params.name}<br>海东籍学生：${params.value}人`;
+                        }
+                    },
+                    series: [{
+                        type: 'pie',
+                        radius: ['40%', '60%'],
+                        center: ['50%', '48%'],
+                        minAngle: 8,
+                        avoidLabelOverlap: true,
+                        label: {show: false},
+                        labelLine: {show: false},
+                        labelLayout: {hideOverlap: true},
+                        itemStyle: {
+                            borderColor: '#071738',
+                            borderWidth: 4
+                        },
+                        data: entries.map((entry, entryIndex) => ({
+                            name: entry.name,
+                            value: entry.value,
+                            itemStyle: {
+                                color: colorPalette[entryIndex % colorPalette.length]
+                            }
+                        }))
+                    }]
+                }));
+                chart.resize();
+                attachResize(chart);
+            });
+        });
+    }
+
+    if (isCollegeAnalytics) {
+        renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true, {
+            legendBottom: -8,
+            titleTop: 0,
+            seriesCenter: ['50%', '40%'],
+            seriesRadius: ['40%', '58%']
+        });
+        renderVerticalBar('majorCategoryChart', '专业类别分布', majorCategoryData);
+        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {
+            legendBottom: -8,
+            titleTop: 0,
+            seriesCenter: ['50%', '40%'],
+            seriesRadius: '58%'
+        });
+        renderHorizontalBar('educationChart', '学历分布', educationData);
+        renderMirrorBar('genderChart', '性别分布', genderData);
+        renderTagCharts('haidongTagCharts', haidongTagData);
+    } else {
     renderAreaChart('ageChart', '年龄结构', ageData);
-    renderHorizontalBar('educationChart', '学历层次', educationData);
+    renderHorizontalBar('educationChart', '学历', educationData);
     renderPieChart('ethnicityChart', '民族分布', ethnicityData, false);
     renderPieChart('politicalChart', '政治面貌', politicalData, true);
     renderHorizontalBar('genderChart', '性别分布', genderData);
     renderPieChart('demandChart', '创业需求', demandData, true);
+    }
 </script>
 </body>
 </html>

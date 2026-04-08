@@ -69,11 +69,8 @@ public class SystemController {
             @RequestParam String section,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model) {
-        model.addAttribute("pageTitle", "基础数据管理");
-        model.addAttribute("formTitle", "新增" + resolveSectionTitle(tab, section));
-        model.addAttribute("formAction", "/system/dictionaries/items?tab=" + tab + "&section=" + section);
-        model.addAttribute("sectionTitle", resolveSectionTitle(tab, section));
-        model.addAttribute("dictForm", new DictionaryItemForm());
+        populateDictionaryItemForm(model, section, "新增" + resolveSectionTitle(tab, section),
+                "/system/dictionaries/items?tab=" + tab + "&section=" + section, new DictionaryItemForm());
         return AjaxRequestSupport.isAjax(requestedWith)
                 ? "system/dictionary-item-form :: drawerContent"
                 : "system/dictionary-item-form";
@@ -88,10 +85,8 @@ public class SystemController {
             Model model,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("pageTitle", "基础数据管理");
-            model.addAttribute("formTitle", "新增" + resolveSectionTitle(tab, section));
-            model.addAttribute("formAction", "/system/dictionaries/items?tab=" + tab + "&section=" + section);
-            model.addAttribute("sectionTitle", resolveSectionTitle(tab, section));
+            populateDictionaryItemForm(model, section, "新增" + resolveSectionTitle(tab, section),
+                    "/system/dictionaries/items?tab=" + tab + "&section=" + section, request);
             return AjaxRequestSupport.isAjax(requestedWith)
                     ? "system/dictionary-item-form :: drawerContent"
                     : "system/dictionary-item-form";
@@ -112,11 +107,8 @@ public class SystemController {
         form.setId(item.getId());
         form.setDictLabel(item.getDictLabel());
         form.setDictValue(item.getDictValue());
-        model.addAttribute("pageTitle", "基础数据管理");
-        model.addAttribute("formTitle", "编辑" + resolveSectionTitle(tab, section));
-        model.addAttribute("formAction", "/system/dictionaries/items/" + id + "?tab=" + tab + "&section=" + section);
-        model.addAttribute("sectionTitle", resolveSectionTitle(tab, section));
-        model.addAttribute("dictForm", form);
+        populateDictionaryItemForm(model, section, "编辑" + resolveSectionTitle(tab, section),
+                "/system/dictionaries/items/" + id + "?tab=" + tab + "&section=" + section, form);
         return AjaxRequestSupport.isAjax(requestedWith)
                 ? "system/dictionary-item-form :: drawerContent"
                 : "system/dictionary-item-form";
@@ -132,10 +124,8 @@ public class SystemController {
             Model model,
             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("pageTitle", "基础数据管理");
-            model.addAttribute("formTitle", "编辑" + resolveSectionTitle(tab, section));
-            model.addAttribute("formAction", "/system/dictionaries/items/" + id + "?tab=" + tab + "&section=" + section);
-            model.addAttribute("sectionTitle", resolveSectionTitle(tab, section));
+            populateDictionaryItemForm(model, section, "编辑" + resolveSectionTitle(tab, section),
+                    "/system/dictionaries/items/" + id + "?tab=" + tab + "&section=" + section, request);
             return AjaxRequestSupport.isAjax(requestedWith)
                     ? "system/dictionary-item-form :: drawerContent"
                     : "system/dictionary-item-form";
@@ -194,6 +184,7 @@ public class SystemController {
         MajorCatalog major = masterDataService.getMajorById(id);
         MajorForm form = new MajorForm();
         form.setId(major.getId());
+        form.setMajorCode(major.getMajorCode());
         form.setMajorName(major.getMajorName());
         form.setCategoryDictItemId(major.getCategoryDictItemId());
         populateMajorForm(model, form, "编辑专业名称", "/system/majors/" + id);
@@ -353,6 +344,7 @@ public class SystemController {
         School school = masterDataService.getSchoolById(id);
         SchoolForm form = new SchoolForm();
         form.setId(school.getId());
+        form.setSchoolCode(school.getSchoolCode());
         form.setSchoolName(school.getSchoolName());
         form.setCategoryDictItemId(school.getCategoryDictItemId());
         form.setTagIds(school.getTagIds());
@@ -577,6 +569,17 @@ public class SystemController {
         model.addAttribute("majorCategories", dictionaryService.getByType("major_category"));
     }
 
+    private void populateDictionaryItemForm(Model model, String section, String formTitle, String formAction,
+            DictionaryItemForm form) {
+        model.addAttribute("pageTitle", "基础数据管理");
+        model.addAttribute("formTitle", formTitle);
+        model.addAttribute("formAction", formAction);
+        model.addAttribute("sectionTitle", resolveSectionTitle(TAB_COMMON, section));
+        model.addAttribute("dictLabelFieldLabel", resolveDictLabelFieldLabel(section));
+        model.addAttribute("dictValueFieldLabel", resolveDictValueFieldLabel(section));
+        model.addAttribute("dictForm", form);
+    }
+
     private void populateSchoolTagForm(Model model, SchoolTagForm form, String formTitle, String formAction) {
         model.addAttribute("pageTitle", "基础数据管理");
         model.addAttribute("formTitle", formTitle);
@@ -622,7 +625,7 @@ public class SystemController {
         }
         switch (query.getTab()) {
             case TAB_COMMON -> {
-                if (section == null || !List.of("gender", "ethnicity", "political_status", "education_level", SECTION_REGION).contains(section)) {
+                if (section == null || !List.of("gender", "ethnicity", "political_status", "education_level", "degree", SECTION_REGION).contains(section)) {
                     query.setSection("gender");
                 }
                 if (!SECTION_REGION.equals(query.getSection())) {
@@ -677,7 +680,8 @@ public class SystemController {
             case "gender" -> "性别";
             case "ethnicity" -> "民族";
             case "political_status" -> "政治面貌";
-            case "education_level" -> "学历层次";
+            case "education_level" -> "学历";
+            case "degree" -> "学位";
             case SECTION_REGION -> "区域数据";
             case "major_category" -> "专业类别";
             case TAB_MAJOR -> "专业名称";
@@ -707,6 +711,22 @@ public class SystemController {
             case "enterprise_scale", "enterprise_nature", "enterprise_industry" -> "企业信息录入与筛选使用统一字典来源";
             case "experience_requirement", "salary_range" -> "招聘岗位录入、筛选与统计使用统一字典来源";
             default -> "统一维护受控基础数据，供录入、筛选和校验使用";
+        };
+    }
+
+    private String resolveDictLabelFieldLabel(String section) {
+        return switch (section) {
+            case "education_level" -> "学历名称";
+            case "degree" -> "学位名称";
+            default -> "显示名称";
+        };
+    }
+
+    private String resolveDictValueFieldLabel(String section) {
+        return switch (section) {
+            case "education_level" -> "学历编码";
+            case "degree" -> "学位编码";
+            default -> "字典值";
         };
     }
 

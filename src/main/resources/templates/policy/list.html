@@ -14,7 +14,7 @@
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
             <h2 class="page-hero-title">就业创业政策</h2>
-            <p class="page-hero-subtitle">统一展示政策标题、发布单位、发布时间和状态，保留富文本详情维护能力。</p>
+            <p class="page-hero-subtitle">展示政策标题、发布单位、发布时间和发布状态。</p>
         </section>
         <div class="drawer-page-layout" data-drawer-page>
         <section class="panel drawer-list-panel">
@@ -26,7 +26,7 @@
             <div class="panel-header">
                 <div>
                     <h2>政策文章列表</h2>
-                    <p>支持富文本内容维护、状态切换和详情查看。</p>
+                    <p>支持信息查询、发布状态调整和详情查看。</p>
                 </div>
             </div>
             <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
@@ -153,5 +153,6 @@
 </div>
 <script th:src="@{/js/list-pagination.js}"></script>
 <script th:src="@{/js/record-drawer.js}"></script>
+<script th:src="@{/js/alert-banner.js}"></script>
 </body>
 </html>

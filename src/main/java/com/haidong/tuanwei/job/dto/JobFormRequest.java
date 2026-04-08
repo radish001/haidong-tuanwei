@@ -2,6 +2,8 @@ package com.haidong.tuanwei.job.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -16,7 +18,10 @@ public class JobFormRequest {
     private String jobName;
 
     private String jobCategory;
-    private String educationRequirement;
+    private List<String> educationRequirements = new ArrayList<>();
+    private List<String> majorCodes = new ArrayList<>();
+    private List<Long> schoolCategoryIds = new ArrayList<>();
+    private List<Long> schoolTagIds = new ArrayList<>();
     private String experienceRequirement;
     private String salaryRange;
     private Integer recruitCount;
