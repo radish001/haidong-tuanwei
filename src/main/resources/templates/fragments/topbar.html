@@ -1,28 +1,66 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<header class="topbar" th:fragment="topbar(pageTitle)">
-    <div class="topbar-meta">
-        <span class="console-tag">业务管理平台</span>
-        <div class="topbar-heading">
-            <h1 th:text="${pageTitle == '基础数据管理' ? '系统设置' : pageTitle}">后台首页</h1>
-            <p>海东市青年就业创业信息管理平台</p>
+<header class="topbar navbar navbar-expand-lg" th:fragment="topbar(pageTitle)">
+    <div class="container-fluid px-0 align-items-center">
+        <button type="button" class="mobile-nav-toggle btn btn-outline-info btn-sm" data-sidebar-toggle aria-label="切换导航">
+            <span class="mobile-nav-toggle-icon"></span>
+        </button>
+        <div class="topbar-meta">
+            <span class="console-tag">业务管理平台</span>
+            <div class="topbar-heading">
+                <h1 th:text="${pageTitle == '基础数据管理' ? '系统设置' : pageTitle}">后台首页</h1>
+                <p>海东市青年就业创业信息管理平台</p>
+            </div>
+            <nav class="topbar-breadcrumb" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/dashboard}">首页</a></li>
+                    <li class="breadcrumb-item active"
+                        aria-current="page"
+                        th:text="${pageTitle == '基础数据管理' ? '系统设置' : pageTitle}">后台首页</li>
+                </ol>
+            </nav>
         </div>
-    </div>
-    <div class="topbar-actions">
-        <div class="system-status">
-            <span class="status-dot"></span>
-            <span>系统运行中</span>
+        <div class="topbar-actions ms-auto">
+            <div class="system-status">
+                <span class="status-dot"></span>
+                <span>系统运行中</span>
+            </div>
+            <div class="dropdown" th:if="${currentUser != null}">
+                <button class="user-chip dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <span class="user-name" th:text="${currentUser.nickname}">系统管理员</span>
+                    <span class="user-role">管理员</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end topbar-dropdown-menu">
+                    <li>
+                        <span class="dropdown-item-text text-secondary small">当前登录账号</span>
+                    </li>
+                    <li>
+                        <span class="dropdown-item-text" th:text="${currentUser.nickname}">系统管理员</span>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="m-0">
+                            <button type="submit" class="dropdown-item">退出登录</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            <form th:action="@{/logout}" method="post" class="topbar-logout-inline" th:if="${currentUser == null}">
+                <button type="submit" class="ghost-button ghost-button-strong">退出登录</button>
+            </form>
         </div>
-        <div class="user-chip" th:if="${currentUser != null}">
-            <span class="user-name" th:text="${currentUser.nickname}">系统管理员</span>
-            <span class="user-role">管理员</span>
-        </div>
-        <form th:action="@{/logout}" method="post">
-            <button type="submit" class="ghost-button ghost-button-strong">退出登录</button>
-        </form>
     </div>
 </header>
+<div class="sidebar-backdrop" data-sidebar-backdrop hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/treeselectjs@0.14.2/dist/treeselectjs.umd.js"></script>
+<script th:src="@{/js/bootstrap-enhancements.js}"></script>
+<script th:src="@{/js/job-form-multiselect.js}"></script>
 <script th:src="@{/js/alert-banner.js}"></script>
 </body>
 </html>

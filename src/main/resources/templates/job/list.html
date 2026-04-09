@@ -9,7 +9,7 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
             <h2 class="page-hero-title">企业招聘信息</h2>
@@ -86,55 +86,57 @@
                   method="post"
                   data-confirm-message="确认删除选中的招聘信息吗？"></form>
 
-            <table class="simple-table">
-                <thead>
-                <tr>
-                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                    <th class="index-cell">序号</th>
-                    <th>岗位名称</th>
-                    <th>企业名称</th>
-                    <th>专业要求</th>
-                    <th>经验要求</th>
-                    <th>学历要求</th>
-                    <th>学校类别</th>
-                    <th>学校标签</th>
-                    <th>薪资待遇</th>
-                    <th>工作地区</th>
-                    <th>联系人</th>
-                    <th>联系电话</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item, itemStat : ${records}">
-                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.jobName}">岗位名称</td>
-                    <td th:text="${item.enterpriseName}">企业名称</td>
-                    <td th:text="${item.majorRequirementSummary}">计算机科学与技术</td>
-                    <td th:text="${item.experienceRequirement}">1-3年</td>
-                    <td th:text="${item.educationRequirement}">本科</td>
-                    <td th:text="${item.schoolCategorySummary}">双一流</td>
-                    <td th:text="${item.schoolTagSummary}">985</td>
-                    <td th:text="${item.salaryRange}">8000-12000元</td>
-                    <td th:text="${item.workRegionName}">乐都区</td>
-                    <td th:text="${item.contactPerson}">联系人</td>
-                    <td th:text="${item.contactPhone}">13800000000</td>
-                    <td class="table-actions">
-                        <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/matches'}">匹配学生</a>
-                        <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/edit'}">编辑</a>
-                        <form th:action="@{'/jobs/' + ${item.id} + '/delete'}"
-                              method="post"
-                              data-confirm-message="确认删除这条招聘信息吗？">
-                            <button type="submit" class="link-button">删除</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(records)}">
-                    <td class="empty-cell" colspan="14">暂无招聘数据</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                        <th class="index-cell">序号</th>
+                        <th>岗位名称</th>
+                        <th>企业名称</th>
+                        <th>专业要求</th>
+                        <th>经验要求</th>
+                        <th>学历要求</th>
+                        <th>学校类别</th>
+                        <th>学校标签</th>
+                        <th>薪资待遇</th>
+                        <th>工作地区</th>
+                        <th>联系人</th>
+                        <th>联系电话</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, itemStat : ${records}">
+                        <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                        <td th:text="${item.jobName}">岗位名称</td>
+                        <td th:text="${item.enterpriseName}">企业名称</td>
+                        <td th:text="${item.majorRequirementSummary}">计算机科学与技术</td>
+                        <td th:text="${item.experienceRequirement}">1-3年</td>
+                        <td th:text="${item.educationRequirement}">本科</td>
+                        <td th:text="${item.schoolCategorySummary}">双一流</td>
+                        <td th:text="${item.schoolTagSummary}">985</td>
+                        <td th:text="${item.salaryRange}">8000-12000元</td>
+                        <td th:text="${item.workRegionName}">乐都区</td>
+                        <td th:text="${item.contactPerson}">联系人</td>
+                        <td th:text="${item.contactPhone}">13800000000</td>
+                        <td class="table-actions">
+                            <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/matches'}">匹配学生</a>
+                            <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/edit'}">编辑</a>
+                            <form th:action="@{'/jobs/' + ${item.id} + '/delete'}"
+                                  method="post"
+                                  data-confirm-message="确认删除这条招聘信息吗？">
+                                <button type="submit" class="link-button">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(records)}">
+                        <td class="empty-cell" colspan="14">暂无招聘数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="pagination-bar" th:if="${totalCount > 0}">
                 <div class="pagination-meta"

@@ -9,17 +9,17 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="drawer-shell">
-            <div class="drawer-placeholder">
+        <section class="drawer-shell bootstrap-grid row g-4 align-items-start">
+            <div class="drawer-placeholder col-12 col-xl-4">
                 <div class="drawer-placeholder-copy">
                     <h2 th:text="${youthTypeLabel}">在校大学生</h2>
                     <p>用于维护青年基础信息。</p>
                 </div>
             </div>
 
-            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+            <section class="drawer-panel record-drawer-inner col-12 col-xl-8" th:fragment="drawerContent">
                 <div class="panel-header">
                     <div class="drawer-panel-header">
                         <div>
@@ -99,10 +99,10 @@
                                     th:attr="data-category-label=${item.categoryLabel}"></option>
                         </select>
                     </label>
-                    <label><span>专业类别</span><input type="text" th:field="*{majorCategory}" readonly></label>
+                    <input type="hidden" th:field="*{majorCategory}">
                     <label><span>毕业时间</span><input type="date" th:field="*{graduationDate}"></label>
-                    <label><span>就业方向</span><input type="text" th:field="*{employmentDirection}"></label>
                     <label><span>联系方式</span><input type="text" th:field="*{phone}"></label>
+                    <label><span>就业方向</span><input type="text" th:field="*{employmentDirection}"></label>
                     <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
                         <span>现居住地</span>
                         <input type="hidden" th:field="*{residenceProvinceCode}" data-region-province>
@@ -110,11 +110,11 @@
                         <input type="hidden" th:field="*{residenceCountyCode}" data-region-county>
                     </div>
                     <label><span>就业状态</span><input type="text" th:field="*{employmentStatus}"></label>
-                    <label><span>当前从事工作</span><input type="text" th:field="*{currentJob}"></label>
                     <label><span>就业单位</span><input type="text" th:field="*{employmentCompany}"></label>
-                    <label><span>创业状态</span><input type="text" th:field="*{entrepreneurshipStatus}"></label>
-                    <label><span>创业项目</span><input type="text" th:field="*{entrepreneurshipProject}"></label>
-                    <label class="full-width"><span>创业需求</span><textarea th:field="*{entrepreneurshipDemand}"></textarea></label>
+                    <label><span>当前从事工作</span><input type="text" th:field="*{currentJob}"></label>
+                    <input type="hidden" th:field="*{entrepreneurshipStatus}">
+                    <input type="hidden" th:field="*{entrepreneurshipProject}">
+                    <input type="hidden" th:field="*{entrepreneurshipDemand}">
                     <label class="full-width"><span>备注</span><textarea th:field="*{remarks}"></textarea></label>
 
                     <div class="form-actions full-width">

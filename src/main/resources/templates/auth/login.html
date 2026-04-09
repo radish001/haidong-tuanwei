@@ -7,33 +7,37 @@
     <link rel="stylesheet" th:href="@{/css/app.css}">
 </head>
 <body class="login-body">
-<main class="login-shell">
-    <section class="login-panel">
-        <div class="login-header">
-            <div class="brand-mark large">HD</div>
-            <h1>海东市联络服务青年就业创业信息平台</h1>
-            <p>登录后进入平台业务管理页面。</p>
-        </div>
+<main class="login-shell container-fluid">
+    <div class="row justify-content-center align-items-center min-vh-100">
+        <div class="col-12 col-md-8 col-lg-5 col-xl-4">
+            <section class="login-panel">
+                <div class="login-header">
+                    <div class="brand-mark large">HD</div>
+                    <h1>海东市联络服务青年就业创业信息平台</h1>
+                    <p>登录后进入平台业务管理页面。</p>
+                </div>
 
-        <div class="alert error-alert" th:if="${param.error}">
-            用户名或密码错误，请重新输入。
-        </div>
-        <div class="alert success-alert" th:if="${param.logout}">
-            你已安全退出系统。
-        </div>
+                <div class="alert error-alert" th:if="${param.error}">
+                    用户名或密码错误，请重新输入。
+                </div>
+                <div class="alert success-alert" th:if="${param.logout}">
+                    你已安全退出系统。
+                </div>
 
-        <form th:action="@{/login}" method="post" class="login-form">
-            <label>
-                <span>用户名</span>
-                <input type="text" name="username" autocomplete="username">
-            </label>
-            <label>
-                <span>密码</span>
-                <input type="password" name="password" autocomplete="current-password">
-            </label>
-            <button type="submit">登录</button>
-        </form>
-    </section>
+                <form th:action="@{/login}" method="post" class="login-form">
+                    <label>
+                        <span>用户名</span>
+                        <input type="text" name="username" autocomplete="username">
+                    </label>
+                    <label>
+                        <span>密码</span>
+                        <input type="password" name="password" autocomplete="current-password">
+                    </label>
+                    <button type="submit">登录</button>
+                </form>
+            </section>
+        </div>
+    </div>
 </main>
 <script th:src="@{/js/alert-banner.js}"></script>
 </body>

@@ -22,14 +22,11 @@
                 <option th:each="item : ${schoolCategories}" th:value="${item.id}" th:text="${item.dictLabel}"></option>
             </select>
         </label>
-        <label class="full-width">
+        <label class="full-width job-multiselect-label">
             <span>学校标签</span>
-            <div class="checkbox-group">
-                <label class="checkbox-option" th:each="item : ${schoolTags}">
-                    <input type="checkbox" th:field="*{tagIds}" th:value="${item.id}">
-                    <span th:text="${item.tagName}">双一流</span>
-                </label>
-            </div>
+            <select th:field="*{tagIds}" multiple data-multiselect data-placeholder="请选择学校标签">
+                <option th:each="item : ${schoolTags}" th:value="${item.id}" th:text="${item.tagName}"></option>
+            </select>
         </label>
         <div class="form-actions full-width">
             <a class="ghost-button" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close>取消</a>

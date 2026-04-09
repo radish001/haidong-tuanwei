@@ -9,17 +9,17 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="drawer-shell">
-            <div class="drawer-placeholder">
+        <section class="drawer-shell bootstrap-grid row g-4 align-items-start">
+            <div class="drawer-placeholder col-12 col-xl-4">
                 <div class="drawer-placeholder-copy">
                     <h2>招聘岗位</h2>
                     <p>用于维护岗位要求、工作地区和联系人信息。</p>
                 </div>
             </div>
 
-            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+            <section class="drawer-panel record-drawer-inner col-12 col-xl-8" th:fragment="drawerContent">
                 <div class="panel-header">
                     <div class="drawer-panel-header">
                         <div>
@@ -41,90 +41,30 @@
                     </label>
                     <label><span>岗位名称</span><input type="text" th:field="*{jobName}"></label>
                     <label><span>岗位类别</span><input type="text" th:field="*{jobCategory}"></label>
-                    <div class="filter-block full-width multi-dropdown-field" data-multi-select-root>
+                    <label class="job-multiselect-label">
                         <span>专业要求</span>
-                        <button type="button" class="multi-dropdown-trigger is-placeholder" data-multi-select-trigger>
-                            <span class="multi-dropdown-value" data-multi-select-value>
-                                <span class="multi-dropdown-tags" data-multi-select-text></span>
-                                <span class="multi-dropdown-placeholder" data-multi-select-placeholder>请选择</span>
-                            </span>
-                            <span class="multi-dropdown-caret" aria-hidden="true"></span>
-                        </button>
-                        <div class="multi-dropdown-panel" data-multi-select-panel hidden>
-                            <div class="multi-dropdown-search-wrap">
-                                <input type="text" class="multi-dropdown-search" placeholder="搜索专业要求" data-multi-select-search>
-                            </div>
-                            <div class="checkbox-group" data-multi-select-options>
-                                <label class="checkbox-option" th:each="item : ${majorOptions}">
-                                    <input type="checkbox" th:field="*{majorCodes}" th:value="${item.majorCode}">
-                                    <span th:text="${item.majorName}"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="filter-block full-width multi-dropdown-field" data-multi-select-root>
+                        <select th:field="*{majorCodes}" multiple data-multiselect data-placeholder="请选择专业要求">
+                            <option th:each="item : ${majorOptions}" th:value="${item.majorCode}" th:text="${item.majorName}"></option>
+                        </select>
+                    </label>
+                    <label class="job-multiselect-label">
                         <span>学历要求</span>
-                        <button type="button" class="multi-dropdown-trigger is-placeholder" data-multi-select-trigger>
-                            <span class="multi-dropdown-value" data-multi-select-value>
-                                <span class="multi-dropdown-tags" data-multi-select-text></span>
-                                <span class="multi-dropdown-placeholder" data-multi-select-placeholder>请选择</span>
-                            </span>
-                            <span class="multi-dropdown-caret" aria-hidden="true"></span>
-                        </button>
-                        <div class="multi-dropdown-panel" data-multi-select-panel hidden>
-                            <div class="multi-dropdown-search-wrap">
-                                <input type="text" class="multi-dropdown-search" placeholder="搜索学历要求" data-multi-select-search>
-                            </div>
-                            <div class="checkbox-group" data-multi-select-options>
-                                <label class="checkbox-option" th:each="item : ${educationOptions}">
-                                    <input type="checkbox" th:field="*{educationRequirements}" th:value="${item.dictValue}">
-                                    <span th:text="${item.dictLabel}"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="filter-block full-width multi-dropdown-field" data-multi-select-root>
+                        <select th:field="*{educationRequirements}" multiple data-multiselect data-placeholder="请选择学历要求">
+                            <option th:each="item : ${educationOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                        </select>
+                    </label>
+                    <label class="job-multiselect-label">
                         <span>学校类别</span>
-                        <button type="button" class="multi-dropdown-trigger is-placeholder" data-multi-select-trigger>
-                            <span class="multi-dropdown-value" data-multi-select-value>
-                                <span class="multi-dropdown-tags" data-multi-select-text></span>
-                                <span class="multi-dropdown-placeholder" data-multi-select-placeholder>请选择</span>
-                            </span>
-                            <span class="multi-dropdown-caret" aria-hidden="true"></span>
-                        </button>
-                        <div class="multi-dropdown-panel" data-multi-select-panel hidden>
-                            <div class="multi-dropdown-search-wrap">
-                                <input type="text" class="multi-dropdown-search" placeholder="搜索学校类别" data-multi-select-search>
-                            </div>
-                            <div class="checkbox-group" data-multi-select-options>
-                                <label class="checkbox-option" th:each="item : ${schoolCategoryOptions}">
-                                    <input type="checkbox" th:field="*{schoolCategoryIds}" th:value="${item.id}">
-                                    <span th:text="${item.dictLabel}"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="filter-block full-width multi-dropdown-field" data-multi-select-root>
+                        <select th:field="*{schoolCategoryIds}" multiple data-multiselect data-placeholder="请选择学校类别">
+                            <option th:each="item : ${schoolCategoryOptions}" th:value="${item.id}" th:text="${item.dictLabel}"></option>
+                        </select>
+                    </label>
+                    <label class="job-multiselect-label">
                         <span>学校标签</span>
-                        <button type="button" class="multi-dropdown-trigger is-placeholder" data-multi-select-trigger>
-                            <span class="multi-dropdown-value" data-multi-select-value>
-                                <span class="multi-dropdown-tags" data-multi-select-text></span>
-                                <span class="multi-dropdown-placeholder" data-multi-select-placeholder>请选择</span>
-                            </span>
-                            <span class="multi-dropdown-caret" aria-hidden="true"></span>
-                        </button>
-                        <div class="multi-dropdown-panel" data-multi-select-panel hidden>
-                            <div class="multi-dropdown-search-wrap">
-                                <input type="text" class="multi-dropdown-search" placeholder="搜索学校标签" data-multi-select-search>
-                            </div>
-                            <div class="checkbox-group" data-multi-select-options>
-                                <label class="checkbox-option" th:each="item : ${schoolTagOptions}">
-                                    <input type="checkbox" th:field="*{schoolTagIds}" th:value="${item.id}">
-                                    <span th:text="${item.tagName}"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+                        <select th:field="*{schoolTagIds}" multiple data-multiselect data-placeholder="请选择学校标签">
+                            <option th:each="item : ${schoolTagOptions}" th:value="${item.id}" th:text="${item.tagName}"></option>
+                        </select>
+                    </label>
                     <label>
                         <span>经验要求</span>
                         <select th:field="*{experienceRequirement}">

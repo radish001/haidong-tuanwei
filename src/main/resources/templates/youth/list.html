@@ -9,7 +9,7 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
 
         <section class="page-hero">
@@ -129,51 +129,53 @@
                 </table>
             </div>
 
-            <table class="simple-table">
-                <thead>
-                <tr>
-                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                    <th class="index-cell">序号</th>
-                    <th>姓名</th>
-                    <th>性别</th>
-                    <th>出生年月</th>
-                    <th>政治面貌</th>
-                    <th>籍贯</th>
-                    <th>就读院校</th>
-                    <th>专业类别</th>
-                    <th>就业方向</th>
-                    <th>联系方式</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item, itemStat : ${records}">
-                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.name}">姓名</td>
-                    <td th:text="${item.gender}">男</td>
-                    <td th:text="${item.birthDate}">2001-01-01</td>
-                    <td th:text="${item.politicalStatus}">共青团员</td>
-                    <td th:text="${item.nativePlaceName}">乐都区</td>
-                    <td th:text="${item.schoolName}">青海大学</td>
-                    <td th:text="${item.majorCategory}">工学</td>
-                    <td th:text="${item.employmentDirection}">互联网开发</td>
-                    <td th:text="${item.phone}">13900000001</td>
-                    <td class="table-actions">
-                        <a data-drawer-link th:href="@{'/youth/college/' + ${item.id}}">详情</a>
-                        <a data-drawer-link th:href="@{'/youth/college/' + ${item.id} + '/edit'}">编辑</a>
-                        <form th:action="@{'/youth/college/' + ${item.id} + '/delete'}"
-                              method="post"
-                              data-confirm-message="确认删除这条青年信息吗？">
-                            <button type="submit" class="link-button">删除</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(records)}">
-                    <td class="empty-cell" colspan="12">暂无在校大学生数据</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                        <th class="index-cell">序号</th>
+                        <th>姓名</th>
+                        <th>性别</th>
+                        <th>出生年月</th>
+                        <th>政治面貌</th>
+                        <th>籍贯</th>
+                        <th>就读院校</th>
+                        <th>专业类别</th>
+                        <th>就业方向</th>
+                        <th>联系方式</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, itemStat : ${records}">
+                        <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                        <td th:text="${item.name}">姓名</td>
+                        <td th:text="${item.gender}">男</td>
+                        <td th:text="${item.birthDate}">2001-01-01</td>
+                        <td th:text="${item.politicalStatus}">共青团员</td>
+                        <td th:text="${item.nativePlaceName}">乐都区</td>
+                        <td th:text="${item.schoolName}">青海大学</td>
+                        <td th:text="${item.majorCategory}">工学</td>
+                        <td th:text="${item.employmentDirection}">互联网开发</td>
+                        <td th:text="${item.phone}">13900000001</td>
+                        <td class="table-actions">
+                            <a data-drawer-link th:href="@{'/youth/college/' + ${item.id}}">详情</a>
+                            <a data-drawer-link th:href="@{'/youth/college/' + ${item.id} + '/edit'}">编辑</a>
+                            <form th:action="@{'/youth/college/' + ${item.id} + '/delete'}"
+                                  method="post"
+                                  data-confirm-message="确认删除这条青年信息吗？">
+                                <button type="submit" class="link-button">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(records)}">
+                        <td class="empty-cell" colspan="12">暂无在校大学生数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="pagination-bar" th:if="${totalCount > 0}">
                 <div class="pagination-meta"

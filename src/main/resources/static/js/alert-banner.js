@@ -19,7 +19,7 @@
         closeButton.className = "alert-close";
         closeButton.setAttribute("data-alert-close", "");
         closeButton.setAttribute("aria-label", "关闭");
-        closeButton.textContent = "×";
+        closeButton.innerHTML = "<i class=\"bi bi-x-lg\" aria-hidden=\"true\"></i>";
         closeButton.addEventListener("click", () => {
             alert.remove();
         });

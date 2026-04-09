@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/bootstrap-layout :: head (${formTitle})}"></head>
+<body data-bs-theme="dark" class="admin-body">
+<div class="d-flex">
+    <!-- 侧边栏 -->
+    <aside th:replace="~{fragments/bootstrap-sidebar :: sidebar}"></aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content flex-grow-1">
+        <!-- 顶部栏 -->
+        <div th:replace="~{fragments/bootstrap-topbar :: topbar}"></div>
+
+        <!-- 页面内容 -->
+        <div class="container-fluid py-4">
+            <!-- 页面标题区 -->
+            <div class="page-hero mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-2">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/dashboard}" class="text-decoration-none text-secondary">首页</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/youth/college}" class="text-decoration-none text-secondary">青年信息库</a>
+                        </li>
+                        <li class="breadcrumb-item active text-brand" aria-current="page" th:text="${formTitle}">新增</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 mb-0" th:text="${formTitle}">新增青年信息</h1>
+                <p class="text-secondary mt-2">填写并维护青年基础信息。</p>
+            </div>
+
+            <!-- 表单卡片 -->
+            <div class="row">
+                <div class="col-12 col-xl-8">
+                    <div class="card border-primary-subtle">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <span><i class="bi bi-person-fill me-2"></i>基本信息</span>
+                            <a th:href="@{${cancelUrl} ?: '/youth/' + ${youthType}}" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{${formAction}}" th:object="${youthForm}" method="post" id="youthForm">
+                                <div class="row g-3">
+                                    <!-- 姓名 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">姓名 <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" th:field="*{name}" placeholder="请输入姓名" required>
+                                    </div>
+
+                                    <!-- 性别 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">性别</label>
+                                        <select class="form-select tomselect-basic" th:field="*{gender}">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${genders}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 出生年月 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">出生年月</label>
+                                        <input type="date" class="form-control" th:field="*{birthDate}">
+                                    </div>
+
+                                    <!-- 民族 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">民族</label>
+                                        <select class="form-select tomselect-basic" th:field="*{ethnicity}">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${ethnicities}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 政治面貌 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">政治面貌</label>
+                                        <select class="form-select tomselect-basic" th:field="*{politicalStatus}">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 籍贯（级联选择） -->
+                                    <div class="col-12">
+                                        <label class="form-label">籍贯</label>
+                                        <div data-region-cascader data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                                            <input type="hidden" th:field="*{nativeProvinceCode}" data-region-province>
+                                            <input type="hidden" th:field="*{nativeCityCode}" data-region-city>
+                                            <input type="hidden" th:field="*{nativeCountyCode}" data-region-county>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-4" style="border-color: rgba(69, 145, 255, 0.2);">
+
+                                <h6 class="mb-3 text-brand"><i class="bi bi-mortarboard-fill me-2"></i>教育信息</h6>
+
+                                <div class="row g-3">
+                                    <!-- 学历 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">学历</label>
+                                        <select class="form-select tomselect-basic" th:field="*{educationLevel}">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 学位 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">学位</label>
+                                        <select class="form-select tomselect-basic" th:field="*{degreeCode}">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 学校 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">学校</label>
+                                        <select class="form-select tomselect-searchable" th:field="*{schoolCode}">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${schools}"
+                                                    th:value="${item.schoolCode}"
+                                                    th:text="${item.schoolName + ' / ' + item.categoryLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 学校所在地（级联选择） -->
+                                    <div class="col-12">
+                                        <label class="form-label">学校所在地</label>
+                                        <div data-region-cascader data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                                            <input type="hidden" th:field="*{schoolProvinceCode}" data-region-province>
+                                            <input type="hidden" th:field="*{schoolCityCode}" data-region-city>
+                                            <input type="hidden" th:field="*{schoolCountyCode}" data-region-county>
+                                        </div>
+                                    </div>
+
+                                    <!-- 专业 -->
+                                    <div class="col-md-8">
+                                        <label class="form-label">专业</label>
+                                        <select class="form-select tomselect-searchable" th:field="*{majorCode}" id="majorSelect">
+                                            <option value="">请选择</option>
+                                            <option th:each="item : ${majors}"
+                                                    th:value="${item.majorCode}"
+                                                    th:text="${item.majorName + ' / ' + item.categoryLabel}"
+                                                    th:attr="data-category-label=${item.categoryLabel}"></option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 专业类别（自动填充） -->
+                                    <div class="col-md-4">
+                                        <label class="form-label">专业类别</label>
+                                        <input type="text" class="form-control" th:field="*{majorCategory}" id="majorCategoryInput" readonly placeholder="自动填充">
+                                    </div>
+
+                                    <!-- 毕业时间 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">毕业时间</label>
+                                        <input type="date" class="form-control" th:field="*{graduationDate}">
+                                    </div>
+
+                                    <!-- 就业方向 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">就业方向</label>
+                                        <input type="text" class="form-control" th:field="*{employmentDirection}" placeholder="如：软件开发、教师">
+                                    </div>
+                                </div>
+
+                                <hr class="my-4" style="border-color: rgba(69, 145, 255, 0.2);">
+
+                                <h6 class="mb-3 text-brand"><i class="bi bi-telephone-fill me-2"></i>联系与现状</h6>
+
+                                <div class="row g-3">
+                                    <!-- 联系方式 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">联系方式</label>
+                                        <input type="text" class="form-control" th:field="*{phone}" placeholder="手机号">
+                                    </div>
+
+                                    <!-- 现居住地（级联选择） -->
+                                    <div class="col-12">
+                                        <label class="form-label">现居住地</label>
+                                        <div data-region-cascader data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                                            <input type="hidden" th:field="*{residenceProvinceCode}" data-region-province>
+                                            <input type="hidden" th:field="*{residenceCityCode}" data-region-city>
+                                            <input type="hidden" th:field="*{residenceCountyCode}" data-region-county>
+                                        </div>
+                                    </div>
+
+                                    <!-- 就业状态 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">就业状态</label>
+                                        <input type="text" class="form-control" th:field="*{employmentStatus}" placeholder="如：已就业、求职中">
+                                    </div>
+
+                                    <!-- 当前从事工作 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">当前从事工作</label>
+                                        <input type="text" class="form-control" th:field="*{currentJob}" placeholder="职位名称">
+                                    </div>
+
+                                    <!-- 就业单位 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">就业单位</label>
+                                        <input type="text" class="form-control" th:field="*{employmentCompany}" placeholder="公司名称">
+                                    </div>
+
+                                    <!-- 创业状态 -->
+                                    <div class="col-md-6">
+                                        <label class="form-label">创业状态</label>
+                                        <input type="text" class="form-control" th:field="*{entrepreneurshipStatus}" placeholder="如：已创业、有意愿">
+                                    </div>
+
+                                    <!-- 创业项目 -->
+                                    <div class="col-12">
+                                        <label class="form-label">创业项目</label>
+                                        <input type="text" class="form-control" th:field="*{entrepreneurshipProject}" placeholder="项目名称">
+                                    </div>
+
+                                    <!-- 创业需求 -->
+                                    <div class="col-12">
+                                        <label class="form-label">创业需求</label>
+                                        <textarea class="form-control" th:field="*{entrepreneurshipDemand}" rows="3" placeholder="描述创业需求和期望支持"></textarea>
+                                    </div>
+
+                                    <!-- 备注 -->
+                                    <div class="col-12">
+                                        <label class="form-label">备注</label>
+                                        <textarea class="form-control" th:field="*{remarks}" rows="2" placeholder="其他需要记录的信息"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- 操作按钮 -->
+                                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top" style="border-color: rgba(69, 145, 255, 0.2);">
+                                    <a th:href="@{${cancelUrl} ?: '/youth/' + ${youthType}}" class="btn btn-secondary">
+                                        <i class="bi bi-x-lg me-1"></i>取消
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-lg me-1"></i>保存
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧辅助信息 -->
+                <div class="col-12 col-xl-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <i class="bi bi-info-circle me-2"></i>填写说明
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0 small text-secondary">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    标有 <span class="text-danger">*</span> 的字段为必填项
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    籍贯和现居住地支持省市区三级联动选择
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    选择专业后，专业类别会自动填充
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    支持在搜索框中输入关键词快速筛选
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+<!-- Tom Select JS -->
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+<!-- 级联选择器 -->
+<script th:src="@{/js/region-cascader-tomselect.js}"></script>
+
+<!-- 表单增强脚本 -->
+<script>
+    // 初始化基础下拉框（单选，无搜索）
+    document.querySelectorAll('.tomselect-basic').forEach(select => {
+        new TomSelect(select, {
+            placeholder: '请选择',
+            allowEmptyOption: true,
+            maxItems: 1,
+            hideSelected: false
+        });
+    });
+
+    // 初始化可搜索下拉框
+    document.querySelectorAll('.tomselect-searchable').forEach(select => {
+        new TomSelect(select, {
+            placeholder: '请选择或搜索',
+            allowEmptyOption: true,
+            maxItems: 1,
+            hideSelected: false,
+            plugins: ['dropdown_input'],
+            onInitialize: function() {
+                // 确保占位符显示正确
+                if (!this.getValue()) {
+                    this.clear(true);
+                }
+            }
+        });
+    });
+
+    // 专业类别自动同步
+    const majorSelect = document.getElementById('majorSelect');
+    const majorCategoryInput = document.getElementById('majorCategoryInput');
+
+    if (majorSelect && majorCategoryInput) {
+        const syncMajorCategory = () => {
+            const selectedOption = majorSelect.selectedOptions[0];
+            if (selectedOption && selectedOption.dataset.categoryLabel) {
+                majorCategoryInput.value = selectedOption.dataset.categoryLabel;
+            } else {
+                majorCategoryInput.value = '';
+            }
+        };
+
+        // 监听原始select的变化
+        majorSelect.addEventListener('change', syncMajorCategory);
+
+        // 监听Tom Select的变化（通过MutationObserver或检查tomselect实例）
+        if (majorSelect.tomselect) {
+            majorSelect.tomselect.on('change', function(value) {
+                const option = this.options[value];
+                majorCategoryInput.value = option && option.dataset ? option.dataset.categoryLabel || '' : '';
+            });
+        }
+
+        // 初始同步
+        syncMajorCategory();
+    }
+</script>
+</body>
+</html>

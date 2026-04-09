@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<aside th:fragment="sidebar" class="sidebar d-flex flex-column vh-100">
+    <!-- 品牌标识 -->
+    <div class="sidebar-brand position-relative">
+        <div class="sidebar-brand-glow"></div>
+        <a th:href="@{/dashboard}" class="d-flex align-items-center text-decoration-none position-relative z-1">
+            <div class="brand-mark">HD</div>
+            <div class="ms-2 text-white">
+                <div class="fw-bold lh-sm" style="font-size: 14px;">海东市联络服务</div>
+                <div class="small text-secondary" style="font-size: 11px;">青年就业创业信息平台</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- 导航菜单 -->
+    <nav class="sidebar-nav flex-grow-1">
+        <a class="nav-link" th:href="@{/dashboard}" th:classappend="${activeMenu == 'dashboard'} ? 'active' : ''">
+            <i class="bi bi-house-door"></i>
+            <span>首页</span>
+        </a>
+
+        <div class="mt-3 mb-2 px-3 text-secondary small text-uppercase" style="font-size: 11px; letter-spacing: 0.1em;">信息管理</div>
+
+        <a class="nav-link" th:href="@{/youth/college}" th:classappend="${activeMenu == 'youth'} ? 'active' : ''">
+            <i class="bi bi-people"></i>
+            <span>青年信息库</span>
+        </a>
+
+        <a class="nav-link" th:href="@{/enterprises}" th:classappend="${activeMenu == 'enterprise'} ? 'active' : ''">
+            <i class="bi bi-building"></i>
+            <span>企业信息</span>
+        </a>
+
+        <a class="nav-link" th:href="@{/jobs}" th:classappend="${activeMenu == 'job'} ? 'active' : ''">
+            <i class="bi bi-briefcase"></i>
+            <span>岗位管理</span>
+        </a>
+
+        <a class="nav-link" th:href="@{/policies}" th:classappend="${activeMenu == 'policy'} ? 'active' : ''">
+            <i class="bi bi-file-text"></i>
+            <span>政策文件</span>
+        </a>
+
+        <div class="mt-3 mb-2 px-3 text-secondary small text-uppercase" style="font-size: 11px; letter-spacing: 0.1em;">数据分析</div>
+
+        <a class="nav-link" th:href="@{/analytics}" th:classappend="${activeMenu == 'analytics'} ? 'active' : ''">
+            <i class="bi bi-graph-up"></i>
+            <span>数据分析</span>
+        </a>
+
+        <a class="nav-link" th:href="@{/analytics/college}" th:classappend="${activeMenu == 'college-analytics'} ? 'active' : ''">
+            <i class="bi bi-mortarboard"></i>
+            <span>大学生分析</span>
+        </a>
+
+        <div sec:authorize="hasRole('ADMIN')" class="mt-3 mb-2 px-3 text-secondary small text-uppercase" style="font-size: 11px; letter-spacing: 0.1em;">系统管理</div>
+
+        <a sec:authorize="hasRole('ADMIN')" class="nav-link" th:href="@{/system/dictionaries}" th:classappend="${activeMenu == 'dictionary'} ? 'active' : ''">
+            <i class="bi bi-journal-text"></i>
+            <span>字典管理</span>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')" class="nav-link" th:href="@{/system/regions}" th:classappend="${activeMenu == 'region'} ? 'active' : ''">
+            <i class="bi bi-geo-alt"></i>
+            <span>地区管理</span>
+        </a>
+
+        <a sec:authorize="hasRole('ADMIN')" class="nav-link" th:href="@{/system/schools}" th:classappend="${activeMenu == 'school'} ? 'active' : ''">
+            <i class="bi bi-bank"></i>
+            <span>学校管理</span>
+        </a>
+    </nav>
+
+    <!-- 底部用户区 -->
+    <div class="p-3 border-top" style="border-color: rgba(67, 127, 222, 0.18) !important;">
+        <div class="d-flex align-items-center">
+            <div class="flex-shrink-0">
+                <div class="rounded-circle d-flex align-items-center justify-content-center"
+                     style="width: 36px; height: 36px; background: rgba(50, 214, 255, 0.15); border: 1px solid rgba(50, 214, 255, 0.3);">
+                    <i class="bi bi-person text-brand"></i>
+                </div>
+            </div>
+            <div class="flex-grow-1 ms-2">
+                <div class="text-white small" sec:authentication="name">用户名</div>
+                <div class="text-secondary" style="font-size: 12px;" sec:authorize="hasRole('ADMIN')">管理员</div>
+                <div class="text-secondary" style="font-size: 12px;" sec:authorize="!hasRole('ADMIN')">普通用户</div>
+            </div>
+            <div class="flex-shrink-0">
+                <form th:action="@{/logout}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-link text-secondary p-0" title="退出">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<!-- 移动端侧边栏切换按钮 -->
+<button class="btn btn-sm btn-primary d-lg-none position-fixed" style="top: 10px; left: 10px; z-index: 1050;"
+        type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+    <i class="bi bi-list"></i>
+</button>
+
+<!-- 移动端侧边栏 -->
+<div class="offcanvas offcanvas-start d-lg-none" id="mobileSidebar" tabindex="-1">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">菜单</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body p-0">
+        <aside th:replace="~{::sidebar}"></aside>
+    </div>
+</div>
+
+</html>

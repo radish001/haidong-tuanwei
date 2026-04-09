@@ -9,7 +9,7 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
             <h2 class="page-hero-title">企业招聘信息</h2>
@@ -79,46 +79,48 @@
                   method="post"
                   data-confirm-message="确认删除选中的企业信息吗？"></form>
 
-            <table class="simple-table">
-                <thead>
-                <tr>
-                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                    <th class="index-cell">序号</th>
-                    <th>企业名称</th>
-                    <th>企业规模</th>
-                    <th>行业</th>
-                    <th>企业性质</th>
-                    <th>所在区域</th>
-                    <th>联系人</th>
-                    <th>联系电话</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item, itemStat : ${records}">
-                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.enterpriseName}">企业名称</td>
-                    <td th:text="${item.enterpriseScale}">500-999人</td>
-                    <td th:text="${item.industry}">智能硬件</td>
-                    <td th:text="${item.enterpriseNature}">民营企业</td>
-                    <td th:text="${item.regionName}">乐都区</td>
-                    <td th:text="${item.contactPerson}">联系人</td>
-                    <td th:text="${item.contactPhone}">13800000000</td>
-                    <td class="table-actions">
-                        <a data-drawer-link th:href="@{'/enterprises/' + ${item.id} + '/edit'}">编辑</a>
-                        <form th:action="@{'/enterprises/' + ${item.id} + '/delete'}"
-                              method="post"
-                              data-confirm-message="确认删除这条企业信息吗？">
-                            <button type="submit" class="link-button">删除</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(records)}">
-                    <td class="empty-cell" colspan="10">暂无企业数据</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                        <th class="index-cell">序号</th>
+                        <th>企业名称</th>
+                        <th>企业规模</th>
+                        <th>行业</th>
+                        <th>企业性质</th>
+                        <th>所在区域</th>
+                        <th>联系人</th>
+                        <th>联系电话</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, itemStat : ${records}">
+                        <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                        <td th:text="${item.enterpriseName}">企业名称</td>
+                        <td th:text="${item.enterpriseScale}">500-999人</td>
+                        <td th:text="${item.industry}">智能硬件</td>
+                        <td th:text="${item.enterpriseNature}">民营企业</td>
+                        <td th:text="${item.regionName}">乐都区</td>
+                        <td th:text="${item.contactPerson}">联系人</td>
+                        <td th:text="${item.contactPhone}">13800000000</td>
+                        <td class="table-actions">
+                            <a data-drawer-link th:href="@{'/enterprises/' + ${item.id} + '/edit'}">编辑</a>
+                            <form th:action="@{'/enterprises/' + ${item.id} + '/delete'}"
+                                  method="post"
+                                  data-confirm-message="确认删除这条企业信息吗？">
+                                <button type="submit" class="link-button">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(records)}">
+                        <td class="empty-cell" colspan="10">暂无企业数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="pagination-bar" th:if="${totalCount > 0}">
                 <div class="pagination-meta"

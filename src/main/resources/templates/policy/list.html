@@ -10,7 +10,7 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
             <h2 class="page-hero-title">就业创业政策</h2>
@@ -61,48 +61,50 @@
                   method="post"
                   data-confirm-message="确认删除选中的政策文章吗？"></form>
 
-            <table class="simple-table">
-                <thead>
-                <tr>
-                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                    <th class="index-cell">序号</th>
-                    <th>标题</th>
-                    <th>发布单位</th>
-                    <th>来源</th>
-                    <th>发布时间</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item, itemStat : ${records}">
-                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.title}">就业扶持政策</td>
-                    <td th:text="${item.issuingOrganization}">海东团市委</td>
-                    <td th:text="${item.policySource}">官网</td>
-                    <td th:text="${item.publishTime}">2026-04-03T17:00</td>
-                    <td th:text="${item.status == 1 ? '已发布' : '草稿'}">已发布</td>
-                    <td class="table-actions">
-                        <a data-drawer-link th:href="@{'/policies/' + ${item.id}}">详情</a>
-                        <a data-drawer-link th:href="@{'/policies/' + ${item.id} + '/edit'}">编辑</a>
-                        <form th:action="@{'/policies/' + ${item.id} + '/status'}" method="post">
-                            <input type="hidden" name="status" th:value="${item.status == 1 ? 0 : 1}">
-                            <button type="submit" class="link-button"
-                                    th:text="${item.status == 1 ? '下线' : '发布'}">发布</button>
-                        </form>
-                        <form th:action="@{'/policies/' + ${item.id} + '/delete'}"
-                              method="post"
-                              data-confirm-message="确认删除这条政策文章吗？">
-                            <button type="submit" class="link-button">删除</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(records)}">
-                    <td class="empty-cell" colspan="8">暂无政策数据</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="simple-table">
+                    <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                        <th class="index-cell">序号</th>
+                        <th>标题</th>
+                        <th>发布单位</th>
+                        <th>来源</th>
+                        <th>发布时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, itemStat : ${records}">
+                        <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                        <td th:text="${item.title}">就业扶持政策</td>
+                        <td th:text="${item.issuingOrganization}">海东团市委</td>
+                        <td th:text="${item.policySource}">官网</td>
+                        <td th:text="${item.publishTime}">2026-04-03T17:00</td>
+                        <td th:text="${item.status == 1 ? '已发布' : '草稿'}">已发布</td>
+                        <td class="table-actions">
+                            <a data-drawer-link th:href="@{'/policies/' + ${item.id}}">详情</a>
+                            <a data-drawer-link th:href="@{'/policies/' + ${item.id} + '/edit'}">编辑</a>
+                            <form th:action="@{'/policies/' + ${item.id} + '/status'}" method="post">
+                                <input type="hidden" name="status" th:value="${item.status == 1 ? 0 : 1}">
+                                <button type="submit" class="link-button"
+                                        th:text="${item.status == 1 ? '下线' : '发布'}">发布</button>
+                            </form>
+                            <form th:action="@{'/policies/' + ${item.id} + '/delete'}"
+                                  method="post"
+                                  data-confirm-message="确认删除这条政策文章吗？">
+                                <button type="submit" class="link-button">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(records)}">
+                        <td class="empty-cell" colspan="8">暂无政策数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
             <div class="pagination-bar" th:if="${totalCount > 0}">
                 <div class="pagination-meta"

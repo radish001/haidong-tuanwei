@@ -1,0 +1,270 @@
+/**
+ * Tom Select 深色主题适配
+ * 配合 Bootstrap 深色主题使用
+ */
+
+/* ==================== 主容器 ==================== */
+.ts-wrapper {
+  display: flex;
+  min-height: calc(1.5em + 1.25rem + 2px);
+}
+
+.ts-wrapper .ts-control {
+  background: rgba(8, 24, 63, 0.8) !important;
+  border: 1px solid rgba(69, 145, 255, 0.2) !important;
+  color: #f1f7ff !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+}
+
+.ts-wrapper.single .ts-control {
+  padding-right: 36px !important;
+}
+
+.ts-wrapper .ts-control input {
+  color: #f1f7ff !important;
+  font-size: 1rem;
+}
+
+.ts-wrapper .ts-control input::placeholder {
+  color: #6280b1 !important;
+}
+
+/* ==================== 聚焦状态 ==================== */
+.ts-wrapper.focus .ts-control {
+  background: rgba(8, 24, 63, 0.95) !important;
+  border-color: rgba(58, 216, 255, 0.5) !important;
+  box-shadow: 0 0 0 0.25rem rgba(50, 214, 255, 0.15) !important;
+}
+
+/* ==================== 下拉箭头 ==================== */
+.ts-wrapper.single .ts-control::after {
+  border-color: #8ea6cf transparent transparent transparent;
+  right: 14px;
+}
+
+.ts-wrapper.single.focus .ts-control::after,
+.ts-wrapper.single:hover .ts-control::after {
+  border-color: #32d6ff transparent transparent transparent;
+}
+
+/* ==================== 下拉面板 ==================== */
+.ts-dropdown {
+  background: rgba(7, 20, 54, 0.98) !important;
+  border: 1px solid rgba(58, 216, 255, 0.36) !important;
+  border-radius: 8px !important;
+  color: #f1f7ff !important;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(20px);
+  z-index: 1050;
+}
+
+/* ==================== 选项样式 ==================== */
+.ts-dropdown .option {
+  color: #f1f7ff !important;
+  padding: 10px 14px;
+  transition: all 0.15s ease;
+}
+
+.ts-dropdown .option:hover {
+  background: rgba(50, 214, 255, 0.1) !important;
+  color: #f1f7ff !important;
+}
+
+.ts-dropdown .active {
+  background: rgba(50, 214, 255, 0.15) !important;
+  color: #32d6ff !important;
+}
+
+.ts-dropdown .selected {
+  background: rgba(50, 214, 255, 0.2) !important;
+  color: #32d6ff !important;
+}
+
+.ts-dropdown .selected::after {
+  content: "✓";
+  float: right;
+  color: #32d6ff;
+}
+
+/* ==================== 分组标题 ==================== */
+.ts-dropdown .optgroup-header {
+  color: #8ea6cf !important;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 8px 14px;
+  background: rgba(11, 31, 78, 0.5) !important;
+  border-bottom: 1px solid rgba(69, 145, 255, 0.1);
+}
+
+/* ==================== 无数据提示 ==================== */
+.ts-dropdown .no-results,
+.ts-dropdown .create {
+  color: #6280b1 !important;
+  padding: 12px 14px;
+}
+
+.ts-dropdown .create:hover {
+  background: rgba(50, 214, 255, 0.1) !important;
+  color: #32d6ff !important;
+}
+
+/* ==================== 搜索输入框（dropdown_input插件） ==================== */
+.ts-dropdown .ts-dropdown-input {
+  background: rgba(8, 24, 63, 0.8) !important;
+  border: 1px solid rgba(69, 145, 255, 0.2) !important;
+  color: #f1f7ff !important;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 8px;
+  width: calc(100% - 16px);
+}
+
+.ts-dropdown .ts-dropdown-input:focus {
+  border-color: rgba(58, 216, 255, 0.5) !important;
+  outline: none;
+  box-shadow: 0 0 0 0.25rem rgba(50, 214, 255, 0.15);
+}
+
+.ts-dropdown .ts-dropdown-input::placeholder {
+  color: #6280b1;
+}
+
+/* ==================== 多选标签样式 ==================== */
+.ts-wrapper.multi .ts-control {
+  padding: 6px 10px !important;
+  gap: 6px;
+  flex-wrap: wrap;
+  height: auto;
+  min-height: calc(1.5em + 1.25rem + 2px);
+}
+
+.ts-wrapper.multi .ts-control > div {
+  background: rgba(50, 214, 255, 0.15) !important;
+  border: 1px solid rgba(50, 214, 255, 0.35) !important;
+  color: #32d6ff !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 !important;
+  cursor: default;
+}
+
+.ts-wrapper.multi .ts-control > div:hover {
+  background: rgba(50, 214, 255, 0.2) !important;
+  border-color: rgba(50, 214, 255, 0.45) !important;
+}
+
+.ts-wrapper.multi .ts-control > div.active {
+  background: rgba(50, 214, 255, 0.25) !important;
+}
+
+/* 删除按钮 */
+.ts-wrapper.multi .ts-control > div .remove {
+  color: #ff6b81 !important;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-left: 1px solid rgba(50, 214, 255, 0.3) !important;
+  margin-left: 6px;
+  padding-left: 6px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.ts-wrapper.multi .ts-control > div .remove:hover {
+  color: #ff8a9a !important;
+}
+
+/* ==================== 输入框在多选模式下的样式 ==================== */
+.ts-wrapper.multi .ts-control > input {
+  background: transparent !important;
+  color: #f1f7ff !important;
+  min-width: 60px;
+  flex: 1;
+  margin: 4px 0 !important;
+  padding: 4px 0 !important;
+}
+
+.ts-wrapper.multi .ts-control > input::placeholder {
+  color: #6280b1 !important;
+}
+
+/* ==================== 禁用状态 ==================== */
+.ts-wrapper.disabled .ts-control {
+  background: rgba(8, 24, 63, 0.5) !important;
+  border-color: rgba(69, 145, 255, 0.1) !important;
+  color: #6280b1 !important;
+  cursor: not-allowed;
+}
+
+.ts-wrapper.disabled .ts-control > div {
+  background: rgba(50, 214, 255, 0.08) !important;
+  border-color: rgba(50, 214, 255, 0.2) !important;
+  color: #6280b1 !important;
+}
+
+/* ==================== 加载状态 ==================== */
+.ts-wrapper.loading .ts-control::before {
+  border-color: rgba(50, 214, 255, 0.2);
+  border-top-color: #32d6ff;
+}
+
+/* ==================== 清除按钮 ==================== */
+.ts-wrapper .ts-control .ts-clear-button {
+  color: #ff6b81;
+  font-size: 1.2em;
+  transition: color 0.15s ease;
+}
+
+.ts-wrapper .ts-control .ts-clear-button:hover {
+  color: #ff8a9a;
+}
+
+/* ==================== 与Bootstrap表单集成 ==================== */
+.ts-wrapper.form-select {
+  padding: 0;
+  background-image: none;
+  border: none;
+}
+
+.ts-wrapper.form-select .ts-control {
+  border-radius: 8px;
+}
+
+/* 级联选择器专用样式 */
+.ts-cascade-wrapper .ts-dropdown {
+  min-width: 200px;
+}
+
+/* 确保下拉层级 */
+.ts-wrapper.dropdown-active .ts-dropdown {
+  z-index: 1060;
+}
+
+/* ==================== 滚动条美化 ==================== */
+.ts-dropdown::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.ts-dropdown::-webkit-scrollbar-track {
+  background: rgba(8, 24, 63, 0.5);
+  border-radius: 3px;
+}
+
+.ts-dropdown::-webkit-scrollbar-thumb {
+  background: rgba(69, 145, 255, 0.3);
+  border-radius: 3px;
+}
+
+.ts-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(69, 145, 255, 0.5);
+}

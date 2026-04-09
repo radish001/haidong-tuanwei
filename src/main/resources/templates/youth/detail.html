@@ -9,18 +9,18 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
 
-        <section class="drawer-shell">
-            <div class="drawer-placeholder">
+        <section class="drawer-shell bootstrap-grid row g-4 align-items-start">
+            <div class="drawer-placeholder col-12 col-xl-4">
                 <div class="drawer-placeholder-copy">
                     <h2 th:text="${record.name}">青年姓名</h2>
                     <p>青年信息详情</p>
                 </div>
             </div>
 
-            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
+            <section class="drawer-panel record-drawer-inner col-12 col-xl-8" th:fragment="drawerContent">
                 <div class="panel-header">
                     <div class="drawer-panel-header">
                         <div>

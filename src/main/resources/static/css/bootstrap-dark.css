@@ -1,0 +1,519 @@
+/**
+ * Bootstrap 5 深色科技主题定制
+ * 基于Bootstrap 5.3变量覆盖
+ */
+
+/* ==================== CSS变量定义 ==================== */
+:root {
+  /* 品牌色 */
+  --bs-primary: #32d6ff;
+  --bs-primary-rgb: 50, 214, 255;
+  --bs-primary-bg-subtle: rgba(50, 214, 255, 0.15);
+  --bs-primary-border-subtle: rgba(50, 214, 255, 0.4);
+  --bs-primary-text-emphasis: #32d6ff;
+
+  /* 辅助色 */
+  --bs-secondary: #8ea6cf;
+  --bs-secondary-rgb: 142, 166, 207;
+
+  /* 功能色 */
+  --bs-success: #22c55e;
+  --bs-success-rgb: 34, 197, 94;
+  --bs-danger: #ff6b81;
+  --bs-danger-rgb: 255, 107, 129;
+  --bs-warning: #fbbf24;
+  --bs-warning-rgb: 251, 191, 36;
+  --bs-info: #1497ff;
+  --bs-info-rgb: 20, 151, 255;
+
+  /* 背景色 */
+  --bs-body-bg: #061437;
+  --bs-body-bg-rgb: 6, 20, 55;
+  --bs-tertiary-bg: rgba(7, 20, 54, 0.88);
+
+  /* 文字色 */
+  --bs-body-color: #f1f7ff;
+  --bs-body-color-rgb: 241, 247, 255;
+  --bs-secondary-color: #8ea6cf;
+  --bs-tertiary-color: #6280b1;
+
+  /* 边框 */
+  --bs-border-color: rgba(69, 145, 255, 0.2);
+  --bs-border-color-translucent: rgba(69, 145, 255, 0.15);
+
+  /* 强调色 */
+  --bs-emphasis-color: #f1f7ff;
+  --bs-link-color: #32d6ff;
+  --bs-link-hover-color: #7fd8ff;
+
+  /* 阴影 */
+  --bs-box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+  --bs-box-shadow-sm: 0 6px 20px rgba(34, 163, 255, 0.24);
+  --bs-box-shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.4);
+  --bs-box-shadow-inset: inset 0 0 0 1px rgba(12, 72, 165, 0.32);
+
+  /* 字体 */
+  --bs-font-sans-serif: "PingFang SC", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ==================== 基础样式 ==================== */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #061437;
+  --bs-body-color: #f1f7ff;
+}
+
+body {
+  font-family: var(--bs-font-sans-serif);
+  background: linear-gradient(180deg, #0a1c4a 0%, #071738 20%, #05112c 56%, #030b1f 100%);
+  min-height: 100vh;
+}
+
+/* 网格背景纹理 */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(58, 216, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(58, 216, 255, 0.02) 1px, transparent 1px);
+  background-size: 120px 120px;
+  mask-image: linear-gradient(180deg, rgba(255, 255, 255, 0.55), transparent 90%);
+  z-index: -1;
+}
+
+/* ==================== 侧边栏 ==================== */
+.sidebar {
+  width: 256px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(5, 18, 47, 0.98), rgba(3, 12, 32, 0.98));
+  border-right: 1px solid rgba(70, 132, 222, 0.22);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  overflow-y: auto;
+}
+
+.sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(58, 216, 255, 0.06), transparent 24%);
+}
+
+.sidebar-brand {
+  padding: 24px 16px 18px;
+  border-bottom: 1px solid rgba(67, 127, 222, 0.18);
+  position: relative;
+}
+
+.sidebar-brand-glow {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 56px;
+  background: radial-gradient(circle at left center, rgba(38, 211, 255, 0.28), transparent 55%);
+  pointer-events: none;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(58, 216, 255, 0.5);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(40, 176, 255, 0.86), rgba(15, 86, 204, 0.95));
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: inset 0 0 18px rgba(255, 255, 255, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.sidebar-nav {
+  padding: 16px 12px;
+}
+
+.sidebar-nav .nav-link {
+  color: #8ea6cf;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-nav .nav-link:hover {
+  background: rgba(50, 214, 255, 0.08);
+  color: #f1f7ff;
+}
+
+.sidebar-nav .nav-link.active {
+  background: rgba(50, 214, 255, 0.12);
+  color: #32d6ff;
+  border: 1px solid rgba(50, 214, 255, 0.25);
+}
+
+.sidebar-nav .nav-link i {
+  font-size: 1.1em;
+  width: 20px;
+  text-align: center;
+}
+
+/* ==================== 主内容区 ==================== */
+.main-content {
+  margin-left: 256px;
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* ==================== 顶部栏 ==================== */
+.topbar {
+  background: rgba(6, 20, 55, 0.8);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(69, 145, 255, 0.2);
+  padding: 16px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.page-hero {
+  padding: 24px;
+  border-bottom: 1px solid rgba(69, 145, 255, 0.1);
+}
+
+.page-hero h1,
+.page-hero h2 {
+  color: #f1f7ff;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ==================== 卡片/面板 ==================== */
+.card {
+  background: rgba(7, 20, 54, 0.88);
+  border: 1px solid rgba(69, 145, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+.card-header {
+  background: rgba(11, 31, 78, 0.5);
+  border-bottom: 1px solid rgba(69, 145, 255, 0.15);
+  color: #f1f7ff;
+  font-weight: 600;
+  padding: 16px 20px;
+  border-radius: 12px 12px 0 0;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* 边框变体 */
+.border-primary-subtle {
+  border-color: rgba(50, 214, 255, 0.3) !important;
+}
+
+/* ==================== 表单 ==================== */
+.form-label {
+  color: #8ea6cf;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+  background: rgba(8, 24, 63, 0.8);
+  border: 1px solid rgba(69, 145, 255, 0.2);
+  color: #f1f7ff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: rgba(8, 24, 63, 0.95);
+  border-color: rgba(58, 216, 255, 0.5);
+  box-shadow: 0 0 0 0.25rem rgba(50, 214, 255, 0.15);
+  color: #f1f7ff;
+}
+
+.form-control::placeholder {
+  color: #6280b1;
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  background: rgba(8, 24, 63, 0.5);
+  color: #6280b1;
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%238ea6cf' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.form-text {
+  color: #6280b1;
+}
+
+/* ==================== 按钮 ==================== */
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  padding: 10px 18px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, rgba(57, 214, 255, 0.9), rgba(17, 126, 255, 0.95));
+  border: 1px solid rgba(54, 220, 255, 0.38);
+  box-shadow: 0 6px 20px rgba(34, 163, 255, 0.24);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, rgba(70, 220, 255, 0.95), rgba(30, 140, 255, 1));
+  border-color: rgba(70, 220, 255, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(34, 163, 255, 0.3);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: linear-gradient(180deg, rgba(13, 36, 88, 0.94), rgba(8, 26, 67, 0.94));
+  border: 1px solid rgba(85, 171, 255, 0.26);
+  color: #d7ebff;
+  box-shadow: inset 0 0 0 1px rgba(12, 72, 165, 0.32);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(180deg, rgba(18, 45, 100, 0.98), rgba(12, 35, 80, 0.98));
+  border-color: rgba(100, 180, 255, 0.35);
+  color: #f1f7ff;
+}
+
+.btn-outline-primary {
+  border-color: rgba(50, 214, 255, 0.4);
+  color: #32d6ff;
+}
+
+.btn-outline-primary:hover {
+  background: rgba(50, 214, 255, 0.12);
+  border-color: rgba(50, 214, 255, 0.6);
+  color: #32d6ff;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  padding: 14px 24px;
+}
+
+/* ==================== 表格 ==================== */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: #f1f7ff;
+  --bs-table-border-color: rgba(69, 145, 255, 0.15);
+  --bs-table-hover-bg: rgba(50, 214, 255, 0.08);
+  --bs-table-striped-bg: rgba(50, 214, 255, 0.03);
+}
+
+.table thead th {
+  color: #8ea6cf;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-bottom-width: 1px;
+  padding: 12px 16px;
+}
+
+.table tbody td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  --bs-table-bg: rgba(50, 214, 255, 0.08);
+}
+
+/* ==================== 分页 ==================== */
+.pagination {
+  --bs-pagination-bg: rgba(8, 24, 63, 0.6);
+  --bs-pagination-border-color: rgba(69, 145, 255, 0.2);
+  --bs-pagination-color: #8ea6cf;
+  --bs-pagination-hover-bg: rgba(50, 214, 255, 0.12);
+  --bs-pagination-hover-border-color: rgba(50, 214, 255, 0.3);
+  --bs-pagination-hover-color: #32d6ff;
+  --bs-pagination-active-bg: rgba(50, 214, 255, 0.2);
+  --bs-pagination-active-border-color: rgba(50, 214, 255, 0.4);
+  --bs-pagination-active-color: #32d6ff;
+  --bs-pagination-disabled-bg: rgba(8, 24, 63, 0.3);
+  --bs-pagination-disabled-border-color: rgba(69, 145, 255, 0.1);
+  --bs-pagination-disabled-color: #6280b1;
+}
+
+.page-link {
+  border-radius: 6px;
+  margin: 0 2px;
+}
+
+/* ==================== 警告/提示 ==================== */
+.alert {
+  border-radius: 8px;
+  border: 1px solid;
+}
+
+.alert-success {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #4ade80;
+}
+
+.alert-danger {
+  background: rgba(255, 107, 129, 0.1);
+  border-color: rgba(255, 107, 129, 0.3);
+  color: #ff8a9a;
+}
+
+.alert-warning {
+  background: rgba(251, 191, 36, 0.1);
+  border-color: rgba(251, 191, 36, 0.3);
+  color: #fcd34d;
+}
+
+.alert-info {
+  background: rgba(20, 151, 255, 0.1);
+  border-color: rgba(20, 151, 255, 0.3);
+  color: #7fd8ff;
+}
+
+/* ==================== 标签/Badge ==================== */
+.badge {
+  font-weight: 500;
+  padding: 6px 10px;
+}
+
+.badge.bg-primary {
+  background: rgba(50, 214, 255, 0.2) !important;
+  color: #32d6ff;
+  border: 1px solid rgba(50, 214, 255, 0.3);
+}
+
+.badge.bg-success {
+  background: rgba(34, 197, 94, 0.2) !important;
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* ==================== 导航标签 ==================== */
+.nav-tabs {
+  border-bottom: 1px solid rgba(69, 145, 255, 0.2);
+}
+
+.nav-tabs .nav-link {
+  color: #8ea6cf;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 12px 20px;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #f1f7ff;
+  border-color: rgba(50, 214, 255, 0.2);
+}
+
+.nav-tabs .nav-link.active {
+  color: #32d6ff;
+  background: transparent;
+  border-bottom-color: #32d6ff;
+}
+
+/* ==================== 抽屉/模态框 ==================== */
+.modal-content {
+  background: rgba(7, 20, 54, 0.95);
+  border: 1px solid rgba(69, 145, 255, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(20px);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(69, 145, 255, 0.2);
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(69, 145, 255, 0.2);
+}
+
+.offcanvas {
+  background: linear-gradient(180deg, rgba(5, 18, 47, 0.98), rgba(3, 12, 32, 0.98));
+  border-right: 1px solid rgba(70, 132, 222, 0.22);
+}
+
+/* ==================== 响应式 ==================== */
+@media (max-width: 991.98px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sidebar.show {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .topbar {
+    padding: 12px 16px;
+  }
+
+  .page-hero {
+    padding: 16px;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+}
+
+/* ==================== 工具类 ==================== */
+.text-brand {
+  color: #32d6ff !important;
+}
+
+.text-secondary-brand {
+  color: #8ea6cf !important;
+}
+
+.bg-transparent-card {
+  background: rgba(7, 20, 54, 0.88) !important;
+  backdrop-filter: blur(10px);
+}
+
+.border-brand {
+  border-color: rgba(50, 214, 255, 0.3) !important;
+}
+
+/* 发光效果 */
+.glow-sm {
+  box-shadow: 0 6px 20px rgba(34, 163, 255, 0.24);
+}
+
+.glow {
+  box-shadow: 0 12px 36px rgba(34, 163, 255, 0.3);
+}

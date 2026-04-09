@@ -9,7 +9,7 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
 
         <section class="page-hero">
@@ -96,56 +96,57 @@
                             <div class="panel-actions system-table-actions">
                                 <a class="ghost-button" data-drawer-link th:href="@{${createUrl}}">新增</a>
                             </div>
-                            <table class="simple-table system-simple-table">
-                            <thead>
-                            <tr th:if="${viewKind == 'dict'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column" th:text="${query.section == 'education_level' ? '学历编码' : (query.section == 'degree' ? '学位编码' : '字典值')}">字典值</th>
-                                <th class="name-column" th:text="${query.section == 'education_level' ? '学历名称' : (query.section == 'degree' ? '学位名称' : '显示名称')}">显示名称</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'major'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column">专业编码</th>
-                                <th class="name-column">专业名称</th>
-                                <th>专业类别</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'school-tag'}">
-                                <th class="index-cell">序号</th>
-                                <th class="name-column">标签名称</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'school'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column">学校编码</th>
-                                <th class="name-column">学校名称</th>
-                                <th>学校类别</th>
-                                <th>学校标签</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'region'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column">区域编码</th>
-                                <th class="name-column">区域名称</th>
-                                <th>层级</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:if="${viewKind == 'dict'}" th:each="item, itemStat : ${records}">
-                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                                <td class="code-cell" th:text="${item.dictValue}">编码</td>
-                                <td class="name-cell" th:text="${item.dictLabel}">名称</td>
-                                <td class="table-actions">
-                                    <a data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
-                                    <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"
-                                          method="post"
-                                          data-confirm-message="确认删除这条基础字典数据吗？">
-                                        <button type="submit" class="link-button">删除</button>
-                                    </form>
-                                </td>
-                            </tr>
+                            <div class="table-responsive">
+                                <table class="simple-table system-simple-table">
+                                <thead>
+                                <tr th:if="${viewKind == 'dict'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column" th:text="${query.section == 'education_level' ? '学历编码' : (query.section == 'degree' ? '学位编码' : '字典值')}">字典值</th>
+                                    <th class="name-column" th:text="${query.section == 'education_level' ? '学历名称' : (query.section == 'degree' ? '学位名称' : '显示名称')}">显示名称</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'major'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column">专业编码</th>
+                                    <th class="name-column">专业名称</th>
+                                    <th>专业类别</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'school-tag'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="name-column">标签名称</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'school'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column">学校编码</th>
+                                    <th class="name-column">学校名称</th>
+                                    <th>学校类别</th>
+                                    <th>学校标签</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'region'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column">区域编码</th>
+                                    <th class="name-column">区域名称</th>
+                                    <th>层级</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${viewKind == 'dict'}" th:each="item, itemStat : ${records}">
+                                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                    <td class="code-cell" th:text="${item.dictValue}">编码</td>
+                                    <td class="name-cell" th:text="${item.dictLabel}">名称</td>
+                                    <td class="table-actions">
+                                        <a data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
+                                        <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"
+                                              method="post"
+                                              data-confirm-message="确认删除这条基础字典数据吗？">
+                                            <button type="submit" class="link-button">删除</button>
+                                        </form>
+                                    </td>
+                                </tr>
 
                             <tr th:if="${viewKind == 'major'}" th:each="item, itemStat : ${records}">
                                 <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
@@ -206,12 +207,13 @@
                                 </td>
                             </tr>
 
-                            <tr th:if="${#lists.isEmpty(records)}">
-                                <td class="empty-cell"
-                                    th:attr="colspan=${viewKind == 'school' ? 6 : (viewKind == 'major' or viewKind == 'region' ? 5 : (viewKind == 'dict' ? 4 : 3))}">当前条件下暂无数据</td>
-                            </tr>
-                            </tbody>
-                            </table>
+                                <tr th:if="${#lists.isEmpty(records)}">
+                                    <td class="empty-cell"
+                                        th:attr="colspan=${viewKind == 'school' ? 6 : (viewKind == 'major' or viewKind == 'region' ? 5 : (viewKind == 'dict' ? 4 : 3))}">当前条件下暂无数据</td>
+                                </tr>
+                                </tbody>
+                                </table>
+                            </div>
 
                             <div class="pagination-bar" th:if="${totalCount > 0}">
                                 <div class="pagination-meta"

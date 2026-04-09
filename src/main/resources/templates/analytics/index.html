@@ -10,12 +10,13 @@
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="page-hero">
             <h2 class="page-hero-title">数据分析</h2>
+            <p class="page-hero-subtitle">通过图表查看青年、学校类别、专业类别等统计分布。</p>
         </section>
-        <section class="panel">
+        <section class="panel analytics-page-panel">
             <div class="tab-row">
                 <div class="tab-list">
                     <a class="tab-link"
@@ -29,12 +30,12 @@
                 </div>
             </div>
             <div th:if="${isCollegeAnalytics}">
-                <div class="analytics-grid analytics-grid-college">
-                    <div class="panel"><div id="schoolCategoryChart" class="chart-box"></div></div>
-                    <div class="panel analytics-span-two"><div id="majorCategoryChart" class="chart-box tall"></div></div>
-                    <div class="panel"><div id="ethnicityChart" class="chart-box"></div></div>
-                    <div class="panel"><div id="educationChart" class="chart-box"></div></div>
-                    <div class="panel"><div id="genderChart" class="chart-box"></div></div>
+                <div class="analytics-grid analytics-grid-college row g-4">
+                    <div class="col-12 col-xl-4"><div class="panel h-100"><div id="schoolCategoryChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-xl-8 analytics-span-two"><div class="panel h-100"><div id="majorCategoryChart" class="chart-box tall"></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="ethnicityChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="educationChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="genderChart" class="chart-box"></div></div></div>
                 </div>
                 <section class="analytics-topic-panel">
                     <div class="panel-header analytics-topic-header">
@@ -45,13 +46,13 @@
                     <div id="haidongTagCharts" class="tag-chart-grid"></div>
                 </section>
             </div>
-            <div th:unless="${isCollegeAnalytics}" class="analytics-grid">
-                <div class="panel"><div id="ageChart" class="chart-box tall"></div></div>
-                <div class="panel"><div id="educationChart" class="chart-box tall"></div></div>
-                <div class="panel"><div id="ethnicityChart" class="chart-box"></div></div>
-                <div class="panel"><div id="politicalChart" class="chart-box"></div></div>
-                <div class="panel"><div id="genderChart" class="chart-box"></div></div>
-                <div class="panel"><div id="demandChart" class="chart-box"></div></div>
+            <div th:unless="${isCollegeAnalytics}" class="analytics-grid row g-4">
+                <div class="col-12 col-xl-6"><div class="panel h-100"><div id="ageChart" class="chart-box tall"></div></div></div>
+                <div class="col-12 col-xl-6"><div class="panel h-100"><div id="educationChart" class="chart-box tall"></div></div></div>
+                <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="ethnicityChart" class="chart-box"></div></div></div>
+                <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="politicalChart" class="chart-box"></div></div></div>
+                <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="genderChart" class="chart-box"></div></div></div>
+                <div class="col-12"><div class="panel h-100"><div id="demandChart" class="chart-box"></div></div></div>
             </div>
         </section>
     </main>

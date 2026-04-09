@@ -93,6 +93,9 @@
         if (window.AlertBanner && typeof window.AlertBanner.init === "function") {
             window.AlertBanner.init(container);
         }
+        if (window.BootstrapEnhancements && typeof window.BootstrapEnhancements.init === "function") {
+            window.BootstrapEnhancements.init(container);
+        }
         if (window.JobFormMultiSelect && typeof window.JobFormMultiSelect.init === "function") {
             window.JobFormMultiSelect.init(container);
         }

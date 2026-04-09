@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<aside class="sidebar" th:fragment="sidebar">
-    <div class="brand brand-compact">
+<aside class="sidebar d-flex flex-column vh-100" th:fragment="sidebar">
+    <div class="brand brand-compact sidebar-brand">
         <div class="brand-glow"></div>
         <div class="brand-mark">HD</div>
         <div class="brand-copy">
@@ -11,18 +11,28 @@
         </div>
     </div>
 
-    <nav class="menu">
+    <nav class="menu nav nav-pills flex-column gap-2 flex-grow-1 sidebar-nav">
         <div class="menu-group" th:each="menu : ${sideMenus}">
-            <a class="menu-link"
+            <a class="menu-link nav-link"
                th:classappend="${currentPath == menu.menuPath or (!#lists.isEmpty(menu.children) and #lists.contains(menu.children.![menuPath], currentPath))} ? ' active' : ''"
                th:href="@{${menu.menuPath}}">
                 <span class="menu-link-accent"></span>
-                <span class="menu-icon"
-                      th:text="${menu.icon != null ? #strings.substring(menu.icon, 0, 1).toUpperCase() : '•'}">H</span>
+                <span class="menu-icon">
+                    <i class="bi"
+                       th:classappend="${
+                           menu.menuName == '首页' ? ' bi-house-door' :
+                           (#strings.contains(menu.menuName, '青年') ? ' bi-people' :
+                           (#strings.contains(menu.menuName, '招聘') ? ' bi-briefcase' :
+                           (#strings.contains(menu.menuName, '企业') ? ' bi-buildings' :
+                           (#strings.contains(menu.menuName, '政策') ? ' bi-file-earmark-text' :
+                           (#strings.contains(menu.menuName, '分析') ? ' bi-bar-chart' : ' bi-gear')))))
+                       }"></i>
+                </span>
                 <span class="menu-text" th:text="${menu.menuName}"></span>
             </a>
-            <div class="submenu" th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息' and menu.menuName != '数据分析' and menu.menuName != '系统设置'}">
-                <a class="submenu-link"
+            <div class="submenu nav flex-column"
+                 th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息' and menu.menuName != '数据分析' and menu.menuName != '系统设置'}">
+                <a class="submenu-link nav-link"
                    th:each="child : ${menu.children}"
                    th:classappend="${currentPath == child.menuPath} ? ' active' : ''"
                    th:href="@{${child.menuPath}}"
