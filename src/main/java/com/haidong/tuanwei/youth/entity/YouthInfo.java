@@ -11,9 +11,12 @@ public class YouthInfo {
     private String youthType;
     private String name;
     private String gender;
+    private String genderName;
     private LocalDate birthDate;
     private String ethnicity;
+    private String ethnicityName;
     private String politicalStatus;
+    private String politicalStatusName;
     private String nativeProvinceCode;
     private String nativeCityCode;
     private String nativeCountyCode;

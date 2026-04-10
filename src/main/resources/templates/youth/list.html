@@ -31,7 +31,7 @@
             <div class="workbench-toolbar">
                 <form class="filter-form workbench-filter-form youth-filter-grid row g-3 bootstrap-filter-form" method="get" id="youth-list-form" data-ajax-form>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="ageRange">年龄
+                        <label for="ageRange">年龄:
                             <select class="form-select" id="ageRange" name="ageRange">
                                 <option value="">全部年龄</option>
                                 <option value="16-18" th:selected="${query.ageRange == '16-18'}">16-18岁</option>
@@ -42,7 +42,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="gender">性别
+                        <label for="gender">性别:
                             <select class="form-select" id="gender" name="gender">
                                 <option value="">全部性别</option>
                                 <option th:each="item : ${genders}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
@@ -51,7 +51,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="ethnicity">民族
+                        <label for="ethnicity">民族:
                             <select class="form-select" id="ethnicity" name="ethnicity">
                                 <option value="">全部民族</option>
                                 <option th:each="item : ${ethnicities}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
@@ -60,7 +60,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="politicalStatus">政治面貌
+                        <label for="politicalStatus">政治面貌:
                             <select class="form-select" id="politicalStatus" name="politicalStatus">
                                 <option value="">全部政治面貌</option>
                                 <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
@@ -69,7 +69,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="educationLevel">学历
+                        <label for="educationLevel">学历:
                             <select class="form-select" id="educationLevel" name="educationLevel">
                                 <option value="">全部学历</option>
                                 <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
@@ -78,7 +78,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="degreeCode">学位
+                        <label for="degreeCode">学位:
                             <select class="form-select" id="degreeCode" name="degreeCode">
                                 <option value="">全部学位</option>
                                 <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
@@ -87,12 +87,12 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="name">姓名
+                        <label for="name">姓名:
                             <input class="form-control" id="name" type="text" name="name" th:value="${query.name}" placeholder="输入姓名">
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="schoolCode">就读院校
+                        <label for="schoolCode">就读院校:
                             <select class="form-select" id="schoolCode" name="schoolCode">
                                 <option value="">全部院校</option>
                                 <option th:each="item : ${schools}"
@@ -103,7 +103,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="majorCategory">专业类别
+                        <label for="majorCategory">专业类别:
                             <select class="form-select" id="majorCategory" name="majorCategory">
                                 <option value="">全部专业类别</option>
                                 <option th:each="item : ${majorCategories}"
@@ -115,7 +115,7 @@
                     </div>
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="filter-block full-width">
-                            <span>籍贯</span>
+                            <span>籍贯:</span>
                             <div data-region-step data-region-api-url="/api/regions" data-region-placeholder="籍贯">
                                 <input type="hidden" name="nativeProvinceCode" th:value="${query.nativeProvinceCode}" data-region-province>
                                 <input type="hidden" name="nativeCityCode" th:value="${query.nativeCityCode}" data-region-city>
@@ -290,27 +290,20 @@
 
                     <div class="modal-body">
                         <div class="bootstrap-upload-actions d-flex flex-wrap gap-2 mb-3">
-                            <form class="m-0" th:action="@{/youth/college/export}" method="get">
-                        <input type="hidden" name="name" th:value="${query.name}">
-                        <input type="hidden" name="gender" th:value="${query.gender}">
-                        <input type="hidden" name="ethnicity" th:value="${query.ethnicity}">
-                        <input type="hidden" name="politicalStatus" th:value="${query.politicalStatus}">
-                        <input type="hidden" name="educationLevel" th:value="${query.educationLevel}">
-                        <input type="hidden" name="degreeCode" th:value="${query.degreeCode}">
-                        <input type="hidden" name="nativeProvinceCode" th:value="${query.nativeProvinceCode}">
-                        <input type="hidden" name="nativeCityCode" th:value="${query.nativeCityCode}">
-                        <input type="hidden" name="nativeCountyCode" th:value="${query.nativeCountyCode}">
-                        <input type="hidden" name="residenceProvinceCode" th:value="${query.residenceProvinceCode}">
-                        <input type="hidden" name="residenceCityCode" th:value="${query.residenceCityCode}">
-                        <input type="hidden" name="residenceCountyCode" th:value="${query.residenceCountyCode}">
-                        <input type="hidden" name="schoolProvinceCode" th:value="${query.schoolProvinceCode}">
-                        <input type="hidden" name="schoolCityCode" th:value="${query.schoolCityCode}">
-                        <input type="hidden" name="schoolCountyCode" th:value="${query.schoolCountyCode}">
-                        <input type="hidden" name="schoolCode" th:value="${query.schoolCode}">
-                        <input type="hidden" name="majorCategory" th:value="${query.majorCategory}">
-                                <button type="submit" class="btn btn-outline-info">导出</button>
-                            </form>
-                            <a class="btn btn-outline-secondary" th:href="@{/youth/college/template}">下载导入模板</a>
+                            <button type="button"
+                                    class="btn btn-outline-info"
+                                    data-export-current-filters
+                                    th:data-export-url="@{/youth/{type}/export(type=${youthType})}">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                导出
+                            </button>
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    data-template-download
+                                    th:data-template-url="@{/youth/{type}/template(type=${youthType})}">
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                下载导入模板
+                            </button>
                         </div>
 
                         <form class="import-dropzone-form" th:action="@{/youth/college/import}" method="post" enctype="multipart/form-data">
@@ -322,7 +315,10 @@
                             </label>
                             <div class="modal-footer px-0 pb-0">
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
-                                <button type="submit" class="btn btn-primary">上传文件</button>
+                                <button type="submit" class="btn btn-primary" data-import-submit>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                    上传文件
+                                </button>
                             </div>
                         </form>
                     </div>
@@ -345,6 +341,73 @@
         const fileInput = modal.querySelector('#youth-import-file');
         const dropzone = modal.querySelector('[data-dropzone]');
         const fileName = modal.querySelector('[data-file-name]');
+        const exportButton = modal.querySelector('[data-export-current-filters]');
+        const templateButton = modal.querySelector('[data-template-download]');
+        const importForm = modal.querySelector('.import-dropzone-form');
+        const importSubmit = modal.querySelector('[data-import-submit]');
+
+        const setButtonLoading = (button, loading) => {
+            if (!button) {
+                return;
+            }
+            const spinner = button.querySelector('.spinner-border');
+            if (spinner) {
+                spinner.classList.toggle('d-none', !loading);
+            }
+            button.disabled = loading;
+        };
+
+        const downloadFile = async (button, url) => {
+            setButtonLoading(button, true);
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error('Download failed: ' + response.status);
+                }
+                const disposition = response.headers.get('Content-Disposition') || '';
+                let downloadName = 'download.xlsx';
+                const utf8Match = disposition.match(/filename\*=UTF-8''(.+)/);
+                if (utf8Match) {
+                    downloadName = decodeURIComponent(utf8Match[1]);
+                }
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.href = blobUrl;
+                anchor.download = downloadName;
+                document.body.appendChild(anchor);
+                anchor.click();
+                document.body.removeChild(anchor);
+                URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                console.error('Download error:', error);
+            } finally {
+                setButtonLoading(button, false);
+            }
+        };
+
+        const buildExportUrl = () => {
+            const exportUrl = exportButton?.dataset.exportUrl;
+            if (!exportUrl) {
+                return null;
+            }
+            const url = new URL(exportUrl, window.location.origin);
+            const filterForm = document.getElementById('youth-list-form');
+            if (!filterForm) {
+                return url.toString();
+            }
+            const formData = new FormData(filterForm);
+            for (const [key, value] of formData.entries()) {
+                if (key === 'page' || key === 'pageSize') {
+                    continue;
+                }
+                const normalizedValue = typeof value === 'string' ? value.trim() : value;
+                if (normalizedValue !== '') {
+                    url.searchParams.append(key, normalizedValue);
+                }
+            }
+            return url.toString();
+        };
 
         const updateFileName = (file) => {
             fileName.textContent = file ? file.name : '未选择文件';
@@ -354,9 +417,32 @@
             updateFileName(fileInput.files[0]);
         });
 
+        exportButton?.addEventListener('click', () => {
+            const targetUrl = buildExportUrl();
+            if (!targetUrl) {
+                return;
+            }
+            downloadFile(exportButton, targetUrl);
+        });
+
+        templateButton?.addEventListener('click', () => {
+            const url = templateButton.dataset.templateUrl;
+            if (!url) {
+                return;
+            }
+            downloadFile(templateButton, url);
+        });
+
+        importForm?.addEventListener('submit', () => {
+            setButtonLoading(importSubmit, true);
+        });
+
         modal.addEventListener('hidden.bs.modal', () => {
             updateFileName(fileInput.files[0]);
             dropzone.classList.remove('is-dragover');
+            setButtonLoading(exportButton, false);
+            setButtonLoading(templateButton, false);
+            setButtonLoading(importSubmit, false);
         });
 
         ['dragenter', 'dragover'].forEach((eventName) => {

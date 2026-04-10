@@ -9,9 +9,12 @@
         <result property="youthType" column="youth_type"/>
         <result property="name" column="name"/>
         <result property="gender" column="gender"/>
+        <result property="genderName" column="gender_name"/>
         <result property="birthDate" column="birth_date"/>
         <result property="ethnicity" column="ethnicity"/>
+        <result property="ethnicityName" column="ethnicity_name"/>
         <result property="politicalStatus" column="political_status"/>
+        <result property="politicalStatusName" column="political_status_name"/>
         <result property="nativeProvinceCode" column="native_province_code"/>
         <result property="nativeCityCode" column="native_city_code"/>
         <result property="nativeCountyCode" column="native_county_code"/>
@@ -135,7 +138,11 @@
     </sql>
 
     <select id="search" resultMap="YouthInfoResultMap">
-        select y.id, y.youth_type, y.name, y.gender, y.birth_date, y.ethnicity, y.political_status,
+        select y.id, y.youth_type, y.name,
+               coalesce(gd.dict_label, y.gender) as gender,
+               y.birth_date,
+               coalesce(eth.dict_label, y.ethnicity) as ethnicity,
+               coalesce(ps.dict_label, y.political_status) as political_status,
                y.native_province_code, y.native_city_code, y.native_county_code,
                concat_ws('-', np.region_name, nc.region_name, nct.region_name) as native_place_name,
                y.education_level,
@@ -156,6 +163,12 @@
                y.employment_status, y.current_job, y.employment_company,
                y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
         from youth_info y
+        left join sys_dict_item gd on gd.dict_type = 'gender' and gd.dict_value = y.gender
+            and gd.enabled = 1 and gd.deleted = 0
+        left join sys_dict_item eth on eth.dict_type = 'ethnicity' and eth.dict_value = y.ethnicity
+            and eth.enabled = 1 and eth.deleted = 0
+        left join sys_dict_item ps on ps.dict_type = 'political_status' and ps.dict_value = y.political_status
+            and ps.enabled = 1 and ps.deleted = 0
         left join sys_dict_item ed on ed.dict_type = 'education_level' and ed.dict_value = y.education_level
             and ed.enabled = 1 and ed.deleted = 0
         left join sys_dict_item dd on dd.dict_type = 'degree' and dd.dict_value = y.degree_code
@@ -189,7 +202,14 @@
     </select>
 
     <select id="findById" resultMap="YouthInfoResultMap">
-        select y.id, y.youth_type, y.name, y.gender, y.birth_date, y.ethnicity, y.political_status,
+        select y.id, y.youth_type, y.name,
+               y.gender,
+               coalesce(gd.dict_label, y.gender) as gender_name,
+               y.birth_date,
+               y.ethnicity,
+               coalesce(eth.dict_label, y.ethnicity) as ethnicity_name,
+               y.political_status,
+               coalesce(ps.dict_label, y.political_status) as political_status_name,
                y.native_province_code, y.native_city_code, y.native_county_code,
                concat_ws('-', np.region_name, nc.region_name, nct.region_name) as native_place_name,
                y.education_level,
@@ -210,6 +230,12 @@
                y.employment_status, y.current_job, y.employment_company,
                y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
         from youth_info y
+        left join sys_dict_item gd on gd.dict_type = 'gender' and gd.dict_value = y.gender
+            and gd.enabled = 1 and gd.deleted = 0
+        left join sys_dict_item eth on eth.dict_type = 'ethnicity' and eth.dict_value = y.ethnicity
+            and eth.enabled = 1 and eth.deleted = 0
+        left join sys_dict_item ps on ps.dict_type = 'political_status' and ps.dict_value = y.political_status
+            and ps.enabled = 1 and ps.deleted = 0
         left join sys_dict_item ed on ed.dict_type = 'education_level' and ed.dict_value = y.education_level
             and ed.enabled = 1 and ed.deleted = 0
         left join sys_dict_item dd on dd.dict_type = 'degree' and dd.dict_value = y.degree_code

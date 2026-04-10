@@ -109,6 +109,9 @@
         }
         await initPolicyEditor(container);
         initYouthForm(container);
+        if (window.FormValidation && typeof window.FormValidation.init === "function") {
+            window.FormValidation.init(container);
+        }
         if (window.SystemRegionForm && typeof window.SystemRegionForm.init === "function") {
             window.SystemRegionForm.init(container);
         }

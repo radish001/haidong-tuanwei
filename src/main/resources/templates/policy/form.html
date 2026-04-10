@@ -15,23 +15,19 @@
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="drawer-workspace">
             <section class="drawer-content-view" th:fragment="drawerContent">
-                <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
-                    <div>
-                        <h2 class="h4 mb-1" th:text="${formTitle}">新增政策文章</h2>
-                        <p class="text-secondary mb-0">填写政策基础信息和正文内容。</p>
-                    </div>
-                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/policies}" data-drawer-close aria-label="关闭">
-                        <i class="bi bi-x-lg" aria-hidden="true"></i>
-                    </a>
+                <div class="drawer-panel-header">
+                    <h2 class="h4 mb-1" th:text="${formTitle}">新增政策文章</h2>
                 </div>
-                <form th:action="@{${formAction}}" th:object="${policyForm}" method="post" class="edit-form row g-3" id="policy-form">
-                    <label class="full-width col-12"><span>标题</span><input class="form-control" type="text" th:field="*{title}"></label>
+                <form th:action="@{${formAction}}" th:object="${policyForm}" method="post" class="edit-form row g-3" id="policy-form" novalidate>
+                    <div class="alert error-alert validation-error-banner col-12" th:if="${formError}" th:text="${formError}"></div>
+                    <div class="alert error-alert validation-error-banner col-12" th:if="${#fields.hasAnyErrors()}">请检查并填写所有必填项</div>
+                    <label class="full-width col-12"><span>标题</span><input class="form-control" type="text" th:field="*{title}" required></label>
                     <label class="col-12 col-md-6"><span>发布单位</span><input class="form-control" type="text" th:field="*{issuingOrganization}"></label>
                     <label class="col-12 col-md-6"><span>来源</span><input class="form-control" type="text" th:field="*{policySource}"></label>
                     <label class="full-width col-12"><span>摘要</span><textarea class="form-control" th:field="*{summary}"></textarea></label>
                     <label class="full-width col-12">
                         <span>正文</span>
-                        <input type="hidden" th:field="*{contentHtml}" id="contentHtml">
+                        <input type="hidden" th:field="*{contentHtml}" id="contentHtml" data-required>
                         <div id="policy-editor" class="rich-editor"></div>
                     </label>
                     <div class="form-actions full-width col-12">

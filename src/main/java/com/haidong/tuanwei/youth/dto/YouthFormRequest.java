@@ -22,10 +22,12 @@ public class YouthFormRequest {
     private String nativeCountyCode;
     private String educationLevel;
     private String degreeCode;
+    @NotBlank(message = "学校不能为空")
     private String schoolCode;
     private String schoolProvinceCode;
     private String schoolCityCode;
     private String schoolCountyCode;
+    @NotBlank(message = "专业不能为空")
     private String majorCode;
     private String majorCategory;
     private String recruitmentYear;

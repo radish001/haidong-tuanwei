@@ -59,12 +59,16 @@
 
     <select id="search" resultMap="JobPostResultMap">
         select j.id, j.enterprise_id, e.enterprise_name, j.job_name, j.job_category,
-               j.experience_requirement, j.salary_range, j.recruit_count, j.work_province_code,
+               coalesce(dexp.dict_label, j.experience_requirement) as experience_requirement,
+               coalesce(dsal.dict_label, j.salary_range) as salary_range,
+               j.recruit_count, j.work_province_code,
                j.work_city_code, j.work_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as work_region_name,
                j.contact_person, j.contact_phone, j.job_description, j.publish_time, j.status
         from job_post j
                  left join enterprise_info e on e.id = j.enterprise_id and e.deleted = 0
+                 left join sys_dict_item dexp on dexp.dict_type = 'experience_requirement' and dexp.dict_value = j.experience_requirement and dexp.enabled = 1 and dexp.deleted = 0
+                 left join sys_dict_item dsal on dsal.dict_type = 'salary_range' and dsal.dict_value = j.salary_range and dsal.enabled = 1 and dsal.deleted = 0
                  left join sys_region rp on rp.region_code = j.work_province_code and rp.deleted = 0
                  left join sys_region rc on rc.region_code = j.work_city_code and rc.deleted = 0
                  left join sys_region rct on rct.region_code = j.work_county_code and rct.deleted = 0

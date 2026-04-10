@@ -29,17 +29,17 @@
             <div class="workbench-toolbar">
                 <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="policy-list-form" data-ajax-form>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="title">标题
+                        <label for="title">标题:
                             <input class="form-control" id="title" type="text" name="title" th:value="${query.title}" placeholder="输入标题关键词">
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="issuingOrganization">发布单位
+                        <label for="issuingOrganization">发布单位:
                             <input class="form-control" id="issuingOrganization" type="text" name="issuingOrganization" th:value="${query.issuingOrganization}" placeholder="输入发布单位">
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="status">状态
+                        <label for="status">状态:
                             <select class="form-select" id="status" name="status">
                                 <option value="">全部状态</option>
                                 <option value="0" th:selected="${query.status != null and query.status == 0}">草稿</option>

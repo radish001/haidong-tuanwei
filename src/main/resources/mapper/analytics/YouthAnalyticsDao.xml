@@ -75,6 +75,36 @@
         order by item_value desc
     </select>
 
+    <select id="countByGender" resultMap="ChartItemResultMap">
+        select coalesce(d.dict_label, yi.gender) as name, count(*) as item_value
+        from youth_info yi
+        left join sys_dict_item d on d.dict_type = 'gender'
+            and d.dict_value = yi.gender
+            and d.enabled = 1
+            and d.deleted = 0
+        where yi.deleted = 0
+          and yi.youth_type = #{youthType}
+          and yi.gender is not null
+          and yi.gender != ''
+        group by yi.gender, d.dict_label
+        order by yi.gender
+    </select>
+
+    <select id="countByEthnicity" resultMap="ChartItemResultMap">
+        select coalesce(d.dict_label, yi.ethnicity) as name, count(*) as item_value
+        from youth_info yi
+        left join sys_dict_item d on d.dict_type = 'ethnicity'
+            and d.dict_value = yi.ethnicity
+            and d.enabled = 1
+            and d.deleted = 0
+        where yi.deleted = 0
+          and yi.youth_type = #{youthType}
+          and yi.ethnicity is not null
+          and yi.ethnicity != ''
+        group by yi.ethnicity, d.dict_label
+        order by item_value desc
+    </select>
+
     <select id="countBySchoolCategory" resultMap="ChartItemResultMap">
         select d.dict_label as name, count(yi.id) as item_value
         from sys_dict_item d

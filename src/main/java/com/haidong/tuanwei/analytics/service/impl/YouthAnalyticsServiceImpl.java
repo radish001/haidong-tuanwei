@@ -29,9 +29,9 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
         }
         return YouthAnalyticsView.builder()
                 .ageDistribution(youthAnalyticsDao.countByAgeRange(youthType))
-                .genderDistribution(countByColumn(youthType, "gender"))
+                .genderDistribution(youthAnalyticsDao.countByGender(youthType))
                 .educationDistribution(youthAnalyticsDao.countByEducationLevel(youthType))
-                .ethnicityDistribution(countByColumn(youthType, "ethnicity"))
+                .ethnicityDistribution(youthAnalyticsDao.countByEthnicity(youthType))
                 .politicalStatusDistribution(countByColumn(youthType, "political_status"))
                 .entrepreneurshipDemandDistribution(countByColumn(youthType, "entrepreneurship_demand"))
                 .build();
@@ -42,9 +42,9 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
         return YouthAnalyticsView.builder()
                 .schoolCategoryDistribution(youthAnalyticsDao.countBySchoolCategory(youthType))
                 .majorCategoryDistribution(youthAnalyticsDao.countByMajorCategory(youthType))
-                .genderDistribution(countByColumn(youthType, "gender"))
+                .genderDistribution(youthAnalyticsDao.countByGender(youthType))
                 .educationDistribution(youthAnalyticsDao.countByEducationLevel(youthType))
-                .ethnicityDistribution(countByColumn(youthType, "ethnicity"))
+                .ethnicityDistribution(youthAnalyticsDao.countByEthnicity(youthType))
                 .haidongSchoolTagDistributions(buildTagCharts(tagSchoolStats))
                 .build();
     }

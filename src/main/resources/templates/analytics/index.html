@@ -29,12 +29,12 @@
                 </div>
             </div>
             <div th:if="${isCollegeAnalytics}">
-                <div class="analytics-grid analytics-grid-college row g-4">
-                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="schoolCategoryChart" class="chart-box"></div></div></div>
-                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="majorCategoryChart" class="chart-box tall"></div></div></div>
-                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="ethnicityChart" class="chart-box"></div></div></div>
-                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="educationChart" class="chart-box"></div></div></div>
-                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="genderChart" class="chart-box"></div></div></div>
+                <div class="analytics-grid-3col">
+                    <div class="card border-0"><div id="schoolCategoryChart" class="chart-box"></div></div>
+                    <div class="card border-0"><div id="educationChart" class="chart-box"></div></div>
+                    <div class="card border-0"><div id="ethnicityChart" class="chart-box"></div></div>
+                    <div class="card border-0"><div id="genderChart" class="chart-box"></div></div>
+                    <div class="card border-0 span-2"><div id="majorCategoryChart" class="chart-box tall"></div></div>
                 </div>
                 <section class="analytics-topic-panel">
                     <div class="analytics-topic-header">
@@ -226,14 +226,25 @@
         attachResize(chart);
     }
 
+    function topNWithOther(data, n) {
+        if (data.length <= n) return data;
+        const sorted = data.slice().sort((a, b) => b.value - a.value);
+        const top = sorted.slice(0, n);
+        const otherValue = sorted.slice(n).reduce((sum, item) => sum + item.value, 0);
+        if (otherValue > 0) {
+            top.push({name: '其他', value: otherValue});
+        }
+        return top;
+    }
+
     function renderPieChart(elementId, title, rawData, donut, options = {}) {
-        const data = parseData(rawData);
+        const data = topNWithOther(parseData(rawData), 10);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
-        const legendBottom = options.legendBottom ?? -6;
-        const seriesCenter = options.seriesCenter ?? ['50%', '42%'];
-        const seriesRadius = options.seriesRadius ?? (donut ? ['42%', '60%'] : '60%');
-        const titleTop = options.titleTop ?? 4;
+        const seriesCenter = options.seriesCenter ?? ['50%', '50%'];
+        const seriesRadius = options.seriesRadius ?? (donut ? ['36%', '58%'] : '58%');
+        const titleTop = options.titleTop ?? 10;
+        const colors = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
         chart.setOption(Object.assign(baseOption(title), {
             title: {
                 text: title,
@@ -241,12 +252,20 @@
                 top: titleTop,
                 textStyle: {color: '#e7f0ff', fontSize: 16, fontWeight: 700}
             },
-            legend: {bottom: legendBottom, textStyle: {color: '#8ea3cc'}},
+            legend: {
+                bottom: 0,
+                left: 'center',
+                textStyle: {color: '#8ea3cc', fontSize: 11},
+                itemWidth: 10,
+                itemHeight: 10,
+                itemGap: 8
+            },
             series: [{
                 type: 'pie',
                 radius: seriesRadius,
                 center: seriesCenter,
-                label: {color: '#dce7ff'},
+                label: {show: false},
+                labelLine: {show: false},
                 itemStyle: {
                     borderColor: '#071738',
                     borderWidth: 4
@@ -255,7 +274,7 @@
                     name: item.name,
                     value: item.value,
                     itemStyle: {
-                        color: ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa'][index % 6]
+                        color: colors[index % colors.length]
                     }
                 }))
             }]
@@ -281,7 +300,7 @@
                     return Array.from(rows.values()).join('<br>');
                 }
             },
-            grid: {left: 30, right: 30, top: 60, bottom: 40},
+            grid: {left: 40, right: 30, top: 60, bottom: 40},
             xAxis: [
                 {
                     type: 'value',
@@ -307,16 +326,15 @@
                     type: 'category',
                     inverse: true,
                     data: categories,
-                    axisLabel: {show: false},
+                    axisLabel: {color: '#dce7ff', fontWeight: 600},
                     axisTick: {show: false},
                     axisLine: {show: false}
                 },
                 {
                     type: 'category',
                     inverse: true,
-                    position: 'center',
                     data: categories,
-                    axisLabel: {color: '#dce7ff', fontWeight: 600},
+                    axisLabel: {show: false},
                     axisTick: {show: false},
                     axisLine: {show: false}
                 },
@@ -376,8 +394,8 @@
             chartEl.id = `tagChart-${index}`;
             panel.appendChild(chartEl);
             container.appendChild(panel);
-            const entries = item.data || [];
-            const colorPalette = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6'];
+            const entries = topNWithOther(item.data || [], 10);
+            const colorPalette = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
             requestAnimationFrame(() => {
                 const chart = echarts.init(chartEl);
                 chart.setOption(Object.assign(baseOption(item.title), {
@@ -393,15 +411,21 @@
                             return `${params.name}<br>海东籍学生：${params.value}人`;
                         }
                     },
+                    legend: {
+                        bottom: 0,
+                        left: 'center',
+                        textStyle: {color: '#8ea3cc', fontSize: 11},
+                        itemWidth: 10,
+                        itemHeight: 10,
+                        itemGap: 8
+                    },
                     series: [{
                         type: 'pie',
-                        radius: ['40%', '60%'],
-                        center: ['50%', '48%'],
-                        minAngle: 8,
-                        avoidLabelOverlap: true,
+                        radius: ['36%', '58%'],
+                        center: ['50%', '50%'],
+                        minAngle: 5,
                         label: {show: false},
                         labelLine: {show: false},
-                        labelLayout: {hideOverlap: true},
                         itemStyle: {
                             borderColor: '#071738',
                             borderWidth: 4
@@ -422,19 +446,9 @@
     }
 
     if (isCollegeAnalytics) {
-        renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true, {
-            legendBottom: -8,
-            titleTop: 0,
-            seriesCenter: ['50%', '40%'],
-            seriesRadius: ['40%', '58%']
-        });
+        renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true);
         renderVerticalBar('majorCategoryChart', '专业类别分布', majorCategoryData);
-        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {
-            legendBottom: -8,
-            titleTop: 0,
-            seriesCenter: ['50%', '40%'],
-            seriesRadius: '58%'
-        });
+        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false);
         renderHorizontalBar('educationChart', '学历分布', educationData);
         renderMirrorBar('genderChart', '性别分布', genderData);
         renderTagCharts('haidongTagCharts', haidongTagData);

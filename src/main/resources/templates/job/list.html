@@ -31,12 +31,12 @@
             <div class="workbench-toolbar">
                 <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="job-list-form" data-ajax-form>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="jobName">岗位名称
+                        <label for="jobName">岗位名称:
                             <input class="form-control" id="jobName" type="text" name="jobName" th:value="${query.jobName}" placeholder="输入岗位名称">
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="enterpriseId">所属企业
+                        <label for="enterpriseId">所属企业:
                             <select class="form-select" id="enterpriseId" name="enterpriseId">
                                 <option value="">全部企业</option>
                                 <option th:each="enterprise : ${enterprises}"
@@ -47,7 +47,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="educationRequirement">学历要求
+                        <label for="educationRequirement">学历要求:
                             <select class="form-select" id="educationRequirement" name="educationRequirement">
                                 <option value="">全部学历</option>
                                 <option th:each="item : ${educationOptions}"
@@ -58,7 +58,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="experienceRequirement">经验要求
+                        <label for="experienceRequirement">经验要求:
                             <select class="form-select" id="experienceRequirement" name="experienceRequirement">
                                 <option value="">全部经验</option>
                                 <option th:each="item : ${experienceOptions}"
@@ -69,7 +69,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="salaryRange">薪资待遇
+                        <label for="salaryRange">薪资待遇:
                             <select class="form-select" id="salaryRange" name="salaryRange">
                                 <option value="">全部薪资</option>
                                 <option th:each="item : ${salaryOptions}"
@@ -81,7 +81,7 @@
                     </div>
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="filter-block full-width">
-                            <span>工作地区</span>
+                            <span>工作地区:</span>
                             <div data-region-step data-region-api-url="/api/regions" data-region-placeholder="工作地区">
                                 <input type="hidden" name="workProvinceCode" th:value="${query.workProvinceCode}" data-region-province>
                                 <input type="hidden" name="workCityCode" th:value="${query.workCityCode}" data-region-city>

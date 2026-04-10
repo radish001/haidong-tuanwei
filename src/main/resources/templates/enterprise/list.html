@@ -31,12 +31,12 @@
             <div class="workbench-toolbar">
                 <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="enterprise-list-form" data-ajax-form>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="enterpriseName">企业名称
+                        <label for="enterpriseName">企业名称:
                             <input class="form-control" id="enterpriseName" type="text" name="enterpriseName" th:value="${query.enterpriseName}" placeholder="输入企业名称">
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="industry">企业行业
+                        <label for="industry">企业行业:
                             <select class="form-select" id="industry" name="industry">
                                 <option value="">全部行业</option>
                                 <option th:each="item : ${industryOptions}"
@@ -47,7 +47,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="enterpriseNature">企业性质
+                        <label for="enterpriseNature">企业性质:
                             <select class="form-select" id="enterpriseNature" name="enterpriseNature">
                                 <option value="">全部性质</option>
                                 <option th:each="item : ${natureOptions}"
@@ -58,7 +58,7 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="enterpriseScale">企业规模
+                        <label for="enterpriseScale">企业规模:
                             <select class="form-select" id="enterpriseScale" name="enterpriseScale">
                                 <option value="">全部规模</option>
                                 <option th:each="item : ${scaleOptions}"
@@ -70,7 +70,7 @@
                     </div>
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="filter-block full-width">
-                            <span>所在地区</span>
+                            <span>所在地区:</span>
                             <div data-region-step data-region-api-url="/api/regions" data-region-placeholder="所在地区">
                                 <input type="hidden" name="regionProvinceCode" th:value="${query.regionProvinceCode}" data-region-province>
                                 <input type="hidden" name="regionCityCode" th:value="${query.regionCityCode}" data-region-city>

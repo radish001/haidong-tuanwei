@@ -14,14 +14,8 @@
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
         <section class="drawer-workspace">
             <section class="drawer-content-view match-results-drawer" th:fragment="drawerContent">
-                <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
-                    <div>
-                        <h2 class="h4 mb-1" th:text="${jobPost.jobName + ' 匹配学生'}">岗位匹配学生</h2>
-                        <p class="text-secondary mb-0" th:text="${'所属企业：' + jobPost.enterpriseName}">所属企业：企业名称</p>
-                    </div>
-                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/jobs}" data-drawer-close aria-label="关闭">
-                        <i class="bi bi-x-lg" aria-hidden="true"></i>
-                    </a>
+                <div class="drawer-panel-header">
+                    <h2 class="h4 mb-1" th:text="${jobPost.jobName + ' 匹配学生'}">岗位匹配学生</h2>
                 </div>
                 <div class="detail-grid row g-3">
                     <div class="col-12 col-sm-6"><span>专业要求</span><strong th:text="${#strings.isEmpty(jobPost.majorRequirementSummary) ? '未限制' : jobPost.majorRequirementSummary}">未限制</strong></div>

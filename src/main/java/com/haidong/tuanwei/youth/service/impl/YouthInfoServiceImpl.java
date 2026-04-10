@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -197,7 +198,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
     public byte[] exportExcel(String youthType, YouthSearchRequest query) {
         query.setPaged(false);
         List<YouthInfo> records = search(youthType, query);
-        try (Workbook workbook = new XSSFWorkbook()) {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook(200)) {
             Sheet sheet = workbook.createSheet("青年信息导出");
             createHeader(sheet, EXPORT_HEADERS);
 
@@ -209,13 +210,11 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 row.createCell(2).setCellValue(ExcelUtils.formatDate(item.getBirthDate()));
                 row.createCell(3).setCellValue(safe(item.getEthnicity()));
                 row.createCell(4).setCellValue(safe(item.getPoliticalStatus()));
-                row.createCell(5).setCellValue(regionSelectionSupport.buildExcelPath(
-                        item.getNativeProvinceCode(), item.getNativeCityCode(), item.getNativeCountyCode()));
+                row.createCell(5).setCellValue(toExcelRegionPath(item.getNativePlaceName()));
                 row.createCell(6).setCellValue(safe(item.getEducationLevelName()));
                 row.createCell(7).setCellValue(safe(item.getDegreeName()));
                 row.createCell(8).setCellValue(safe(item.getSchoolName()));
-                row.createCell(9).setCellValue(regionSelectionSupport.buildExcelPath(
-                        item.getSchoolProvinceCode(), item.getSchoolCityCode(), item.getSchoolCountyCode()));
+                row.createCell(9).setCellValue(toExcelRegionPath(item.getSchoolRegionName()));
                 row.createCell(10).setCellValue(safe(item.getMajor()));
                 row.createCell(11).setCellValue(item.getRecruitmentYear() == null ? "" : String.valueOf(item.getRecruitmentYear()));
                 row.createCell(12).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
@@ -223,7 +222,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 row.createCell(14).setCellValue(safe(item.getPhone()));
             }
             for (int i = 0; i < EXPORT_HEADERS.length; i++) {
-                sheet.autoSizeColumn(i);
+                sheet.setColumnWidth(i, 18 * 256);
             }
             return ExcelUtils.toBytes(workbook);
         } catch (IOException e) {
@@ -627,6 +626,13 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             }
         }
         return true;
+    }
+
+    private String toExcelRegionPath(String dashDelimited) {
+        if (dashDelimited == null || dashDelimited.isBlank()) {
+            return "";
+        }
+        return dashDelimited.replace("-", " / ");
     }
 
     private String safe(String value) {

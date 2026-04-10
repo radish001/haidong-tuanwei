@@ -13,6 +13,10 @@ public interface YouthAnalyticsDao {
 
     List<ChartItem> countByEducationLevel(@Param("youthType") String youthType);
 
+    List<ChartItem> countByGender(@Param("youthType") String youthType);
+
+    List<ChartItem> countByEthnicity(@Param("youthType") String youthType);
+
     List<ChartItem> countBySchoolCategory(@Param("youthType") String youthType);
 
     List<ChartItem> countByMajorCategory(@Param("youthType") String youthType);

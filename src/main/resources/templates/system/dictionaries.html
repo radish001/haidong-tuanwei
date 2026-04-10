@@ -83,7 +83,7 @@
                                 <input type="hidden" name="regionLevel" th:value="${query.regionLevel}" th:if="${query.section == 'region' and query.regionLevel != null}">
                                 <input type="hidden" name="parentId" th:value="${query.parentId}" th:if="${query.section == 'region' and query.parentId != null}">
                                 <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                                    <label for="keyword">名称/关键字
+                                    <label for="keyword">名称/关键字:
                                         <input class="form-control" id="keyword" type="text" name="keyword" th:value="${query.keyword}" placeholder="输入名称或关键字">
                                     </label>
                                 </div>

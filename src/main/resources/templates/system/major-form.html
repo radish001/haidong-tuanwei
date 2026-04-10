@@ -2,22 +2,17 @@
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
 <section class="drawer-content-view" th:fragment="drawerContent">
-    <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
-        <div>
-            <h2 class="h4 mb-1" th:text="${formTitle}">新增专业名称</h2>
-            <p class="text-secondary mb-0">每个专业名称必须绑定一个专业类别。</p>
-        </div>
-        <a class="btn btn-outline-secondary btn-sm" th:href="@{/system/dictionaries(tab='major')}" data-drawer-close aria-label="关闭">
-            <i class="bi bi-x-lg" aria-hidden="true"></i>
-        </a>
+    <div class="drawer-panel-header">
+        <h2 class="h4 mb-1" th:text="${formTitle}">新增专业名称</h2>
     </div>
     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-    <form th:action="@{${formAction}}" th:object="${majorForm}" method="post" class="edit-form row g-3">
-        <label class="col-12 col-md-6"><span>专业编码</span><input class="form-control" type="text" th:field="*{majorCode}"></label>
-        <label class="col-12 col-md-6"><span>专业名称</span><input class="form-control" type="text" th:field="*{majorName}"></label>
+    <form th:action="@{${formAction}}" th:object="${majorForm}" method="post" class="edit-form row g-3" novalidate>
+        <div class="alert error-alert validation-error-banner col-12" th:if="${#fields.hasAnyErrors()}">请检查并填写所有必填项</div>
+        <label class="col-12 col-md-6"><span>专业编码</span><input class="form-control" type="text" th:field="*{majorCode}" required></label>
+        <label class="col-12 col-md-6"><span>专业名称</span><input class="form-control" type="text" th:field="*{majorName}" required></label>
         <label class="col-12 col-md-6">
             <span>专业类别</span>
-            <select class="form-select" th:field="*{categoryDictItemId}">
+            <select class="form-select" th:field="*{categoryDictItemId}" required>
                 <option value="">请选择</option>
                 <option th:each="item : ${majorCategories}" th:value="${item.id}" th:text="${item.dictLabel}"></option>
             </select>
