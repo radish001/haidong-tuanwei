@@ -5,93 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>青年信息表单</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="drawer-shell">
-            <div class="drawer-placeholder">
-                <div class="drawer-placeholder-copy">
-                    <h2 th:text="${youthTypeLabel}">在校大学生</h2>
-                    <p>用于维护青年基础信息。</p>
-                </div>
-            </div>
-
-            <section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
-                <div class="panel-header">
-                    <div class="drawer-panel-header">
-                        <div>
-                            <h2 th:text="${formTitle}">新增青年信息</h2>
-                            <p>填写并维护青年信息。</p>
-                        </div>
-                        <a class="drawer-close-link" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>×</a>
+        <section class="drawer-workspace">
+            <section class="drawer-content-view" th:fragment="drawerContent">
+                <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h2 class="h4 mb-1" th:text="${formTitle}">新增青年信息</h2>
+                        <p class="text-secondary mb-0">填写并维护青年信息。</p>
                     </div>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{'/youth/' + ${youthType}}" data-drawer-close aria-label="关闭">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </a>
                 </div>
 
-                <form th:action="@{${formAction}}" th:object="${youthForm}" method="post" class="edit-form">
-                    <label><span>姓名</span><input type="text" th:field="*{name}"></label>
-                    <label>
+                <form th:action="@{${formAction}}" th:object="${youthForm}" method="post" class="edit-form row g-3">
+                    <label class="col-12 col-md-6"><span>姓名</span><input class="form-control" type="text" th:field="*{name}"></label>
+                    <label class="col-12 col-md-6">
                         <span>性别</span>
-                        <select th:field="*{gender}">
+                        <select class="form-select" th:field="*{gender}">
                             <option value="">请选择</option>
                             <option th:each="item : ${genders}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label><span>出生年月</span><input type="date" th:field="*{birthDate}"></label>
-                    <label>
+                    <label class="col-12 col-md-6"><span>出生年月</span><input class="form-control" type="date" th:field="*{birthDate}"></label>
+                    <label class="col-12 col-md-6">
                         <span>民族</span>
-                        <select th:field="*{ethnicity}">
+                        <select class="form-select" th:field="*{ethnicity}">
                             <option value="">请选择</option>
                             <option th:each="item : ${ethnicities}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>政治面貌</span>
-                        <select th:field="*{politicalStatus}">
+                        <select class="form-select" th:field="*{politicalStatus}">
                             <option value="">请选择</option>
                             <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                    <div class="filter-block col-12 col-md-6" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
                         <span>籍贯</span>
                         <input type="hidden" th:field="*{nativeProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{nativeCityCode}" data-region-city>
                         <input type="hidden" th:field="*{nativeCountyCode}" data-region-county>
                     </div>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>学历</span>
-                        <select th:field="*{educationLevel}">
+                        <select class="form-select" th:field="*{educationLevel}">
                             <option value="">请选择</option>
                             <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>学位</span>
-                        <select th:field="*{degreeCode}">
+                        <select class="form-select" th:field="*{degreeCode}">
                             <option value="">请选择</option>
                             <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>学校</span>
-                        <select th:field="*{schoolCode}">
+                        <select class="form-select" th:field="*{schoolCode}">
                             <option value="">请选择</option>
                             <option th:each="item : ${schools}"
                                     th:value="${item.schoolCode}"
                                     th:text="${item.schoolName + ' / ' + item.categoryLabel}"></option>
                         </select>
                     </label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                    <div class="filter-block col-12 col-md-6" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
                         <span>学校所在地</span>
                         <input type="hidden" th:field="*{schoolProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{schoolCityCode}" data-region-city>
                         <input type="hidden" th:field="*{schoolCountyCode}" data-region-county>
                     </div>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>专业</span>
-                        <select th:field="*{majorCode}">
+                        <select class="form-select" th:field="*{majorCode}">
                             <option value="">请选择</option>
                             <option th:each="item : ${majors}"
                                     th:value="${item.majorCode}"
@@ -99,27 +93,31 @@
                                     th:attr="data-category-label=${item.categoryLabel}"></option>
                         </select>
                     </label>
-                    <label><span>专业类别</span><input type="text" th:field="*{majorCategory}" readonly></label>
-                    <label><span>毕业时间</span><input type="date" th:field="*{graduationDate}"></label>
-                    <label><span>就业方向</span><input type="text" th:field="*{employmentDirection}"></label>
-                    <label><span>联系方式</span><input type="text" th:field="*{phone}"></label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                    <input type="hidden" th:field="*{majorCategory}">
+                    <label class="col-12 col-md-6">
+                        <span>招考年份</span>
+                        <input class="form-control" type="text" th:field="*{recruitmentYear}" inputmode="numeric" maxlength="4" placeholder="例如 2023">
+                    </label>
+                    <label class="col-12 col-md-6"><span>毕业时间</span><input class="form-control" type="date" th:field="*{graduationDate}"></label>
+                    <label class="col-12 col-md-6"><span>联系方式</span><input class="form-control" type="text" th:field="*{phone}"></label>
+                    <label class="col-12 col-md-6"><span>就业方向</span><input class="form-control" type="text" th:field="*{employmentDirection}"></label>
+                    <div class="filter-block col-12 col-md-6" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
                         <span>现居住地</span>
                         <input type="hidden" th:field="*{residenceProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{residenceCityCode}" data-region-city>
                         <input type="hidden" th:field="*{residenceCountyCode}" data-region-county>
                     </div>
-                    <label><span>就业状态</span><input type="text" th:field="*{employmentStatus}"></label>
-                    <label><span>当前从事工作</span><input type="text" th:field="*{currentJob}"></label>
-                    <label><span>就业单位</span><input type="text" th:field="*{employmentCompany}"></label>
-                    <label><span>创业状态</span><input type="text" th:field="*{entrepreneurshipStatus}"></label>
-                    <label><span>创业项目</span><input type="text" th:field="*{entrepreneurshipProject}"></label>
-                    <label class="full-width"><span>创业需求</span><textarea th:field="*{entrepreneurshipDemand}"></textarea></label>
-                    <label class="full-width"><span>备注</span><textarea th:field="*{remarks}"></textarea></label>
+                    <label class="col-12 col-md-6"><span>就业状态</span><input class="form-control" type="text" th:field="*{employmentStatus}"></label>
+                    <label class="col-12 col-md-6"><span>就业单位</span><input class="form-control" type="text" th:field="*{employmentCompany}"></label>
+                    <label class="col-12 col-md-6"><span>当前从事工作</span><input class="form-control" type="text" th:field="*{currentJob}"></label>
+                    <input type="hidden" th:field="*{entrepreneurshipStatus}">
+                    <input type="hidden" th:field="*{entrepreneurshipProject}">
+                    <input type="hidden" th:field="*{entrepreneurshipDemand}">
+                    <label class="full-width col-12"><span>备注</span><textarea class="form-control" th:field="*{remarks}"></textarea></label>
 
-                    <div class="form-actions full-width">
-                        <a class="ghost-button" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>取消</a>
-                        <button type="submit">保存</button>
+                    <div class="form-actions full-width col-12">
+                        <a class="btn btn-outline-secondary" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>取消</a>
+                        <button type="submit" class="btn btn-primary">保存</button>
                     </div>
                 </form>
             </section>

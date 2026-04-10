@@ -14,6 +14,8 @@ public interface SchoolDao {
 
     List<School> findAll();
 
+    List<School> findAllForSelect();
+
     School findById(@Param("id") Long id);
 
     School findByCode(@Param("schoolCode") String schoolCode);
@@ -35,4 +37,6 @@ public interface SchoolDao {
     long countByCategoryId(@Param("categoryDictItemId") Long categoryDictItemId);
 
     long countYouthUsageBySchoolCode(@Param("schoolCode") String schoolCode);
+
+    List<School> findExistingCodes(@Param("codes") List<String> codes);
 }

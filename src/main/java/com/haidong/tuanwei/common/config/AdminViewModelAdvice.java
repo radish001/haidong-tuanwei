@@ -8,11 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice(annotations = Controller.class)
 @RequiredArgsConstructor
@@ -25,6 +30,9 @@ public class AdminViewModelAdvice {
             "/youth/entrepreneur");
 
     private final MenuService menuService;
+
+    @Value("${app.upload.max-file-size:10MB}")
+    private String uploadMaxFileSizeText;
 
     @ModelAttribute("currentUser")
     public AdminUserDetails currentUser() {
@@ -49,6 +57,22 @@ public class AdminViewModelAdvice {
     @ModelAttribute("currentPath")
     public String currentPath(HttpServletRequest request) {
         return request == null ? "" : request.getRequestURI();
+    }
+
+    @ModelAttribute("uploadMaxFileSizeText")
+    public String uploadMaxFileSizeText() {
+        return uploadMaxFileSizeText;
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ModelAndView handleMaxUploadSizeExceeded(HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String requestUri = request == null ? "" : request.getRequestURI();
+        String redirectPath = requestUri != null && requestUri.endsWith("/import")
+                ? requestUri.substring(0, requestUri.length() - "/import".length())
+                : "/";
+        redirectAttributes.addFlashAttribute("importMessage",
+                "上传文件不能超过 " + uploadMaxFileSizeText + "，请压缩或拆分后重试");
+        return new ModelAndView("redirect:" + redirectPath);
     }
 
     private List<Menu> normalizeMenus(List<Menu> menus) {

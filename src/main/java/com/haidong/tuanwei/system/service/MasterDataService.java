@@ -1,5 +1,6 @@
 package com.haidong.tuanwei.system.service;
 
+import com.haidong.tuanwei.system.dto.DataImportResult;
 import com.haidong.tuanwei.system.dto.MajorForm;
 import com.haidong.tuanwei.system.dto.SchoolForm;
 import com.haidong.tuanwei.system.dto.SchoolTagForm;
@@ -7,6 +8,7 @@ import com.haidong.tuanwei.system.entity.MajorCatalog;
 import com.haidong.tuanwei.system.entity.School;
 import com.haidong.tuanwei.system.entity.SchoolTag;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MasterDataService {
 
@@ -23,6 +25,10 @@ public interface MasterDataService {
     void updateMajor(Long id, MajorForm request);
 
     void deleteMajor(Long id);
+
+    byte[] generateMajorImportTemplate();
+
+    DataImportResult importMajorsFromExcel(MultipartFile file);
 
     List<SchoolTag> searchSchoolTags(String keyword, int page, int pageSize);
 
@@ -44,6 +50,8 @@ public interface MasterDataService {
 
     List<School> getAllSchools();
 
+    List<School> getAllSchoolsForSelect();
+
     School getSchoolById(Long id);
 
     void createSchool(SchoolForm request);
@@ -51,4 +59,8 @@ public interface MasterDataService {
     void updateSchool(Long id, SchoolForm request);
 
     void deleteSchool(Long id);
+
+    byte[] generateSchoolImportTemplate();
+
+    DataImportResult importSchoolsFromExcel(MultipartFile file);
 }

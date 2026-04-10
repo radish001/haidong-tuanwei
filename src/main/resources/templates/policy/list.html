@@ -5,52 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>政策管理</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="page-hero">
-            <h2 class="page-hero-title">就业创业政策</h2>
-            <p class="page-hero-subtitle">展示政策标题、发布单位、发布时间和发布状态。</p>
-        </section>
-        <div class="drawer-page-layout" data-drawer-page>
-        <section class="panel drawer-list-panel">
-            <div class="tab-row">
-                <div class="tab-list">
-                    <a class="tab-link active" th:href="@{/policies}">政策列表</a>
-                </div>
-            </div>
-            <div class="panel-header">
-                <div>
-                    <h2>政策文章列表</h2>
-                    <p>支持信息查询、发布状态调整和详情查看。</p>
-                </div>
+        <div data-drawer-page>
+        <section class="card border-0 shadow-sm workbench-card">
+            <div class="card-body">
+            <div class="workbench-tabs">
+                <ul class="nav nav-tabs border-0 gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/policies}">政策列表</a>
+                    </li>
+                </ul>
             </div>
             <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
 
             <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
-            <div class="youth-toolbar">
-                <form class="filter-form compact-filter" method="get" id="policy-list-form" data-ajax-form>
-                    <input type="text" name="title" th:value="${query.title}" placeholder="标题">
-                    <input type="text" name="issuingOrganization" th:value="${query.issuingOrganization}" placeholder="发布单位">
-                    <select name="status">
-                        <option value="">状态</option>
-                        <option value="0" th:selected="${query.status != null and query.status == 0}">草稿</option>
-                        <option value="1" th:selected="${query.status != null and query.status == 1}">已发布</option>
-                    </select>
-                    <div class="filter-actions-inline">
-                        <button type="submit">查询</button>
-                        <a class="secondary-button" data-ajax-link th:href="@{/policies(pageSize=${pageSize})}">重置</a>
+            <div class="workbench-toolbar">
+                <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="policy-list-form" data-ajax-form>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="title">标题
+                            <input class="form-control" id="title" type="text" name="title" th:value="${query.title}" placeholder="输入标题关键词">
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="issuingOrganization">发布单位
+                            <input class="form-control" id="issuingOrganization" type="text" name="issuingOrganization" th:value="${query.issuingOrganization}" placeholder="输入发布单位">
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="status">状态
+                            <select class="form-select" id="status" name="status">
+                                <option value="">全部状态</option>
+                                <option value="0" th:selected="${query.status != null and query.status == 0}">草稿</option>
+                                <option value="1" th:selected="${query.status != null and query.status == 1}">已发布</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 d-flex align-items-end">
+                        <div class="filter-actions-inline d-flex gap-2">
+                            <a class="btn btn-outline-secondary" data-ajax-link th:href="@{/policies(pageSize=${pageSize})}">重置</a>
+                            <button type="submit" class="btn btn-primary">查询</button>
+                        </div>
                     </div>
                 </form>
 
-                <div class="panel-actions youth-page-actions">
-                    <a class="ghost-button" data-drawer-link th:href="@{/policies/new}">新增</a>
+                <div class="workbench-actions">
+                    <a class="btn btn-primary" data-drawer-link th:href="@{/policies/new}">新增</a>
                     <button type="button"
-                            class="secondary-button"
+                            class="btn btn-outline-danger"
                             data-batch-delete-button
                             data-batch-form-id="policy-batch-delete-form">删除</button>
                 </div>
@@ -61,56 +69,58 @@
                   method="post"
                   data-confirm-message="确认删除选中的政策文章吗？"></form>
 
-            <table class="simple-table">
-                <thead>
-                <tr>
-                    <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                    <th class="index-cell">序号</th>
-                    <th>标题</th>
-                    <th>发布单位</th>
-                    <th>来源</th>
-                    <th>发布时间</th>
-                    <th>状态</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item, itemStat : ${records}">
-                    <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                    <td th:text="${item.title}">就业扶持政策</td>
-                    <td th:text="${item.issuingOrganization}">海东团市委</td>
-                    <td th:text="${item.policySource}">官网</td>
-                    <td th:text="${item.publishTime}">2026-04-03T17:00</td>
-                    <td th:text="${item.status == 1 ? '已发布' : '草稿'}">已发布</td>
-                    <td class="table-actions">
-                        <a data-drawer-link th:href="@{'/policies/' + ${item.id}}">详情</a>
-                        <a data-drawer-link th:href="@{'/policies/' + ${item.id} + '/edit'}">编辑</a>
-                        <form th:action="@{'/policies/' + ${item.id} + '/status'}" method="post">
-                            <input type="hidden" name="status" th:value="${item.status == 1 ? 0 : 1}">
-                            <button type="submit" class="link-button"
-                                    th:text="${item.status == 1 ? '下线' : '发布'}">发布</button>
-                        </form>
-                        <form th:action="@{'/policies/' + ${item.id} + '/delete'}"
-                              method="post"
-                              data-confirm-message="确认删除这条政策文章吗？">
-                            <button type="submit" class="link-button">删除</button>
-                        </form>
-                    </td>
-                </tr>
-                <tr th:if="${#lists.isEmpty(records)}">
-                    <td class="empty-cell" colspan="8">暂无政策数据</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="simple-table table table-hover align-middle mb-0">
+                    <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
+                        <th class="index-cell">序号</th>
+                        <th>标题</th>
+                        <th>发布单位</th>
+                        <th>来源</th>
+                        <th>发布时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, itemStat : ${records}">
+                        <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
+                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                        <td th:text="${item.title}">就业扶持政策</td>
+                        <td th:text="${item.issuingOrganization}">海东团市委</td>
+                        <td th:text="${item.policySource}">官网</td>
+                        <td th:text="${item.publishTime}">2026-04-03T17:00</td>
+                        <td th:text="${item.status == 1 ? '已发布' : '草稿'}">已发布</td>
+                        <td class="table-actions">
+                            <a class="btn btn-sm btn-outline-info" data-drawer-link th:href="@{'/policies/' + ${item.id}}">详情</a>
+                            <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{'/policies/' + ${item.id} + '/edit'}">编辑</a>
+                            <form th:action="@{'/policies/' + ${item.id} + '/status'}" method="post">
+                                <input type="hidden" name="status" th:value="${item.status == 1 ? 0 : 1}">
+                                <button type="submit" class="btn btn-sm btn-outline-warning"
+                                        th:text="${item.status == 1 ? '下线' : '发布'}">发布</button>
+                            </form>
+                            <form th:action="@{'/policies/' + ${item.id} + '/delete'}"
+                                  method="post"
+                                  data-confirm-message="确认删除这条政策文章吗？">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(records)}">
+                        <td class="empty-cell" colspan="8">暂无政策数据</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-            <div class="pagination-bar" th:if="${totalCount > 0}">
+            <div class="pagination-bar d-flex flex-wrap justify-content-between align-items-center" th:if="${totalCount > 0}">
                 <div class="pagination-meta"
                      th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
-                <div class="pagination-tools">
-                    <label class="pagination-page-size">
+                <div class="pagination-tools d-flex align-items-center gap-3">
+                    <label class="pagination-page-size d-inline-flex align-items-center gap-2 mb-0">
                         <span>每页</span>
-                        <select name="pageSize" form="policy-list-form" data-page-size-select>
+                        <select class="form-select form-select-sm" name="pageSize" form="policy-list-form" data-page-size-select>
                             <option value="10" th:selected="${pageSize == 10}">10</option>
                             <option value="20" th:selected="${pageSize == 20}">20</option>
                             <option value="50" th:selected="${pageSize == 50}">50</option>
@@ -118,36 +128,55 @@
                         </select>
                         <span>条</span>
                     </label>
-                    <div class="pagination-actions">
-                        <button class="pagination-link" type="submit" form="policy-list-form" name="page"
-                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
-                        <button class="pagination-link" type="submit" form="policy-list-form" name="page"
-                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
-                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
-                        <button class="pagination-link"
-                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                    <nav aria-label="政策分页">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" th:classappend="${!hasPrevious} ? ' disabled'">
+                                <button class="page-link" type="submit" form="policy-list-form" name="page"
+                                        th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                            </li>
+                            <li class="page-item" th:if="${showFirstPage}">
+                                <button class="page-link" type="submit" form="policy-list-form" name="page"
+                                        th:value="${firstPage}" th:text="${firstPage}">1</button>
+                            </li>
+                            <li class="page-item disabled" th:if="${showLeadingEllipsis}">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item"
                                 th:each="pageNumber : ${pageNumbers}"
-                                type="submit"
-                                form="policy-list-form"
-                                name="page"
-                                th:value="${pageNumber}"
-                                th:text="${pageNumber}"
-                                th:disabled="${pageNumber == currentPage}">1</button>
-                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
-                        <button class="pagination-link" type="submit" form="policy-list-form" name="page"
-                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
-                        <button class="pagination-link" type="submit" form="policy-list-form" name="page"
-                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
-                    </div>
+                                th:classappend="${pageNumber == currentPage} ? ' active'">
+                                <button class="page-link"
+                                        type="submit"
+                                        form="policy-list-form"
+                                        name="page"
+                                        th:value="${pageNumber}"
+                                        th:text="${pageNumber}"
+                                        th:disabled="${pageNumber == currentPage}">1</button>
+                            </li>
+                            <li class="page-item disabled" th:if="${showTrailingEllipsis}">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item" th:if="${showLastPage}">
+                                <button class="page-link" type="submit" form="policy-list-form" name="page"
+                                        th:value="${lastPage}" th:text="${lastPage}">99</button>
+                            </li>
+                            <li class="page-item" th:classappend="${!hasNext} ? ' disabled'">
+                                <button class="page-link" type="submit" form="policy-list-form" name="page"
+                                        th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
             </div>
-        </section>
-        <aside class="record-drawer" data-drawer-panel hidden>
-            <div class="panel record-drawer-panel">
-                <div data-drawer-content class="record-drawer-content"></div>
             </div>
-        </aside>
+        </section>
+        <div class="offcanvas offcanvas-end record-drawer-canvas" tabindex="-1" data-drawer-offcanvas aria-labelledby="policy-drawer-title">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title" id="policy-drawer-title" data-drawer-title>详细信息</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="关闭"></button>
+            </div>
+            <div class="offcanvas-body" data-drawer-content></div>
+        </div>
         </div>
     </main>
 </div>

@@ -5,26 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
 
-        <section class="page-hero">
-            <h2 class="page-hero-title">海东市联络服务青年就业创业信息平台</h2>
-            <div class="page-hero-actions">
-                <a class="ghost-button" th:href="@{/analytics/college}">在校大学生分析</a>
-                <a class="ghost-button" th:href="@{/enterprises}">企业招聘信息</a>
-            </div>
-        </section>
+        <div class="workbench-actions justify-content-start ms-0">
+            <a class="btn btn-outline-info" th:href="@{/analytics/college}">在校大学生分析</a>
+        </div>
 
-        <section class="map-grid">
-            <article class="map-card panel">
-                <div class="panel-header map-card-header">
+        <section class="map-grid row g-4">
+            <div class="col-12 col-xl-6">
+            <article class="map-card card border-0 h-100">
+                <div class="map-card-header card-header bg-transparent border-0">
                     <div>
                         <h2>海东市在校大学生分布</h2>
                     </div>
@@ -34,8 +32,10 @@
                     <strong id="chinaCollegeMapSummary">0 人 / 0 省级区域</strong>
                 </div>
             </article>
-            <article class="map-card panel">
-                <div class="panel-header map-card-header">
+            </div>
+            <div class="col-12 col-xl-6">
+            <article class="map-card card border-0 h-100">
+                <div class="map-card-header card-header bg-transparent border-0">
                     <div>
                         <h2>海东市各区县在校大学生分布</h2>
                     </div>
@@ -45,40 +45,51 @@
                     <strong id="haidongCollegeMapSummary">0 人 / 0 区县</strong>
                 </div>
             </article>
+            </div>
         </section>
 
-        <section class="stats-grid">
-            <article class="stat-card">
+        <section class="stats-grid row g-4">
+            <div class="col-12 col-sm-6 col-xl-3">
+            <article class="stat-card card border-0 h-100">
                 <span class="stat-label">青年总数</span>
                 <strong th:text="${stats.youthCount}">0</strong>
                 <div class="stat-meta">在库青年信息总量</div>
             </article>
-            <article class="stat-card">
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+            <article class="stat-card card border-0 h-100">
                 <span class="stat-label">企业总数</span>
                 <strong th:text="${stats.enterpriseCount}">0</strong>
                 <div class="stat-meta">在库企业主体数量</div>
             </article>
-            <article class="stat-card">
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+            <article class="stat-card card border-0 h-100">
                 <span class="stat-label">岗位总数</span>
                 <strong th:text="${stats.jobCount}">0</strong>
                 <div class="stat-meta">在库岗位信息数量</div>
             </article>
-            <article class="stat-card">
+            </div>
+            <div class="col-12 col-sm-6 col-xl-3">
+            <article class="stat-card card border-0 h-100">
                 <span class="stat-label">政策总数</span>
                 <strong th:text="${stats.policyCount}">0</strong>
                 <div class="stat-meta">已录入政策数量</div>
             </article>
+            </div>
         </section>
 
-        <section class="list-grid">
-            <article class="panel">
-                <div class="panel-header">
+        <section class="list-grid row g-4">
+            <div class="col-12 col-xl-6">
+            <article class="card border-0 h-100">
+                <div class="card-header bg-transparent border-0">
                     <div>
                         <h2>政策信息</h2>
                     </div>
-                    <a class="ghost-button" th:href="@{/policies}">更多</a>
+                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/policies}">更多</a>
                 </div>
-                <table class="simple-table">
+                <div class="table-responsive">
+                <table class="simple-table table table-hover align-middle mb-0">
                     <thead>
                     <tr>
                         <th>标题</th>
@@ -97,16 +108,20 @@
                     </tr>
                     </tbody>
                 </table>
+                </div>
             </article>
+            </div>
 
-            <article class="panel">
-                <div class="panel-header">
+            <div class="col-12 col-xl-6">
+            <article class="card border-0 h-100">
+                <div class="card-header bg-transparent border-0">
                     <div>
                         <h2>招聘信息</h2>
                     </div>
-                    <a class="ghost-button" th:href="@{/jobs}">更多</a>
+                    <a class="btn btn-sm btn-outline-secondary" th:href="@{/jobs}">更多</a>
                 </div>
-                <table class="simple-table">
+                <div class="table-responsive">
+                <table class="simple-table table table-hover align-middle mb-0">
                     <thead>
                     <tr>
                         <th>岗位名称</th>
@@ -125,7 +140,9 @@
                     </tr>
                     </tbody>
                 </table>
+                </div>
             </article>
+            </div>
         </section>
     </main>
 </div>

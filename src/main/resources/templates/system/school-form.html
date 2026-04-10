@@ -1,39 +1,36 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
-    <div class="panel-header">
-        <div class="drawer-panel-header">
-            <div>
-                <h2 th:text="${formTitle}">新增学校</h2>
-                <p>学校需要绑定一个学校类别，并可关联多个学校标签。</p>
-            </div>
-            <a class="drawer-close-link" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close>×</a>
+<section class="drawer-content-view" th:fragment="drawerContent">
+    <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+            <h2 class="h4 mb-1" th:text="${formTitle}">新增学校</h2>
+            <p class="text-secondary mb-0">学校需要绑定一个学校类别，并可关联多个学校标签。</p>
         </div>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close aria-label="关闭">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </a>
     </div>
     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-    <form th:action="@{${formAction}}" th:object="${schoolForm}" method="post" class="edit-form">
-        <label><span>学校编码</span><input type="text" th:field="*{schoolCode}"></label>
-        <label><span>学校名称</span><input type="text" th:field="*{schoolName}"></label>
-        <label>
+    <form th:action="@{${formAction}}" th:object="${schoolForm}" method="post" class="edit-form row g-3">
+        <label class="col-12 col-md-6"><span>学校编码</span><input class="form-control" type="text" th:field="*{schoolCode}"></label>
+        <label class="col-12 col-md-6"><span>学校名称</span><input class="form-control" type="text" th:field="*{schoolName}"></label>
+        <label class="col-12 col-md-6">
             <span>学校类别</span>
-            <select th:field="*{categoryDictItemId}">
+            <select class="form-select" th:field="*{categoryDictItemId}">
                 <option value="">请选择</option>
                 <option th:each="item : ${schoolCategories}" th:value="${item.id}" th:text="${item.dictLabel}"></option>
             </select>
         </label>
-        <label class="full-width">
+        <label class="full-width job-multiselect-label col-12">
             <span>学校标签</span>
-            <div class="checkbox-group">
-                <label class="checkbox-option" th:each="item : ${schoolTags}">
-                    <input type="checkbox" th:field="*{tagIds}" th:value="${item.id}">
-                    <span th:text="${item.tagName}">双一流</span>
-                </label>
-            </div>
+            <select class="form-select" th:field="*{tagIds}" multiple data-multiselect data-placeholder="请选择学校标签">
+                <option th:each="item : ${schoolTags}" th:value="${item.id}" th:text="${item.tagName}"></option>
+            </select>
         </label>
-        <div class="form-actions full-width">
-            <a class="ghost-button" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close>取消</a>
-            <button type="submit">保存</button>
+        <div class="form-actions full-width col-12">
+            <a class="btn btn-outline-secondary" th:href="@{/system/dictionaries(tab='school')}" data-drawer-close>取消</a>
+            <button type="submit" class="btn btn-primary">保存</button>
         </div>
     </form>
 </section>

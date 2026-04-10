@@ -10,6 +10,7 @@ public class Region {
     private Long id;
 
     private Long parentId;
+    private String parentName;
 
     private String regionCode;
 

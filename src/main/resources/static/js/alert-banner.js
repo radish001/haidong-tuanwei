@@ -8,6 +8,14 @@
             return;
         }
 
+        alert.classList.add("alert-dismissible", "fade", "show");
+        if (alert.classList.contains("success-alert")) {
+            alert.classList.add("alert-success");
+        }
+        if (alert.classList.contains("error-alert")) {
+            alert.classList.add("alert-danger");
+        }
+
         const message = document.createElement("span");
         message.className = MESSAGE_CLASS;
         message.textContent = alert.textContent.trim();
@@ -16,10 +24,9 @@
 
         const closeButton = document.createElement("button");
         closeButton.type = "button";
-        closeButton.className = "alert-close";
+        closeButton.className = "alert-close btn-close btn-close-white";
         closeButton.setAttribute("data-alert-close", "");
         closeButton.setAttribute("aria-label", "关闭");
-        closeButton.textContent = "×";
         closeButton.addEventListener("click", () => {
             alert.remove();
         });

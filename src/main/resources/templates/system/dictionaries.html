@@ -5,31 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>系统设置</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
 
-        <section class="page-hero">
-            <h2 class="page-hero-title">系统设置</h2>
-        </section>
-
-        <div class="drawer-page-layout" data-drawer-page>
-            <section class="panel drawer-list-panel">
-                <div class="tab-row">
-                    <div class="tab-list">
-                        <a class="tab-link" data-ajax-link th:classappend="${query.tab == 'common'} ? ' active'" th:href="@{/system/dictionaries(tab='common')}">公共字典</a>
-                        <a class="tab-link" data-ajax-link th:classappend="${query.tab == 'major-category'} ? ' active'" th:href="@{/system/dictionaries(tab='major-category')}">专业类别</a>
-                        <a class="tab-link" data-ajax-link th:classappend="${query.tab == 'major'} ? ' active'" th:href="@{/system/dictionaries(tab='major')}">专业名称</a>
-                        <a class="tab-link" data-ajax-link th:classappend="${query.tab == 'school-category'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category')}">学校类别</a>
-                        <a class="tab-link" data-ajax-link th:classappend="${query.tab == 'school'} ? ' active'" th:href="@{/system/dictionaries(tab='school')}">学校</a>
-                        <a class="tab-link" data-ajax-link th:classappend="${query.tab == 'enterprise'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise')}">企业字典</a>
-                    </div>
+        <div data-drawer-page>
+            <section class="card border-0 shadow-sm workbench-card">
+                <div class="card-body">
+                <div class="workbench-tabs">
+                    <ul class="nav nav-tabs border-0 gap-2 flex-wrap">
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'common'} ? ' active'" th:href="@{/system/dictionaries(tab='common')}">公共字典</a></li>
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'major-category'} ? ' active'" th:href="@{/system/dictionaries(tab='major-category')}">专业类别</a></li>
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'major'} ? ' active'" th:href="@{/system/dictionaries(tab='major')}">专业名称</a></li>
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'school-category'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category')}">学校类别</a></li>
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'school'} ? ' active'" th:href="@{/system/dictionaries(tab='school')}">学校</a></li>
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'enterprise'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise')}">企业字典</a></li>
+                    </ul>
                 </div>
 
-                <div class="panel-header">
+                <div class="workbench-heading">
                     <div>
                         <h2 th:text="${viewTitle}">基础数据</h2>
                     </div>
@@ -38,114 +36,130 @@
                 <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
                     <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
                     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+                    <div class="alert" th:if="${importMessage}"
+                         th:classappend="${importResult != null and importResult.failCount > 0} ? 'error-alert' : 'success-alert'"
+                         th:text="${importMessage}"></div>
+                    <div class="import-result" th:if="${importResult != null and !#lists.isEmpty(importResult.errors)}">
+                        <table class="simple-table table table-hover align-middle mb-3">
+                            <thead><tr><th>失败行号</th><th>错误信息</th></tr></thead>
+                            <tbody>
+                            <tr th:each="error : ${importResult.errors}">
+                                <td th:text="${error.rowNumber}">2</td>
+                                <td th:text="${error.message}">数据错误</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <div class="system-content-shell">
-                        <div class="tab-row" th:if="${query.tab == 'common' or query.tab == 'school-category' or query.tab == 'enterprise'}">
-                            <div class="tab-list">
+                        <div class="workbench-tabs" th:if="${query.tab == 'common' or query.tab == 'school-category' or query.tab == 'enterprise'}">
+                            <ul class="nav nav-tabs border-0 gap-2 flex-wrap">
                                 <th:block th:if="${query.tab == 'common'}">
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'gender'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='gender')}">性别</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'ethnicity'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='ethnicity')}">民族</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'political_status'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='political_status')}">政治面貌</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'education_level'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='education_level')}">学历</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'degree'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='degree')}">学位</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'region'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='region')}">区域数据</a>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'gender'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='gender')}">性别</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'ethnicity'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='ethnicity')}">民族</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'political_status'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='political_status')}">政治面貌</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'education_level'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='education_level')}">学历</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'degree'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='degree')}">学位</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'region'} ? ' active'" th:href="@{/system/dictionaries(tab='common', section='region')}">区域数据</a></li>
                                 </th:block>
                                 <th:block th:if="${query.tab == 'school-category'}">
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'school_category'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school_category')}">学校类别</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'school-tag'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}">学校标签</a>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'school_category'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school_category')}">学校类别</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'school-tag'} ? ' active'" th:href="@{/system/dictionaries(tab='school-category', section='school-tag')}">学校标签</a></li>
                                 </th:block>
                                 <th:block th:if="${query.tab == 'enterprise'}">
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_scale'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_scale')}">企业规模</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_nature'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_nature')}">企业性质</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'enterprise_industry'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_industry')}">企业行业</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'experience_requirement'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='experience_requirement')}">经验要求</a>
-                                    <a class="tab-link" data-ajax-link th:classappend="${query.section == 'salary_range'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='salary_range')}">薪资待遇</a>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'enterprise_scale'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_scale')}">企业规模</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'enterprise_nature'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_nature')}">企业性质</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'enterprise_industry'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='enterprise_industry')}">企业行业</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'experience_requirement'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='experience_requirement')}">经验要求</a></li>
+                                    <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.section == 'salary_range'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise', section='salary_range')}">薪资待遇</a></li>
                                 </th:block>
-                            </div>
+                            </ul>
                         </div>
 
-                        <div class="youth-toolbar system-toolbar">
-                            <form class="filter-form compact-filter" method="get" id="dictionary-list-form" data-ajax-form>
+                        <div class="workbench-toolbar">
+                            <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="dictionary-list-form" data-ajax-form>
                                 <input type="hidden" name="tab" th:value="${query.tab}">
                                 <input type="hidden" name="section" th:value="${query.section}">
-                                <th:block th:if="${viewKind == 'region'}">
-                                    <select name="regionLevel">
-                                        <option value="1" th:selected="${query.regionLevel == 1}">省级</option>
-                                        <option value="2" th:selected="${query.regionLevel == 2}">市级</option>
-                                        <option value="3" th:selected="${query.regionLevel == 3}">区县级</option>
-                                    </select>
-                                    <select name="parentId" th:if="${query.regionLevel > 1}">
-                                        <option value="">上级区域</option>
-                                        <option th:each="item : ${parentRegionOptions}"
-                                                th:value="${item.id}"
-                                                th:text="${item.regionName}"
-                                                th:selected="${item.id == query.parentId}"></option>
-                                    </select>
-                                </th:block>
-                                <input type="text" name="keyword" th:value="${query.keyword}" placeholder="名称/关键字">
-                                <div class="filter-actions-inline">
-                                    <button type="submit">查询</button>
-                                    <a class="secondary-button"
-                                       data-ajax-link
-                                       th:href="@{/system/dictionaries(tab=${query.tab}, section=${query.section})}">重置</a>
+                                <input type="hidden" name="regionLevel" th:value="${query.regionLevel}" th:if="${query.section == 'region' and query.regionLevel != null}">
+                                <input type="hidden" name="parentId" th:value="${query.parentId}" th:if="${query.section == 'region' and query.parentId != null}">
+                                <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                                    <label for="keyword">名称/关键字
+                                        <input class="form-control" id="keyword" type="text" name="keyword" th:value="${query.keyword}" placeholder="输入名称或关键字">
+                                    </label>
+                                </div>
+                                <div class="col-12 col-sm-6 col-lg-4 d-flex align-items-end">
+                                    <div class="filter-actions-inline d-flex gap-2">
+                                        <a class="btn btn-outline-secondary"
+                                           data-ajax-link
+                                           th:href="@{/system/dictionaries(tab=${query.tab}, section=${query.section})}">重置</a>
+                                        <button type="submit" class="btn btn-primary">查询</button>
+                                    </div>
                                 </div>
                             </form>
+                            <div class="workbench-actions">
+                                <th:block th:if="${query.tab == 'major'}">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#majorImportModal">批量导入</button>
+                                </th:block>
+                                <th:block th:if="${query.tab == 'school'}">
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#schoolImportModal">批量导入</button>
+                                </th:block>
+                                <a class="btn btn-primary" data-drawer-link th:href="@{${createUrl}}">新增</a>
+                            </div>
                         </div>
 
                         <div class="system-table-wrap">
-                            <div class="panel-actions system-table-actions">
-                                <a class="ghost-button" data-drawer-link th:href="@{${createUrl}}">新增</a>
-                            </div>
-                            <table class="simple-table system-simple-table">
-                            <thead>
-                            <tr th:if="${viewKind == 'dict'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column" th:text="${query.section == 'education_level' ? '学历编码' : (query.section == 'degree' ? '学位编码' : '字典值')}">字典值</th>
-                                <th class="name-column" th:text="${query.section == 'education_level' ? '学历名称' : (query.section == 'degree' ? '学位名称' : '显示名称')}">显示名称</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'major'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column">专业编码</th>
-                                <th class="name-column">专业名称</th>
-                                <th>专业类别</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'school-tag'}">
-                                <th class="index-cell">序号</th>
-                                <th class="name-column">标签名称</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'school'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column">学校编码</th>
-                                <th class="name-column">学校名称</th>
-                                <th>学校类别</th>
-                                <th>学校标签</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            <tr th:if="${viewKind == 'region'}">
-                                <th class="index-cell">序号</th>
-                                <th class="code-column">区域编码</th>
-                                <th class="name-column">区域名称</th>
-                                <th>层级</th>
-                                <th class="action-column">操作</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:if="${viewKind == 'dict'}" th:each="item, itemStat : ${records}">
-                                <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                                <td class="code-cell" th:text="${item.dictValue}">编码</td>
-                                <td class="name-cell" th:text="${item.dictLabel}">名称</td>
-                                <td class="table-actions">
-                                    <a data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
-                                    <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"
-                                          method="post"
-                                          data-confirm-message="确认删除这条基础字典数据吗？">
-                                        <button type="submit" class="link-button">删除</button>
-                                    </form>
-                                </td>
-                            </tr>
+                            <div class="table-responsive">
+                                <table class="simple-table system-simple-table table table-hover align-middle mb-0">
+                                <thead>
+                                <tr th:if="${viewKind == 'dict'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column" th:text="${query.section == 'education_level' ? '学历编码' : (query.section == 'degree' ? '学位编码' : '字典值')}">字典值</th>
+                                    <th class="name-column" th:text="${query.section == 'education_level' ? '学历名称' : (query.section == 'degree' ? '学位名称' : '显示名称')}">显示名称</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'major'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column">专业编码</th>
+                                    <th class="name-column">专业名称</th>
+                                    <th>专业类别</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'school-tag'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="name-column">标签名称</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'school'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column">学校编码</th>
+                                    <th class="name-column">学校名称</th>
+                                    <th>学校类别</th>
+                                    <th>学校标签</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                <tr th:if="${viewKind == 'region'}">
+                                    <th class="index-cell">序号</th>
+                                    <th class="code-column">区域编码</th>
+                                    <th class="name-column">区域名称</th>
+                                    <th>层级</th>
+                                    <th>上级区域</th>
+                                    <th class="action-column">操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${viewKind == 'dict'}" th:each="item, itemStat : ${records}">
+                                    <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
+                                    <td class="code-cell" th:text="${item.dictValue}">编码</td>
+                                    <td class="name-cell" th:text="${item.dictLabel}">名称</td>
+                                    <td class="table-actions">
+                                        <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
+                                        <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"
+                                              method="post"
+                                              data-confirm-message="确认删除这条基础字典数据吗？">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
+                                        </form>
+                                    </td>
+                                </tr>
 
                             <tr th:if="${viewKind == 'major'}" th:each="item, itemStat : ${records}">
                                 <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
@@ -153,11 +167,11 @@
                                 <td class="name-cell" th:text="${item.majorName}">计算机科学与技术</td>
                                 <td th:text="${item.categoryLabel}">工学</td>
                                 <td class="table-actions">
-                                    <a data-drawer-link th:href="@{/system/majors/{id}/edit(id=${item.id})}">编辑</a>
+                                    <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{/system/majors/{id}/edit(id=${item.id})}">编辑</a>
                                     <form th:action="@{/system/majors/{id}/delete(id=${item.id})}"
                                           method="post"
                                           data-confirm-message="确认删除这条专业名称吗？">
-                                        <button type="submit" class="link-button">删除</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
                                     </form>
                                 </td>
                             </tr>
@@ -166,11 +180,11 @@
                                 <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                                 <td class="name-cell" th:text="${item.tagName}">双一流</td>
                                 <td class="table-actions">
-                                    <a data-drawer-link th:href="@{/system/school-tags/{id}/edit(id=${item.id})}">编辑</a>
+                                    <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{/system/school-tags/{id}/edit(id=${item.id})}">编辑</a>
                                     <form th:action="@{/system/school-tags/{id}/delete(id=${item.id})}"
                                           method="post"
                                           data-confirm-message="确认删除这条学校标签吗？">
-                                        <button type="submit" class="link-button">删除</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
                                     </form>
                                 </td>
                             </tr>
@@ -182,11 +196,11 @@
                                 <td th:text="${item.categoryLabel}">双一流</td>
                                 <td th:text="${item.tagSummary}">双一流</td>
                                 <td class="table-actions">
-                                    <a data-drawer-link th:href="@{/system/schools/{id}/edit(id=${item.id})}">编辑</a>
+                                    <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{/system/schools/{id}/edit(id=${item.id})}">编辑</a>
                                     <form th:action="@{/system/schools/{id}/delete(id=${item.id})}"
                                           method="post"
                                           data-confirm-message="确认删除这所学校吗？">
-                                        <button type="submit" class="link-button">删除</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
                                     </form>
                                 </td>
                             </tr>
@@ -196,30 +210,32 @@
                                 <td class="code-cell" th:text="${item.regionCode}">630200</td>
                                 <td class="name-cell" th:text="${item.regionName}">海东市</td>
                                 <td th:text="${item.regionLevel == 1 ? '省级' : (item.regionLevel == 2 ? '市级' : '区县级')}">省级</td>
+                                <td th:text="${item.parentName != null ? item.parentName : '-'}">青海省</td>
                                 <td class="table-actions">
-                                    <a data-drawer-link th:href="@{/system/regions/{id}/edit(id=${item.id})}">编辑</a>
+                                    <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{/system/regions/{id}/edit(id=${item.id})}">编辑</a>
                                     <form th:action="@{/system/regions/{id}/delete(id=${item.id}, regionLevel=${query.regionLevel}, parentId=${query.parentId})}"
                                           method="post"
                                           data-confirm-message="确认删除这条区域数据吗？">
-                                        <button type="submit" class="link-button">删除</button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
                                     </form>
                                 </td>
                             </tr>
 
-                            <tr th:if="${#lists.isEmpty(records)}">
-                                <td class="empty-cell"
-                                    th:attr="colspan=${viewKind == 'school' ? 6 : (viewKind == 'major' or viewKind == 'region' ? 5 : (viewKind == 'dict' ? 4 : 3))}">当前条件下暂无数据</td>
-                            </tr>
-                            </tbody>
-                            </table>
+                                <tr th:if="${#lists.isEmpty(records)}">
+                                    <td class="empty-cell"
+                                        th:attr="colspan=${viewKind == 'school' ? 6 : (viewKind == 'major' ? 5 : (viewKind == 'region' ? 6 : (viewKind == 'dict' ? 4 : 3)))}">当前条件下暂无数据</td>
+                                </tr>
+                                </tbody>
+                                </table>
+                            </div>
 
-                            <div class="pagination-bar" th:if="${totalCount > 0}">
+                            <div class="pagination-bar d-flex flex-wrap justify-content-between align-items-center" th:if="${totalCount > 0}">
                                 <div class="pagination-meta"
                                      th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
-                                <div class="pagination-tools">
-                                    <label class="pagination-page-size">
+                                <div class="pagination-tools d-flex align-items-center gap-3">
+                                    <label class="pagination-page-size d-inline-flex align-items-center gap-2 mb-0">
                                         <span>每页</span>
-                                        <select name="pageSize" form="dictionary-list-form" data-page-size-select>
+                                        <select class="form-select form-select-sm" name="pageSize" form="dictionary-list-form" data-page-size-select>
                                             <option value="10" th:selected="${pageSize == 10}">10</option>
                                             <option value="20" th:selected="${pageSize == 20}">20</option>
                                             <option value="50" th:selected="${pageSize == 50}">50</option>
@@ -227,38 +243,113 @@
                                         </select>
                                         <span>条</span>
                                     </label>
-                                    <div class="pagination-actions">
-                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
-                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
-                                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
-                                        <button class="pagination-link"
-                                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                                    <nav aria-label="字典分页">
+                                        <ul class="pagination pagination-sm mb-0">
+                                            <li class="page-item" th:classappend="${!hasPrevious} ? ' disabled'">
+                                                <button class="page-link" type="submit" form="dictionary-list-form" name="page"
+                                                        th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                                            </li>
+                                            <li class="page-item" th:if="${showFirstPage}">
+                                                <button class="page-link" type="submit" form="dictionary-list-form" name="page"
+                                                        th:value="${firstPage}" th:text="${firstPage}">1</button>
+                                            </li>
+                                            <li class="page-item disabled" th:if="${showLeadingEllipsis}">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                            <li class="page-item"
                                                 th:each="pageNumber : ${pageNumbers}"
-                                                type="submit"
-                                                form="dictionary-list-form"
-                                                name="page"
-                                                th:value="${pageNumber}"
-                                                th:text="${pageNumber}"
-                                                th:disabled="${pageNumber == currentPage}">1</button>
-                                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
-                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
-                                        <button class="pagination-link" type="submit" form="dictionary-list-form" name="page"
-                                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
-                                    </div>
+                                                th:classappend="${pageNumber == currentPage} ? ' active'">
+                                                <button class="page-link"
+                                                        type="submit"
+                                                        form="dictionary-list-form"
+                                                        name="page"
+                                                        th:value="${pageNumber}"
+                                                        th:text="${pageNumber}"
+                                                        th:disabled="${pageNumber == currentPage}">1</button>
+                                            </li>
+                                            <li class="page-item disabled" th:if="${showTrailingEllipsis}">
+                                                <span class="page-link">...</span>
+                                            </li>
+                                            <li class="page-item" th:if="${showLastPage}">
+                                                <button class="page-link" type="submit" form="dictionary-list-form" name="page"
+                                                        th:value="${lastPage}" th:text="${lastPage}">99</button>
+                                            </li>
+                                            <li class="page-item" th:classappend="${!hasNext} ? ' disabled'">
+                                                <button class="page-link" type="submit" form="dictionary-list-form" name="page"
+                                                        th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                                            </li>
+                                        </ul>
+                                    </nav>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-            <aside class="record-drawer" data-drawer-panel hidden>
-                <div class="panel record-drawer-panel">
-                    <div data-drawer-content class="record-drawer-content"></div>
                 </div>
-            </aside>
+            </section>
+        <div class="modal fade bootstrap-upload-modal" id="majorImportModal" tabindex="-1" aria-labelledby="majorImportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div><h3 class="modal-title" id="majorImportModalLabel">批量导入专业</h3></div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="关闭"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="bootstrap-upload-actions d-flex flex-wrap gap-2 mb-3">
+                            <a class="btn btn-outline-secondary" th:href="@{/system/majors/template}">下载导入模板</a>
+                        </div>
+                        <form class="import-dropzone-form" th:action="@{/system/majors/import}" method="post" enctype="multipart/form-data">
+                            <label class="bootstrap-upload-dropzone" for="major-import-file" data-dropzone>
+                                <input id="major-import-file" type="file" name="file" accept=".xlsx,.xls" hidden>
+                                <strong>拖动 Excel 文件到此处</strong>
+                                <span>或点击选择文件，支持 <code>.xlsx</code>、<code>.xls</code>，单文件不超过 <span th:text="${uploadMaxFileSizeText}">10MB</span></span>
+                                <em data-file-name>未选择文件</em>
+                            </label>
+                            <div class="modal-footer px-0 pb-0">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-primary">上传文件</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade bootstrap-upload-modal" id="schoolImportModal" tabindex="-1" aria-labelledby="schoolImportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div><h3 class="modal-title" id="schoolImportModalLabel">批量导入学校</h3></div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="关闭"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="bootstrap-upload-actions d-flex flex-wrap gap-2 mb-3">
+                            <a class="btn btn-outline-secondary" th:href="@{/system/schools/template}">下载导入模板</a>
+                        </div>
+                        <form class="import-dropzone-form" th:action="@{/system/schools/import}" method="post" enctype="multipart/form-data">
+                            <label class="bootstrap-upload-dropzone" for="school-import-file" data-dropzone>
+                                <input id="school-import-file" type="file" name="file" accept=".xlsx,.xls" hidden>
+                                <strong>拖动 Excel 文件到此处</strong>
+                                <span>或点击选择文件，支持 <code>.xlsx</code>、<code>.xls</code>，单文件不超过 <span th:text="${uploadMaxFileSizeText}">10MB</span></span>
+                                <em data-file-name>未选择文件</em>
+                            </label>
+                            <div class="modal-footer px-0 pb-0">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-primary">上传文件</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="offcanvas offcanvas-end record-drawer-canvas" tabindex="-1" data-drawer-offcanvas aria-labelledby="system-drawer-title">
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title" id="system-drawer-title" data-drawer-title>详细信息</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="关闭"></button>
+                </div>
+                <div class="offcanvas-body" data-drawer-content></div>
+            </div>
         </div>
     </main>
 </div>
@@ -266,5 +357,35 @@
 <script th:src="@{/js/record-drawer.js}"></script>
 <script th:src="@{/js/system-region-form.js}"></script>
 <script th:src="@{/js/alert-banner.js}"></script>
+<script>
+    (() => {
+        ['majorImportModal', 'schoolImportModal'].forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            const fileInput = modal.querySelector('input[type="file"]');
+            const dropzone = modal.querySelector('[data-dropzone]');
+            const fileName = modal.querySelector('[data-file-name]');
+            const updateFileName = (file) => { fileName.textContent = file ? file.name : '未选择文件'; };
+            fileInput.addEventListener('change', () => updateFileName(fileInput.files[0]));
+            modal.addEventListener('hidden.bs.modal', () => {
+                updateFileName(null);
+                dropzone.classList.remove('is-dragover');
+            });
+            dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('is-dragover'); });
+            dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-dragover'));
+            dropzone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('is-dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    fileInput.files = dt.files;
+                    updateFileName(file);
+                }
+            });
+        });
+    })();
+</script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package com.haidong.tuanwei.system.controller;
 
 import com.haidong.tuanwei.common.web.AjaxRequestSupport;
 import com.haidong.tuanwei.common.web.PaginationSupport;
+import com.haidong.tuanwei.system.dto.DataImportResult;
 import com.haidong.tuanwei.system.dto.DictionaryItemForm;
 import com.haidong.tuanwei.system.dto.DictionaryWorkbenchQuery;
 import com.haidong.tuanwei.system.dto.MajorForm;
@@ -17,8 +18,13 @@ import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.system.service.RegionService;
 import jakarta.validation.Valid;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -222,6 +229,52 @@ public class SystemController {
             redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
         }
         return redirectToWorkbench(TAB_MAJOR, TAB_MAJOR, null, null);
+    }
+
+    @GetMapping("/system/majors/template")
+    public ResponseEntity<byte[]> downloadMajorTemplate() {
+        return excelResponse(masterDataService.generateMajorImportTemplate(), "专业信息导入模板.xlsx");
+    }
+
+    @PostMapping("/system/majors/import")
+    public String importMajors(MultipartFile file, RedirectAttributes redirectAttributes) {
+        if (file == null || file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("importMessage", "请先选择需要上传的 Excel 文件");
+            return "redirect:/system/dictionaries?tab=major";
+        }
+        DataImportResult result = masterDataService.importMajorsFromExcel(file);
+        redirectAttributes.addFlashAttribute("importResult", result);
+        if (result.getFailCount() > 0) {
+            redirectAttributes.addFlashAttribute("importMessage",
+                    "导入失败，发现 " + result.getFailCount() + " 处问题，请修正后重新上传");
+        } else {
+            redirectAttributes.addFlashAttribute("importMessage",
+                    "导入成功，共导入 " + result.getSuccessCount() + " 条专业");
+        }
+        return "redirect:/system/dictionaries?tab=major";
+    }
+
+    @GetMapping("/system/schools/template")
+    public ResponseEntity<byte[]> downloadSchoolTemplate() {
+        return excelResponse(masterDataService.generateSchoolImportTemplate(), "学校信息导入模板.xlsx");
+    }
+
+    @PostMapping("/system/schools/import")
+    public String importSchools(MultipartFile file, RedirectAttributes redirectAttributes) {
+        if (file == null || file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("importMessage", "请先选择需要上传的 Excel 文件");
+            return "redirect:/system/dictionaries?tab=school";
+        }
+        DataImportResult result = masterDataService.importSchoolsFromExcel(file);
+        redirectAttributes.addFlashAttribute("importResult", result);
+        if (result.getFailCount() > 0) {
+            redirectAttributes.addFlashAttribute("importMessage",
+                    "导入失败，发现 " + result.getFailCount() + " 处问题，请修正后重新上传");
+        } else {
+            redirectAttributes.addFlashAttribute("importMessage",
+                    "导入成功，共导入 " + result.getSuccessCount() + " 所学校");
+        }
+        return "redirect:/system/dictionaries?tab=school";
     }
 
     @GetMapping("/system/school-tags/new")
@@ -650,10 +703,14 @@ public class SystemController {
             default -> {
             }
         }
-        if (query.getRegionLevel() == null || query.getRegionLevel() < 1 || query.getRegionLevel() > 3) {
-            query.setRegionLevel(1);
+        // For non-region sections, set default regionLevel
+        if (!SECTION_REGION.equals(query.getSection())) {
+            if (query.getRegionLevel() == null || query.getRegionLevel() < 1 || query.getRegionLevel() > 3) {
+                query.setRegionLevel(1);
+            }
         }
-        if (query.getRegionLevel() == 1) {
+        // Clear parentId for level 1 or non-region sections
+        if (query.getRegionLevel() == null || query.getRegionLevel() == 1 || !SECTION_REGION.equals(query.getSection())) {
             query.setParentId(null);
         }
     }
@@ -757,5 +814,14 @@ public class SystemController {
             builder.append("&parentId=").append(parentId);
         }
         return builder.toString();
+    }
+
+    private ResponseEntity<byte[]> excelResponse(byte[] bytes, String fileName) {
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"download.xlsx\"; filename*=UTF-8''" + encodedFileName)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(bytes);
     }
 }

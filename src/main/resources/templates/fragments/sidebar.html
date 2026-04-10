@@ -1,28 +1,44 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<aside class="sidebar" th:fragment="sidebar">
-    <div class="brand brand-compact">
-        <div class="brand-glow"></div>
-        <div class="brand-mark">HD</div>
-        <div class="brand-copy">
-            <div class="brand-title">海东市联络服务青年就业创业信息平台</div>
-            <div class="brand-subtitle">业务管理平台</div>
-        </div>
+<aside class="sidebar d-flex flex-column border-end" th:fragment="sidebar" aria-label="主导航">
+    <div class="sidebar-brand px-3 py-3 border-bottom border-info-subtle d-flex align-items-start justify-content-between gap-3">
+        <a class="navbar-brand d-flex align-items-center gap-3 m-0 text-decoration-none flex-grow-1" th:href="@{/dashboard}">
+            <span class="brand-mark">HD</span>
+            <span class="d-flex flex-column min-w-0">
+                <span class="brand-title">海东市联系服务青年就业创业平台</span>
+            </span>
+        </a>
+        <button type="button"
+                class="sidebar-close btn btn-outline-secondary btn-sm d-xl-none"
+                data-sidebar-toggle
+                aria-label="关闭导航">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </button>
     </div>
 
-    <nav class="menu">
+    <nav class="menu nav nav-pills flex-column gap-2 flex-grow-1 sidebar-nav px-2 px-lg-3 py-3">
         <div class="menu-group" th:each="menu : ${sideMenus}">
-            <a class="menu-link"
+            <a class="menu-link nav-link"
                th:classappend="${currentPath == menu.menuPath or (!#lists.isEmpty(menu.children) and #lists.contains(menu.children.![menuPath], currentPath))} ? ' active' : ''"
                th:href="@{${menu.menuPath}}">
-                <span class="menu-link-accent"></span>
-                <span class="menu-icon"
-                      th:text="${menu.icon != null ? #strings.substring(menu.icon, 0, 1).toUpperCase() : '•'}">H</span>
+                <span class="menu-icon">
+                    <i class="bi"
+                       th:classappend="${
+                           menu.menuName == '首页' ? ' bi-house-door' :
+                           (#strings.contains(menu.menuName, '青年') ? ' bi-people' :
+                           (#strings.contains(menu.menuName, '招聘') ? ' bi-briefcase' :
+                           (#strings.contains(menu.menuName, '企业') ? ' bi-buildings' :
+                           (#strings.contains(menu.menuName, '政策') ? ' bi-file-earmark-text' :
+                           (#strings.contains(menu.menuName, '分析') ? ' bi-bar-chart' : ' bi-gear')))))
+                       }"></i>
+                </span>
                 <span class="menu-text" th:text="${menu.menuName}"></span>
+                <i class="bi bi-chevron-right small menu-link-accent" aria-hidden="true"></i>
             </a>
-            <div class="submenu" th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息' and menu.menuName != '数据分析' and menu.menuName != '系统设置'}">
-                <a class="submenu-link"
+            <div class="submenu nav flex-column"
+                 th:if="${!#lists.isEmpty(menu.children) and menu.menuName != '企业招聘信息' and menu.menuName != '数据分析' and menu.menuName != '系统设置'}">
+                <a class="submenu-link nav-link"
                    th:each="child : ${menu.children}"
                    th:classappend="${currentPath == child.menuPath} ? ' active' : ''"
                    th:href="@{${child.menuPath}}"

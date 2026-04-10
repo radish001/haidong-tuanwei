@@ -103,4 +103,13 @@
         where major_code = #{majorCode}
           and deleted = 0
     </select>
+
+    <select id="findExistingCodes" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        <include refid="majorJoin"/>
+          and m.major_code in
+        <foreach item="code" collection="codes" open="(" separator="," close=")">
+            #{code}
+        </foreach>
+    </select>
 </mapper>

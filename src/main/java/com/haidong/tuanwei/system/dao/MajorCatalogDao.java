@@ -29,4 +29,6 @@ public interface MajorCatalogDao {
     long countByCategoryId(@Param("categoryDictItemId") Long categoryDictItemId);
 
     long countYouthUsageByMajorCode(@Param("majorCode") String majorCode);
+
+    List<MajorCatalog> findExistingCodes(@Param("codes") List<String> codes);
 }

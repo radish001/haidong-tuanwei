@@ -5,38 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>区域管理</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-
-        <section class="panel">
-            <div class="panel-header">
-                <h2>区域树</h2>
-                <p>用于查看和维护省、市、区县区域数据。</p>
-            </div>
-            <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
-            <form th:action="@{/system/regions}" th:object="${regionForm}" method="post" class="filter-form">
-                <input type="number" th:field="*{parentId}" placeholder="上级区域ID，顶级填 0">
-                <input type="text" th:field="*{regionCode}" placeholder="区域编码">
-                <input type="text" th:field="*{regionName}" placeholder="区域名称">
-                <input type="number" th:field="*{regionLevel}" placeholder="区域层级">
-                <button type="submit">新增区域</button>
-            </form>
-            <div class="region-tree">
-                <div th:each="province : ${regions}" class="region-node">
-                    <div class="region-name" th:text="${province.regionName}">青海省</div>
-                    <div class="region-children" th:each="city : ${province.children}">
-                        <div class="region-name child" th:text="${city.regionName}">海东市</div>
-                        <div class="region-leaf-list">
-                            <span class="region-leaf" th:each="district : ${city.children}" th:text="${district.regionName}">乐都区</span>
+        <div class="row g-3 align-items-start system-region-page">
+            <section class="col-12 col-lg-4">
+                <div class="card border-0 h-100 shadow-sm workbench-card">
+                    <div class="card-body">
+                    <div class="workbench-heading">
+                        <div>
+                            <h2>新增区域</h2>
+                            <p>录入区域编码、名称、层级和上级区域。</p>
+                        </div>
+                    </div>
+                        <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
+                        <form th:action="@{/system/regions}" th:object="${regionForm}" method="post" class="edit-form system-region-form row g-3">
+                            <label class="col-12"><span>上级区域ID</span><input class="form-control" type="number" th:field="*{parentId}" placeholder="顶级区域填 0"></label>
+                            <label class="col-12"><span>区域编码</span><input class="form-control" type="text" th:field="*{regionCode}" placeholder="请输入区域编码"></label>
+                            <label class="col-12"><span>区域名称</span><input class="form-control" type="text" th:field="*{regionName}" placeholder="请输入区域名称"></label>
+                            <label class="col-12"><span>区域层级</span><input class="form-control" type="number" th:field="*{regionLevel}" placeholder="1/2/3"></label>
+                            <div class="form-actions full-width col-12">
+                                <button type="submit" class="btn btn-primary">新增区域</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+            <section class="col-12 col-lg-8">
+                <div class="card border-0 h-100 shadow-sm workbench-card">
+                    <div class="card-body">
+                    <div class="workbench-heading">
+                        <div>
+                            <h2>区域树</h2>
+                            <p>用于查看和维护省、市、区县区域数据。</p>
+                        </div>
+                    </div>
+                        <div class="region-tree list-group list-group-flush">
+                            <div th:each="province : ${regions}" class="list-group-item region-node">
+                                <div class="region-name d-flex align-items-center justify-content-between">
+                                    <span th:text="${province.regionName}">青海省</span>
+                                    <span class="badge text-bg-info rounded-pill" th:text="${#lists.size(province.children)}">0</span>
+                                </div>
+                                <div class="region-children" th:each="city : ${province.children}">
+                                    <div class="region-name child d-flex align-items-center justify-content-between">
+                                        <span th:text="${city.regionName}">海东市</span>
+                                        <span class="badge text-bg-secondary rounded-pill" th:text="${#lists.size(city.children)}">0</span>
+                                    </div>
+                                    <div class="region-leaf-list">
+                                        <span class="region-leaf badge rounded-pill"
+                                              th:each="district : ${city.children}"
+                                              th:text="${district.regionName}">乐都区</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 </div>
 <script th:src="@{/js/alert-banner.js}"></script>

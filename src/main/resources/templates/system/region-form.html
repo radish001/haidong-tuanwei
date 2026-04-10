@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
-    <div class="panel-header">
-        <div class="drawer-panel-header">
-            <div>
-                <h2 th:text="${formTitle}">新增区域</h2>
-                <p>支持省、市、区（县）三级区域的级联维护。</p>
-            </div>
-            <a class="drawer-close-link" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close>×</a>
+<section class="drawer-content-view" th:fragment="drawerContent">
+    <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+            <h2 class="h4 mb-1" th:text="${formTitle}">新增区域</h2>
+            <p class="text-secondary mb-0">支持省、市、区（县）三级区域的级联维护。</p>
         </div>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close aria-label="关闭">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </a>
     </div>
     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
     <form th:action="@{${formAction}}"
           th:object="${regionForm}"
           method="post"
-          class="edit-form"
+          class="edit-form row g-3"
           data-region-form
           th:attr="data-selected-parent-id=${regionForm.parentId}">
-        <label><span>区域编码</span><input type="text" th:field="*{regionCode}"></label>
-        <label><span>区域名称</span><input type="text" th:field="*{regionName}"></label>
-        <label>
+        <label class="col-12 col-md-6"><span>区域编码</span><input class="form-control" type="text" th:field="*{regionCode}"></label>
+        <label class="col-12 col-md-6"><span>区域名称</span><input class="form-control" type="text" th:field="*{regionName}"></label>
+        <label class="col-12 col-md-6">
             <span>区域层级</span>
-            <select th:field="*{regionLevel}" data-region-level-select>
+            <select class="form-select" th:field="*{regionLevel}" data-region-level-select>
                 <option value="1">省级</option>
                 <option value="2">市级</option>
                 <option value="3">区县级</option>
             </select>
         </label>
-        <label data-region-parent-container>
+        <label class="col-12 col-md-6" data-region-parent-container>
             <span>上级区域</span>
-            <select th:field="*{parentId}" data-region-parent-select>
+            <select class="form-select" th:field="*{parentId}" data-region-parent-select>
                 <option value="0">顶级区域（无上级）</option>
                 <option th:each="item : ${provinceOptions}"
                         th:value="${item.id}"
@@ -42,9 +42,9 @@
                         data-parent-level="2"></option>
             </select>
         </label>
-        <div class="form-actions full-width">
-            <a class="ghost-button" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close>取消</a>
-            <button type="submit">保存</button>
+        <div class="form-actions full-width col-12">
+            <a class="btn btn-outline-secondary" th:href="@{/system/dictionaries(tab='common', section='region')}" data-drawer-close>取消</a>
+            <button type="submit" class="btn btn-primary">保存</button>
         </div>
     </form>
 </section>
