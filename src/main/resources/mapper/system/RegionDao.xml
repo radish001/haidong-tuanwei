@@ -7,6 +7,7 @@
     <resultMap id="RegionResultMap" type="com.haidong.tuanwei.system.entity.Region">
         <id property="id" column="id"/>
         <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name"/>
         <result property="regionCode" column="region_code"/>
         <result property="regionName" column="region_name"/>
         <result property="regionLevel" column="region_level"/>
@@ -21,20 +22,21 @@
     </select>
 
     <select id="search" resultMap="RegionResultMap">
-        select id, parent_id, region_code, region_name, region_level, sort_no
-        from sys_region
-        where deleted = 0
+        select r.id, r.parent_id, p.region_name as parent_name, r.region_code, r.region_name, r.region_level, r.sort_no
+        from sys_region r
+        left join sys_region p on r.parent_id = p.id and p.deleted = 0
+        where r.deleted = 0
         <if test="regionLevel != null">
-            and region_level = #{regionLevel}
+            and r.region_level = #{regionLevel}
         </if>
         <if test="parentId != null and regionLevel != null and regionLevel &gt; 1">
-            and parent_id = #{parentId}
+            and r.parent_id = #{parentId}
         </if>
         <if test="keyword != null and keyword != ''">
-            and (region_name like concat('%', #{keyword}, '%')
-            or region_code like concat('%', #{keyword}, '%'))
+            and (r.region_name like concat('%', #{keyword}, '%')
+            or r.region_code like concat('%', #{keyword}, '%'))
         </if>
-        order by sort_no, id
+        order by r.sort_no, r.id
         limit #{offset}, #{limit}
     </select>
 
@@ -112,9 +114,6 @@
                 or school_province_code = #{regionCode}
                 or school_city_code = #{regionCode}
                 or school_county_code = #{regionCode}
-                or native_place_code = #{regionCode}
-                or current_residence_code = #{regionCode}
-                or school_region_code = #{regionCode}
             ))
             +
             (select count(*) from enterprise_info where deleted = 0 and (

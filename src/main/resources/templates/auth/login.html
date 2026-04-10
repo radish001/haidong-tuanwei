@@ -5,36 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="login-body">
 <main class="login-shell container-fluid">
     <div class="row justify-content-center align-items-center min-vh-100">
         <div class="col-12 col-md-8 col-lg-5 col-xl-4">
-            <section class="login-panel">
-                <div class="login-header">
-                    <div class="brand-mark large">HD</div>
-                    <h1>海东市联络服务青年就业创业信息平台</h1>
-                    <p>登录后进入平台业务管理页面。</p>
-                </div>
+            <section class="card border-0 shadow-lg">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="login-header">
+                        <div class="brand-mark large">HD</div>
+                        <h1>海东市联系服务青年就业创业平台</h1>
+                        <p>登录后进入平台业务管理页面。</p>
+                    </div>
 
-                <div class="alert error-alert" th:if="${param.error}">
-                    用户名或密码错误，请重新输入。
-                </div>
-                <div class="alert success-alert" th:if="${param.logout}">
-                    你已安全退出系统。
-                </div>
+                    <div class="alert error-alert" th:if="${param.error}">
+                        用户名或密码错误，请重新输入。
+                    </div>
+                    <div class="alert success-alert" th:if="${param.logout}">
+                        你已安全退出系统。
+                    </div>
 
-                <form th:action="@{/login}" method="post" class="login-form">
-                    <label>
-                        <span>用户名</span>
-                        <input type="text" name="username" autocomplete="username">
-                    </label>
-                    <label>
-                        <span>密码</span>
-                        <input type="password" name="password" autocomplete="current-password">
-                    </label>
-                    <button type="submit">登录</button>
-                </form>
+                    <form th:action="@{/login}" method="post" class="login-form">
+                        <label>
+                            <span>用户名</span>
+                            <input class="form-control" type="text" name="username" autocomplete="username">
+                        </label>
+                        <label>
+                            <span>密码</span>
+                            <input class="form-control" type="password" name="password" autocomplete="current-password">
+                        </label>
+                        <button type="submit" class="btn btn-primary w-100">登录</button>
+                    </form>
+                </div>
             </section>
         </div>
     </div>

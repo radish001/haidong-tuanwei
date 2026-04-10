@@ -28,6 +28,7 @@ public class YouthFormRequest {
     private String schoolCountyCode;
     private String majorCode;
     private String majorCategory;
+    private String recruitmentYear;
     private String graduationDate;
     private String employmentDirection;
     private String phone;

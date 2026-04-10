@@ -13,7 +13,7 @@ public class DictionaryWorkbenchQuery {
 
     private Long parentId;
 
-    private Integer regionLevel = 1;
+    private Integer regionLevel;
 
     private Integer page = 1;
 

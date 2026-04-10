@@ -227,7 +227,7 @@ public class YouthController {
         model.addAttribute("degrees", dictionaryService.getByType("degree"));
         model.addAttribute("majorCategories", dictionaryService.getByType("major_category"));
         model.addAttribute("regions", regionService.getRegionTree());
-        model.addAttribute("schools", masterDataService.getAllSchools());
+        model.addAttribute("schools", masterDataService.getAllSchoolsForSelect());
         model.addAttribute("majors", masterDataService.getAllMajors());
     }
 
@@ -250,6 +250,7 @@ public class YouthController {
         form.setSchoolCountyCode(youthInfo.getSchoolCountyCode());
         form.setMajorCode(youthInfo.getMajorCode());
         form.setMajorCategory(youthInfo.getMajorCategory());
+        form.setRecruitmentYear(youthInfo.getRecruitmentYear() == null ? null : String.valueOf(youthInfo.getRecruitmentYear()));
         form.setGraduationDate(youthInfo.getGraduationDate() == null ? null : youthInfo.getGraduationDate().toString());
         form.setEmploymentDirection(youthInfo.getEmploymentDirection());
         form.setPhone(youthInfo.getPhone());

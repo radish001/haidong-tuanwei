@@ -31,6 +31,7 @@ public class YouthInfo {
     private String majorCode;
     private String major;
     private String majorCategory;
+    private Integer recruitmentYear;
     private LocalDate graduationDate;
     private String employmentDirection;
     private String phone;

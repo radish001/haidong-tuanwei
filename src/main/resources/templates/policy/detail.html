@@ -5,40 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>政策详情</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
     <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="drawer-shell bootstrap-grid row g-4 align-items-start">
-            <div class="drawer-placeholder col-12 col-xl-4">
-                <div class="drawer-placeholder-copy">
-                    <h2>政策详情</h2>
-                    <p th:text="${record.issuingOrganization}">发布单位</p>
-                </div>
-            </div>
-
-            <section class="drawer-panel record-drawer-inner col-12 col-xl-8" th:fragment="drawerContent">
-                <div class="panel-header">
-                    <div class="drawer-panel-header">
-                        <div>
-                            <h2 th:text="${record.title}">政策标题</h2>
-                            <p th:text="${record.issuingOrganization}">发布单位</p>
-                        </div>
-                        <a class="drawer-close-link" th:href="@{/policies}" data-drawer-close>×</a>
+        <section class="drawer-workspace">
+            <section class="drawer-content-view" th:fragment="drawerContent">
+                <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h2 class="h4 mb-1" th:text="${record.title}">政策标题</h2>
+                        <p class="text-secondary mb-0" th:text="${record.issuingOrganization}">发布单位</p>
                     </div>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/policies}" data-drawer-close aria-label="关闭">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </a>
                 </div>
-                <div class="detail-grid">
-                    <div><span>来源</span><strong th:text="${record.policySource}">官网</strong></div>
-                    <div><span>状态</span><strong th:text="${record.status == 1 ? '已发布' : '草稿'}">已发布</strong></div>
-                    <div class="full-width"><span>摘要</span><strong th:text="${record.summary}">政策摘要</strong></div>
-                    <div class="full-width policy-content"><span>正文</span><div th:utext="${record.contentHtml}"></div></div>
-                </div>
-                <div class="form-actions" style="margin-top: 16px;">
-                    <a class="ghost-button" th:href="@{/policies}" data-drawer-close>返回列表</a>
-                    <a class="ghost-button" data-drawer-link th:href="@{'/policies/' + ${record.id} + '/edit'}">编辑</a>
-                </div>
+                    <div class="detail-grid row g-3">
+                        <div class="col-12 col-sm-6"><span>来源</span><strong th:text="${record.policySource}">官网</strong></div>
+                        <div class="col-12 col-sm-6"><span>状态</span><strong th:text="${record.status == 1 ? '已发布' : '草稿'}">已发布</strong></div>
+                        <div class="col-12"><span>摘要</span><strong th:text="${record.summary}">政策摘要</strong></div>
+                        <div class="col-12">
+                            <span>正文</span>
+                            <div class="policy-content-body" th:utext="${record.contentHtml}"></div>
+                        </div>
+                    </div>
+                    <div class="form-actions mt-3">
+                        <a class="btn btn-outline-secondary" th:href="@{/policies}" data-drawer-close>返回列表</a>
+                        <a class="btn btn-primary" data-drawer-link th:href="@{'/policies/' + ${record.id} + '/edit'}">编辑</a>
+                    </div>
             </section>
         </section>
     </main>

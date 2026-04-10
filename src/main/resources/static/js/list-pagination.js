@@ -10,76 +10,73 @@
 
     let activeDialogResolver = null;
 
-    const syncBodyModalState = () => {
-        const hasVisibleModal = document.querySelector('.modal-backdrop:not([hidden])');
-        document.body.classList.toggle("modal-open", Boolean(hasVisibleModal));
-    };
-
     const ensureConfirmModal = () => {
         let modal = document.getElementById(CONFIRM_MODAL_ID);
-        if (modal) {
-            return modal;
+        if (!modal) {
+            modal = document.createElement("div");
+            modal.id = CONFIRM_MODAL_ID;
+            modal.className = "modal fade";
+            modal.tabIndex = -1;
+            modal.setAttribute("aria-hidden", "true");
+            modal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <div>
+                                <h5 class="modal-title" data-dialog-title>确认操作</h5>
+                                <p class="small text-secondary mb-0 mt-1" data-dialog-message></p>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="关闭"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-0" data-dialog-detail hidden></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dialog-cancel>取消</button>
+                            <button type="button" class="btn btn-primary" data-dialog-confirm>确认</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
         }
 
-        modal = document.createElement("div");
-        modal.id = CONFIRM_MODAL_ID;
-        modal.className = "modal-backdrop";
-        modal.hidden = true;
-        modal.innerHTML = `
-            <div class="modal-card confirm-modal-card">
-                <div class="modal-header">
-                    <div>
-                        <h3 data-dialog-title>确认操作</h3>
-                        <p data-dialog-message></p>
-                    </div>
-                    <button type="button" class="modal-close" aria-label="关闭" data-dialog-close>×</button>
-                </div>
-                <div class="confirm-modal-body">
-                    <p data-dialog-detail></p>
-                </div>
-                <div class="modal-footer confirm-modal-footer">
-                    <button type="button" class="secondary-button" data-dialog-cancel>取消</button>
-                    <button type="button" data-dialog-confirm>确认</button>
-                </div>
-            </div>
-        `;
+        const modalInstance = window.bootstrap?.Modal?.getOrCreateInstance(modal);
+        if (modal.dataset.initialized !== "true") {
+            modal.addEventListener("hidden.bs.modal", () => {
+                if (activeDialogResolver) {
+                    const result = modal.dataset.dialogResult === "true";
+                    modal.dataset.dialogResult = "";
+                    activeDialogResolver(result);
+                    activeDialogResolver = null;
+                }
+            });
 
-        const closeDialog = (result) => {
-            modal.hidden = true;
-            syncBodyModalState();
-            if (activeDialogResolver) {
-                activeDialogResolver(result);
-                activeDialogResolver = null;
-            }
-        };
+            modal.querySelector("[data-dialog-cancel]").addEventListener("click", () => {
+                modal.dataset.dialogResult = "false";
+                modalInstance?.hide();
+            });
 
-        modal.addEventListener("click", (event) => {
-            if (event.target === modal) {
-                closeDialog(false);
-            }
-        });
+            modal.querySelector("[data-dialog-confirm]").addEventListener("click", () => {
+                modal.dataset.dialogResult = "true";
+                modalInstance?.hide();
+            });
 
-        modal.querySelector("[data-dialog-close]").addEventListener("click", () => closeDialog(false));
-        modal.querySelector("[data-dialog-cancel]").addEventListener("click", () => closeDialog(false));
-        modal.querySelector("[data-dialog-confirm]").addEventListener("click", () => closeDialog(true));
+            modal.dataset.initialized = "true";
+        }
 
-        document.addEventListener("keydown", (event) => {
-            if (event.key === "Escape" && !modal.hidden) {
-                closeDialog(false);
-            }
-        });
-
-        document.body.appendChild(modal);
         return modal;
     };
 
     const showDialog = ({ title, message, detail, confirmText = "确认", cancelText = "取消", hideCancel = false }) => {
         const modal = ensureConfirmModal();
+        const modalInstance = window.bootstrap?.Modal?.getOrCreateInstance(modal);
         if (activeDialogResolver) {
             activeDialogResolver(false);
             activeDialogResolver = null;
         }
 
+        modal.dataset.dialogResult = "false";
         modal.querySelector("[data-dialog-title]").textContent = title;
         modal.querySelector("[data-dialog-message]").textContent = message || "";
         modal.querySelector("[data-dialog-detail]").textContent = detail || "";
@@ -92,8 +89,7 @@
         cancelButton.hidden = hideCancel;
         confirmButton.textContent = confirmText;
 
-        modal.hidden = false;
-        syncBodyModalState();
+        modalInstance?.show();
         queueMicrotask(() => confirmButton.focus());
 
         return new Promise((resolve) => {
@@ -112,6 +108,9 @@
         }
         if (window.AlertBanner && typeof window.AlertBanner.init === "function") {
             window.AlertBanner.init(root);
+        }
+        if (window.BootstrapEnhancements && typeof window.BootstrapEnhancements.init === "function") {
+            await window.BootstrapEnhancements.init(root);
         }
         if (window.RegionStepSelect && typeof window.RegionStepSelect.init === "function") {
             await window.RegionStepSelect.init(root);

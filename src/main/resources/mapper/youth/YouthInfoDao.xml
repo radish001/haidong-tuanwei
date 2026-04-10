@@ -29,6 +29,7 @@
         <result property="majorCode" column="major_code"/>
         <result property="major" column="major"/>
         <result property="majorCategory" column="major_category"/>
+        <result property="recruitmentYear" column="recruitment_year"/>
         <result property="graduationDate" column="graduation_date"/>
         <result property="employmentDirection" column="employment_direction"/>
         <result property="phone" column="phone"/>
@@ -148,6 +149,7 @@
                y.major_code,
                coalesce(m.major_name, y.major) as major,
                coalesce(mc.dict_label, y.major_category) as major_category,
+               y.recruitment_year,
                y.graduation_date, y.employment_direction, y.phone,
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as current_residence_name,
@@ -201,6 +203,7 @@
                y.major_code,
                coalesce(m.major_name, y.major) as major,
                coalesce(mc.dict_label, y.major_category) as major_category,
+               y.recruitment_year,
                y.graduation_date, y.employment_direction, y.phone,
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as current_residence_name,
@@ -234,7 +237,7 @@
             youth_type, name, gender, birth_date, ethnicity, political_status,
             native_province_code, native_city_code, native_county_code,
             education_level, degree_code, school_code, school_name, school_province_code, school_city_code, school_county_code,
-            major_code, major, major_category,
+            major_code, major, major_category, recruitment_year,
             graduation_date, employment_direction, phone, residence_province_code, residence_city_code, residence_county_code,
             employment_status, current_job, employment_company,
             entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by,
@@ -243,7 +246,7 @@
             #{youthType}, #{name}, #{gender}, #{birthDate}, #{ethnicity}, #{politicalStatus},
             #{nativeProvinceCode}, #{nativeCityCode}, #{nativeCountyCode},
             #{educationCode}, #{degreeCode}, #{schoolCode}, #{schoolName}, #{schoolProvinceCode}, #{schoolCityCode},
-            #{schoolCountyCode}, #{majorCode}, #{major}, #{majorCategory},
+            #{schoolCountyCode}, #{majorCode}, #{major}, #{majorCategory}, #{recruitmentYear},
             #{graduationDate}, #{employmentDirection}, #{phone}, #{residenceProvinceCode}, #{residenceCityCode}, #{residenceCountyCode}, #{employmentStatus}, #{currentJob},
             #{employmentCompany}, #{entrepreneurshipStatus}, #{entrepreneurshipProject}, #{entrepreneurshipDemand},
             #{remarks}, #{createBy}, #{updateBy}, 0
@@ -270,6 +273,7 @@
             major_code = #{majorCode},
             major = #{major},
             major_category = #{majorCategory},
+            recruitment_year = #{recruitmentYear},
             graduation_date = #{graduationDate},
             employment_direction = #{employmentDirection},
             phone = #{phone},

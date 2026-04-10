@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <body>
-<section class="drawer-panel record-drawer-inner" th:fragment="drawerContent">
-    <div class="panel-header">
-        <div class="drawer-panel-header">
-            <div>
-                <h2 th:text="${formTitle}">新增字典项</h2>
-                <p th:text="${sectionTitle + '使用受控的名称和值维护'}">基础字典维护</p>
-            </div>
-            <a class="drawer-close-link" th:href="@{/system/dictionaries}" data-drawer-close>×</a>
+<section class="drawer-content-view" th:fragment="drawerContent">
+    <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+            <h2 class="h4 mb-1" th:text="${formTitle}">新增字典项</h2>
+            <p class="text-secondary mb-0" th:text="${sectionTitle + '使用受控的名称和值维护'}">基础字典维护</p>
         </div>
+        <a class="btn btn-outline-secondary btn-sm" th:href="@{/system/dictionaries}" data-drawer-close aria-label="关闭">
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
+        </a>
     </div>
     <div class="alert error-alert" th:if="${errorMessage}" th:text="${errorMessage}"></div>
-    <form th:action="@{${formAction}}" th:object="${dictForm}" method="post" class="edit-form">
-        <label><span th:text="${dictValueFieldLabel}">字典值</span><input type="text" th:field="*{dictValue}"></label>
-        <label><span th:text="${dictLabelFieldLabel}">显示名称</span><input type="text" th:field="*{dictLabel}"></label>
-        <div class="form-actions full-width">
-            <a class="ghost-button" th:href="@{/system/dictionaries}" data-drawer-close>取消</a>
-            <button type="submit">保存</button>
+    <form th:action="@{${formAction}}" th:object="${dictForm}" method="post" class="edit-form row g-3">
+        <label class="col-12 col-md-6"><span th:text="${dictValueFieldLabel}">字典值</span><input class="form-control" type="text" th:field="*{dictValue}"></label>
+        <label class="col-12 col-md-6"><span th:text="${dictLabelFieldLabel}">显示名称</span><input class="form-control" type="text" th:field="*{dictLabel}"></label>
+        <div class="form-actions full-width col-12">
+            <a class="btn btn-outline-secondary" th:href="@{/system/dictionaries}" data-drawer-close>取消</a>
+            <button type="submit" class="btn btn-primary">保存</button>
         </div>
     </form>
 </section>

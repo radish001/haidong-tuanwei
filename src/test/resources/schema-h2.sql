@@ -167,6 +167,7 @@ create table if not exists youth_info (
     major_code varchar(64),
     major varchar(100),
     major_category varchar(64),
+    recruitment_year int,
     graduation_date date,
     employment_direction varchar(100),
     phone varchar(20),

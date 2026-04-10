@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>数据分析</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 </head>
 <body class="admin-body">
@@ -12,33 +13,31 @@
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
     <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="page-hero">
-            <h2 class="page-hero-title">数据分析</h2>
-            <p class="page-hero-subtitle">通过图表查看青年、学校类别、专业类别等统计分布。</p>
-        </section>
-        <section class="panel analytics-page-panel">
-            <div class="tab-row">
-                <div class="tab-list">
-                    <a class="tab-link"
-                       th:classappend="${youthType == 'college'} ? ' active' : ''"
-                       th:href="@{/analytics/college}">在校大学生</a>
-                </div>
+        <section class="analytics-page-panel card border-0 shadow-sm">
+            <div class="workbench-tabs">
+                <ul class="nav nav-tabs border-0 gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${youthType == 'college'} ? ' active' : ''"
+                           th:href="@{/analytics/college}">在校大学生</a>
+                    </li>
+                </ul>
             </div>
-            <div class="panel-header">
+            <div class="workbench-heading">
                 <div>
                     <h2 th:text="${isCollegeAnalytics ? '在校大学生分析看板' : '统计分析看板'}">在校大学生分析看板</h2>
                 </div>
             </div>
             <div th:if="${isCollegeAnalytics}">
                 <div class="analytics-grid analytics-grid-college row g-4">
-                    <div class="col-12 col-xl-4"><div class="panel h-100"><div id="schoolCategoryChart" class="chart-box"></div></div></div>
-                    <div class="col-12 col-xl-8 analytics-span-two"><div class="panel h-100"><div id="majorCategoryChart" class="chart-box tall"></div></div></div>
-                    <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="ethnicityChart" class="chart-box"></div></div></div>
-                    <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="educationChart" class="chart-box"></div></div></div>
-                    <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="genderChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="schoolCategoryChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="majorCategoryChart" class="chart-box tall"></div></div></div>
+                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="ethnicityChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="educationChart" class="chart-box"></div></div></div>
+                    <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="genderChart" class="chart-box"></div></div></div>
                 </div>
                 <section class="analytics-topic-panel">
-                    <div class="panel-header analytics-topic-header">
+                    <div class="analytics-topic-header">
                         <div>
                             <h3>海东籍顶尖高校分析</h3>
                         </div>
@@ -47,12 +46,12 @@
                 </section>
             </div>
             <div th:unless="${isCollegeAnalytics}" class="analytics-grid row g-4">
-                <div class="col-12 col-xl-6"><div class="panel h-100"><div id="ageChart" class="chart-box tall"></div></div></div>
-                <div class="col-12 col-xl-6"><div class="panel h-100"><div id="educationChart" class="chart-box tall"></div></div></div>
-                <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="ethnicityChart" class="chart-box"></div></div></div>
-                <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="politicalChart" class="chart-box"></div></div></div>
-                <div class="col-12 col-md-6 col-xl-4"><div class="panel h-100"><div id="genderChart" class="chart-box"></div></div></div>
-                <div class="col-12"><div class="panel h-100"><div id="demandChart" class="chart-box"></div></div></div>
+                <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="ageChart" class="chart-box tall"></div></div></div>
+                <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="educationChart" class="chart-box tall"></div></div></div>
+                <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="ethnicityChart" class="chart-box"></div></div></div>
+                <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="politicalChart" class="chart-box"></div></div></div>
+                <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="genderChart" class="chart-box"></div></div></div>
+                <div class="col-12"><div class="card h-100 border-0"><div id="demandChart" class="chart-box"></div></div></div>
             </div>
         </section>
     </main>
@@ -86,13 +85,44 @@
         };
     }
 
+    function noDataOption(title) {
+        return Object.assign(baseOption(title), {
+            graphic: {
+                type: 'text',
+                left: 'center',
+                top: 'middle',
+                style: {
+                    text: '暂无数据',
+                    fontSize: 14,
+                    fill: 'rgba(142, 163, 204, 0.5)',
+                    fontWeight: 400
+                }
+            }
+        });
+    }
+
+    function hasData(data) {
+        return data.length > 0 && data.some(item => item.value > 0);
+    }
+
+    function initChart(elementId, title, data) {
+        const chart = echarts.init(document.getElementById(elementId));
+        if (!hasData(data)) {
+            chart.setOption(noDataOption(title));
+            window.addEventListener('resize', () => chart.resize());
+            return null;
+        }
+        return chart;
+    }
+
     function attachResize(chart) {
         window.addEventListener('resize', () => chart.resize());
     }
 
     function renderAreaChart(elementId, title, rawData) {
         const data = parseData(rawData);
-        const chart = echarts.init(document.getElementById(elementId));
+        const chart = initChart(elementId, title, data);
+        if (!chart) return;
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis'},
             grid: {left: 50, right: 24, top: 60, bottom: 40},
@@ -128,7 +158,8 @@
 
     function renderHorizontalBar(elementId, title, rawData) {
         const data = parseData(rawData);
-        const chart = echarts.init(document.getElementById(elementId));
+        const chart = initChart(elementId, title, data);
+        if (!chart) return;
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
             grid: {left: 70, right: 24, top: 60, bottom: 30},
@@ -160,7 +191,8 @@
 
     function renderVerticalBar(elementId, title, rawData) {
         const data = parseData(rawData);
-        const chart = echarts.init(document.getElementById(elementId));
+        const chart = initChart(elementId, title, data);
+        if (!chart) return;
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
             grid: {left: 40, right: 24, top: 60, bottom: 70},
@@ -196,7 +228,8 @@
 
     function renderPieChart(elementId, title, rawData, donut, options = {}) {
         const data = parseData(rawData);
-        const chart = echarts.init(document.getElementById(elementId));
+        const chart = initChart(elementId, title, data);
+        if (!chart) return;
         const legendBottom = options.legendBottom ?? -6;
         const seriesCenter = options.seriesCenter ?? ['50%', '42%'];
         const seriesRadius = options.seriesRadius ?? (donut ? ['42%', '60%'] : '60%');
@@ -232,9 +265,10 @@
 
     function renderMirrorBar(elementId, title, rawData) {
         const data = parseData(rawData);
+        const chart = initChart(elementId, title, data);
+        if (!chart) return;
         const categories = data.map(item => item.name);
         const values = data.map(item => item.value);
-        const chart = echarts.init(document.getElementById(elementId));
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {
                 trigger: 'axis',
@@ -330,13 +364,13 @@
         });
         const tagCharts = parseData(rawData);
         if (!tagCharts.length) {
-            container.innerHTML = '<div class="panel tag-chart-empty">暂无学校标签专题数据</div>';
+            container.innerHTML = '<div class="tag-chart-empty">暂无学校标签专题数据</div>';
             return;
         }
         container.innerHTML = '';
         tagCharts.forEach((item, index) => {
             const panel = document.createElement('div');
-            panel.className = 'panel tag-chart-panel';
+            panel.className = 'card border-0 tag-chart-panel';
             const chartEl = document.createElement('div');
             chartEl.className = 'chart-box tag-chart-box';
             chartEl.id = `tagChart-${index}`;

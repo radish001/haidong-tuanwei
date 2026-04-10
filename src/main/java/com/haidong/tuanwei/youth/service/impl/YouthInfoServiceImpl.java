@@ -45,9 +45,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class YouthInfoServiceImpl implements YouthInfoService {
 
     private static final String REGION_PATH_DELIMITER = " / ";
-    private static final String[] TEMPLATE_HEADERS = {
+    private static final String[] IMPORT_TEMPLATE_HEADERS = {
+            "姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
+            "学校", "学校所在区域", "专业", "联系方式"
+    };
+    private static final String[] EXPORT_HEADERS = {
             "姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学位",
-            "学校", "学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"
+            "学校", "学校所在区域", "专业", "招考年份", "毕业时间", "就业方向", "联系方式"
     };
 
     private final YouthInfoDao youthInfoDao;
@@ -106,38 +110,32 @@ public class YouthInfoServiceImpl implements YouthInfoService {
     public byte[] generateImportTemplate() {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet mainSheet = workbook.createSheet("青年信息导入模板");
-            createHeader(mainSheet);
+            createHeader(mainSheet, IMPORT_TEMPLATE_HEADERS);
 
             List<String> genderOptions = dictionaryValues("gender");
             List<String> ethnicityOptions = dictionaryValues("ethnicity");
-            List<String> politicalOptions = dictionaryValues("political_status");
             List<String> regionOptions = regionPaths();
             List<String> educationOptions = dictionaryLabels("education_level");
-            List<String> degreeOptions = dictionaryLabels("degree");
             List<String> schoolOptions = schoolNames();
             List<String> majorOptions = majorNames();
 
             createHiddenSheet(workbook, "hidden_1", "genderOptions", genderOptions);
             createHiddenSheet(workbook, "hidden_3", "ethnicityOptions", ethnicityOptions);
-            createHiddenSheet(workbook, "hidden_4", "politicalOptions", politicalOptions);
             createHiddenSheet(workbook, "hidden_5", "nativePlaceOptions", regionOptions);
             createHiddenSheet(workbook, "hidden_6", "educationOptions", educationOptions);
-            createHiddenSheet(workbook, "hidden_7", "degreeOptions", degreeOptions);
             createHiddenSheet(workbook, "hidden_8", "schoolOptions", schoolOptions);
             createHiddenSheet(workbook, "hidden_9", "schoolRegionOptions", regionOptions);
             createHiddenSheet(workbook, "hidden_10", "majorOptions", majorOptions);
 
             applyDropDown(mainSheet, "genderOptions", 1);
-            applyDropDown(mainSheet, "ethnicityOptions", 3);
-            applyDropDown(mainSheet, "politicalOptions", 4);
-            applyDropDown(mainSheet, "nativePlaceOptions", 5);
+            applyDropDown(mainSheet, "ethnicityOptions", 2);
+            applyDropDown(mainSheet, "nativePlaceOptions", 4);
             applyDropDown(mainSheet, "educationOptions", 6);
-            applyDropDown(mainSheet, "degreeOptions", 7);
-            applyDropDown(mainSheet, "schoolOptions", 8);
-            applyDropDown(mainSheet, "schoolRegionOptions", 9);
-            applyDropDown(mainSheet, "majorOptions", 10);
+            applyDropDown(mainSheet, "schoolOptions", 7);
+            applyDropDown(mainSheet, "schoolRegionOptions", 8);
+            applyDropDown(mainSheet, "majorOptions", 9);
 
-            for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+            for (int i = 0; i < IMPORT_TEMPLATE_HEADERS.length; i++) {
                 mainSheet.autoSizeColumn(i);
                 mainSheet.setColumnWidth(i, Math.max(mainSheet.getColumnWidth(i), 16 * 256));
             }
@@ -201,7 +199,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         List<YouthInfo> records = search(youthType, query);
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("青年信息导出");
-            createHeader(sheet);
+            createHeader(sheet, EXPORT_HEADERS);
 
             int rowIndex = 1;
             for (YouthInfo item : records) {
@@ -219,11 +217,12 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 row.createCell(9).setCellValue(regionSelectionSupport.buildExcelPath(
                         item.getSchoolProvinceCode(), item.getSchoolCityCode(), item.getSchoolCountyCode()));
                 row.createCell(10).setCellValue(safe(item.getMajor()));
-                row.createCell(11).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
-                row.createCell(12).setCellValue(safe(item.getEmploymentDirection()));
-                row.createCell(13).setCellValue(safe(item.getPhone()));
+                row.createCell(11).setCellValue(item.getRecruitmentYear() == null ? "" : String.valueOf(item.getRecruitmentYear()));
+                row.createCell(12).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
+                row.createCell(13).setCellValue(safe(item.getEmploymentDirection()));
+                row.createCell(14).setCellValue(safe(item.getPhone()));
             }
-            for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+            for (int i = 0; i < EXPORT_HEADERS.length; i++) {
                 sheet.autoSizeColumn(i);
             }
             return ExcelUtils.toBytes(workbook);
@@ -258,6 +257,11 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setMajorCode(majorCatalog.getMajorCode());
         youthInfo.setMajor(majorCatalog.getMajorName());
         youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
+        try {
+            youthInfo.setRecruitmentYear(parseRecruitmentYear(request.getRecruitmentYear(), "招考年份格式不正确"));
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalStateException(ex.getMessage(), ex);
+        }
         youthInfo.setGraduationDate(parseDate(request.getGraduationDate()));
         youthInfo.setEmploymentDirection(request.getEmploymentDirection());
         youthInfo.setPhone(request.getPhone());
@@ -283,10 +287,25 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         return LocalDate.parse(dateText);
     }
 
-    private void createHeader(Sheet sheet) {
+    private Integer parseRecruitmentYear(String yearText, String errorMessage) {
+        if (yearText == null || yearText.isBlank()) {
+            return null;
+        }
+        String normalized = yearText.trim();
+        if (!normalized.matches("\\d{4}")) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        int year = Integer.parseInt(normalized);
+        if (year < 1900 || year > 2100) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+        return year;
+    }
+
+    private void createHeader(Sheet sheet, String[] headers) {
         Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
-            headerRow.createCell(i).setCellValue(TEMPLATE_HEADERS[i]);
+        for (int i = 0; i < headers.length; i++) {
+            headerRow.createCell(i).setCellValue(headers[i]);
         }
     }
 
@@ -387,22 +406,17 @@ public class YouthInfoServiceImpl implements YouthInfoService {
     private YouthInfo mapRowToYouth(Row row, Map<String, RegionSelectionSupport.RegionSelection> regionPathMap) {
         String name = requiredText(row.getCell(0), "姓名不能为空");
         String gender = requiredText(row.getCell(1), "性别不能为空");
-        String ethnicity = requiredText(row.getCell(3), "民族不能为空");
-        String politicalStatus = requiredText(row.getCell(4), "政治面貌不能为空");
-        String nativePlaceName = requiredText(row.getCell(5), "籍贯不能为空");
+        String ethnicity = requiredText(row.getCell(2), "民族不能为空");
+        String nativePlaceName = requiredText(row.getCell(4), "籍贯不能为空");
         String educationLevel = requiredText(row.getCell(6), "学历不能为空");
-        String degree = requiredText(row.getCell(7), "学位不能为空");
-        String schoolName = requiredText(row.getCell(8), "学校不能为空");
-        String schoolLocationName = requiredText(row.getCell(9), "学校所在地不能为空");
-        String major = requiredText(row.getCell(10), "专业不能为空");
-        String employmentDirection = requiredText(row.getCell(12), "就业方向不能为空");
-        String phone = requiredText(row.getCell(13), "联系方式不能为空");
+        String schoolName = requiredText(row.getCell(7), "学校不能为空");
+        String schoolLocationName = requiredText(row.getCell(8), "学校所在地不能为空");
+        String major = requiredText(row.getCell(9), "专业不能为空");
+        String phone = requiredText(row.getCell(10), "联系方式不能为空");
 
         String genderCode = validateImportDictLabel("gender", gender, "性别");
         String ethnicityCode = validateImportDictLabel("ethnicity", ethnicity, "民族");
-        String politicalStatusCode = validateImportDictLabel("political_status", politicalStatus, "政治面貌");
         String educationCode = validateImportDictLabel("education_level", educationLevel, "学历");
-        String degreeCode = validateImportDictLabel("degree", degree, "学位");
 
         RegionSelectionSupport.RegionSelection nativeSelection = requireRegionSelection(nativePlaceName, regionPathMap, "籍贯");
         RegionSelectionSupport.RegionSelection schoolSelection = requireRegionSelection(
@@ -413,14 +427,12 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         YouthInfo youthInfo = new YouthInfo();
         youthInfo.setName(name);
         youthInfo.setGender(genderCode);
-        youthInfo.setBirthDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(2)), "出生年月格式不正确"));
+        youthInfo.setBirthDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(3)), "出生年月格式不正确"));
         youthInfo.setEthnicity(ethnicityCode);
-        youthInfo.setPoliticalStatus(politicalStatusCode);
         youthInfo.setNativeProvinceCode(nativeSelection.getProvinceCode());
         youthInfo.setNativeCityCode(nativeSelection.getCityCode());
         youthInfo.setNativeCountyCode(nativeSelection.getCountyCode());
         youthInfo.setEducationCode(educationCode);
-        youthInfo.setDegreeCode(degreeCode);
         youthInfo.setSchoolCode(school.getSchoolCode());
         youthInfo.setSchoolName(school.getSchoolName());
         youthInfo.setSchoolProvinceCode(schoolSelection.getProvinceCode());
@@ -429,8 +441,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setMajorCode(majorCatalog.getMajorCode());
         youthInfo.setMajor(majorCatalog.getMajorName());
         youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
-        youthInfo.setGraduationDate(parseOptionalDate(ExcelUtils.getCellText(row.getCell(11)), "毕业时间格式不正确"));
-        youthInfo.setEmploymentDirection(employmentDirection);
+        youthInfo.setRecruitmentYear(parseRecruitmentYear(ExcelUtils.getCellText(row.getCell(5)), "招考年份格式不正确"));
         youthInfo.setPhone(phone);
         youthInfo.setEmploymentStatus("待确认");
         youthInfo.setRemarks("通过 Excel 模板导入");
@@ -534,15 +545,15 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         if (headerRow == null) {
             throw new IllegalArgumentException("导入模板表头缺失，请使用最新模板");
         }
-        for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+        for (int i = 0; i < IMPORT_TEMPLATE_HEADERS.length; i++) {
             String actualHeader = ExcelUtils.getCellText(headerRow.getCell(i)).trim();
-            if (!TEMPLATE_HEADERS[i].equals(actualHeader)) {
+            if (!IMPORT_TEMPLATE_HEADERS[i].equals(actualHeader)) {
                 throw new IllegalArgumentException("导入模板列顺序或表头不正确，请使用最新模板");
             }
         }
         short lastCellNum = headerRow.getLastCellNum();
-        if (lastCellNum > TEMPLATE_HEADERS.length) {
-            for (int i = TEMPLATE_HEADERS.length; i < lastCellNum; i++) {
+        if (lastCellNum > IMPORT_TEMPLATE_HEADERS.length) {
+            for (int i = IMPORT_TEMPLATE_HEADERS.length; i < lastCellNum; i++) {
                 if (!ExcelUtils.getCellText(headerRow.getCell(i)).isBlank()) {
                     throw new IllegalArgumentException("导入模板列顺序或表头不正确，请使用最新模板");
                 }
@@ -610,7 +621,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
     }
 
     private boolean isEmptyRow(Row row) {
-        for (int i = 0; i < TEMPLATE_HEADERS.length; i++) {
+        for (int i = 0; i < IMPORT_TEMPLATE_HEADERS.length; i++) {
             if (!ExcelUtils.getCellText(row.getCell(i)).isBlank()) {
                 return false;
             }

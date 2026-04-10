@@ -1,7 +1,8 @@
 (() => {
     const DRAWER_PAGE_SELECTOR = "[data-drawer-page]";
-    const DRAWER_PANEL_SELECTOR = "[data-drawer-panel]";
+    const DRAWER_PANEL_SELECTOR = "[data-drawer-offcanvas]";
     const DRAWER_CONTENT_SELECTOR = "[data-drawer-content]";
+    const DRAWER_TITLE_SELECTOR = "[data-drawer-title]";
     const DRAWER_LINK_SELECTOR = "a[data-drawer-link]";
     const DRAWER_CLOSE_SELECTOR = "[data-drawer-close]";
     const PAGE_SIZE_SELECTOR = "select[data-page-size-select]";
@@ -12,6 +13,13 @@
     const QUILL_STYLE_URL = "https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css";
 
     let quillLoader = null;
+
+    const getOffcanvasInstance = (drawerPanel) => {
+        if (!(drawerPanel instanceof HTMLElement) || !window.bootstrap?.Offcanvas) {
+            return null;
+        }
+        return window.bootstrap.Offcanvas.getOrCreateInstance(drawerPanel);
+    };
 
     const initYouthForm = (container) => {
         const majorSelect = container.querySelector('select[name="major"]');
@@ -104,11 +112,6 @@
         if (window.SystemRegionForm && typeof window.SystemRegionForm.init === "function") {
             window.SystemRegionForm.init(container);
         }
-        // 旧的三级级联组件（保留兼容）
-        if (window.RegionCascader && typeof window.RegionCascader.init === "function") {
-            await window.RegionCascader.init(container);
-        }
-        // 箭头展开式级联选择器
         if (window.RegionStepSelect && typeof window.RegionStepSelect.init === "function") {
             await window.RegionStepSelect.init(container);
         }
@@ -116,14 +119,17 @@
 
     const setDrawerLoading = (drawerContent) => {
         drawerContent.innerHTML = `
-            <section class="drawer-panel record-drawer-inner">
-                <div class="panel-header">
-                    <div>
-                        <h2>加载中</h2>
-                        <p>正在加载内容...</p>
-                    </div>
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <h2 class="h4 mb-1">加载中</h2>
+                    <p class="text-secondary mb-0">正在加载内容...</p>
                 </div>
-            </section>
+                <div class="placeholder-glow">
+                    <span class="placeholder col-12 mb-2"></span>
+                    <span class="placeholder col-10 mb-2"></span>
+                    <span class="placeholder col-8"></span>
+                </div>
+            </div>
         `;
     };
 
@@ -143,17 +149,21 @@
         return url.toString();
     };
 
-    const openDrawer = async (page, url) => {
+    const openDrawer = async (page, url, trigger) => {
         const drawerPanel = page.querySelector(DRAWER_PANEL_SELECTOR);
         const drawerContent = page.querySelector(DRAWER_CONTENT_SELECTOR);
+        const drawerTitle = page.querySelector(DRAWER_TITLE_SELECTOR);
         if (!drawerPanel || !drawerContent) {
             window.location.href = url;
             return;
         }
 
         page.classList.add("drawer-open");
-        drawerPanel.hidden = false;
+        if (drawerTitle instanceof HTMLElement) {
+            drawerTitle.textContent = trigger?.dataset.drawerTitle || trigger?.textContent?.trim() || "详细信息";
+        }
         setDrawerLoading(drawerContent);
+        getOffcanvasInstance(drawerPanel)?.show();
 
         try {
             const response = await fetch(url, {
@@ -179,14 +189,7 @@
 
     const closeDrawer = (page) => {
         const drawerPanel = page.querySelector(DRAWER_PANEL_SELECTOR);
-        const drawerContent = page.querySelector(DRAWER_CONTENT_SELECTOR);
-        page.classList.remove("drawer-open");
-        if (drawerContent) {
-            drawerContent.innerHTML = "";
-        }
-        if (drawerPanel) {
-            drawerPanel.hidden = true;
-        }
+        getOffcanvasInstance(drawerPanel)?.hide();
     };
 
     document.addEventListener("click", (event) => {
@@ -201,7 +204,7 @@
             window.location.href = link.href;
             return;
         }
-        openDrawer(page, link.href);
+        openDrawer(page, link.href, link);
     });
 
     document.addEventListener("click", (event) => {
@@ -217,6 +220,19 @@
 
         event.preventDefault();
         closeDrawer(page);
+    });
+
+    document.addEventListener("hidden.bs.offcanvas", (event) => {
+        const drawerPanel = event.target;
+        if (!(drawerPanel instanceof HTMLElement) || !drawerPanel.matches(DRAWER_PANEL_SELECTOR)) {
+            return;
+        }
+        const page = drawerPanel.closest(DRAWER_PAGE_SELECTOR);
+        const drawerContent = drawerPanel.querySelector(DRAWER_CONTENT_SELECTOR);
+        page?.classList.remove("drawer-open");
+        if (drawerContent instanceof HTMLElement) {
+            drawerContent.innerHTML = "";
+        }
     });
 
     document.addEventListener("submit", async (event) => {

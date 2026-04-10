@@ -118,10 +118,12 @@
         const options = regionTree.map((item) => buildTreeOption(item, [], pathMap));
         const initialValue = getCurrentValue(inputs);
         const placeholder = container.dataset.regionPlaceholder || "请选择地区";
-        const setDisplayValue = (text) => {
+        const setDisplayValue = (path) => {
             const input = mountPoint.querySelector(".treeselect-input__edit");
             if (input instanceof HTMLInputElement) {
-                input.value = text || "";
+                const hasSelection = Array.isArray(path) && path.length > 0;
+                input.value = hasSelection ? resolveDisplayText(path, placeholder) : "";
+                input.placeholder = placeholder;
             }
         };
         const treeselect = new window.Treeselect({
@@ -139,7 +141,7 @@
                 const selectedValue = Array.isArray(value) ? value[0] : value;
                 const path = pathMap.get(selectedValue) || [];
                 updateHiddenInputs(container, resolveSelection(path));
-                setDisplayValue(resolveDisplayText(path, placeholder));
+                setDisplayValue(path);
             }
         });
 
@@ -147,7 +149,7 @@
         if (input instanceof HTMLInputElement) {
             input.placeholder = placeholder;
         }
-        setDisplayValue(resolveDisplayText(pathMap.get(initialValue) || [], placeholder));
+        setDisplayValue(pathMap.get(initialValue) || []);
         mountPoint.querySelector(".treeselect-list")?.classList.add("region-treeselect-list");
         container._treeselect = treeselect;
 

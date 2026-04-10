@@ -5,77 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>招聘信息</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
     <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="page-hero">
-            <h2 class="page-hero-title">企业招聘信息</h2>
-        </section>
-        <div class="drawer-page-layout job-drawer-page" data-drawer-page>
-        <section class="panel drawer-list-panel">
-            <div class="tab-row">
-                <div class="tab-list">
-                    <a class="tab-link active" th:href="@{/jobs}">招聘信息</a>
-                    <a class="tab-link" th:href="@{/enterprises}">企业信息</a>
-                </div>
-            </div>
-            <div class="panel-header">
-                <div>
-                    <h2>招聘岗位列表</h2>
-                </div>
+        <div class="job-drawer-page" data-drawer-page>
+        <section class="card border-0 shadow-sm workbench-card">
+            <div class="card-body">
+            <div class="workbench-tabs">
+                <ul class="nav nav-tabs border-0 gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" th:href="@{/jobs}">招聘信息</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/enterprises}">企业信息</a>
+                    </li>
+                </ul>
             </div>
             <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
 
             <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
-            <div class="youth-toolbar">
-                <form class="filter-form compact-filter" method="get" id="job-list-form" data-ajax-form>
-                    <input type="text" name="jobName" th:value="${query.jobName}" placeholder="岗位名称">
-                    <select name="enterpriseId">
-                        <option value="">全部企业</option>
-                        <option th:each="enterprise : ${enterprises}"
-                                th:value="${enterprise.id}"
-                                th:text="${enterprise.enterpriseName}"
-                                th:selected="${query.enterpriseId != null and query.enterpriseId == enterprise.id}"></option>
-                    </select>
-                    <select name="educationRequirement">
-                        <option value="">学历要求</option>
-                        <option th:each="item : ${educationOptions}"
-                                th:value="${item.dictValue}"
-                                th:text="${item.dictLabel}"
-                                th:selected="${item.dictValue == query.educationRequirement}"></option>
-                    </select>
-                    <select name="experienceRequirement">
-                        <option value="">经验要求</option>
-                        <option th:each="item : ${experienceOptions}"
-                                th:value="${item.dictValue}"
-                                th:text="${item.dictLabel}"
-                                th:selected="${item.dictValue == query.experienceRequirement}"></option>
-                    </select>
-                    <select name="salaryRange">
-                        <option value="">薪资待遇</option>
-                        <option th:each="item : ${salaryOptions}"
-                                th:value="${item.dictValue}"
-                                th:text="${item.dictLabel}"
-                                th:selected="${item.dictValue == query.salaryRange}"></option>
-                    </select>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="工作地区">
-                        <input type="hidden" name="workProvinceCode" th:value="${query.workProvinceCode}" data-region-province>
-                        <input type="hidden" name="workCityCode" th:value="${query.workCityCode}" data-region-city>
-                        <input type="hidden" name="workCountyCode" th:value="${query.workCountyCode}" data-region-county>
+            <div class="workbench-toolbar">
+                <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="job-list-form" data-ajax-form>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="jobName">岗位名称
+                            <input class="form-control" id="jobName" type="text" name="jobName" th:value="${query.jobName}" placeholder="输入岗位名称">
+                        </label>
                     </div>
-                    <div class="filter-actions-inline">
-                        <button type="submit">查询</button>
-                        <a class="secondary-button" data-ajax-link th:href="@{/jobs(pageSize=${pageSize})}">重置</a>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="enterpriseId">所属企业
+                            <select class="form-select" id="enterpriseId" name="enterpriseId">
+                                <option value="">全部企业</option>
+                                <option th:each="enterprise : ${enterprises}"
+                                        th:value="${enterprise.id}"
+                                        th:text="${enterprise.enterpriseName}"
+                                        th:selected="${query.enterpriseId != null and query.enterpriseId == enterprise.id}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="educationRequirement">学历要求
+                            <select class="form-select" id="educationRequirement" name="educationRequirement">
+                                <option value="">全部学历</option>
+                                <option th:each="item : ${educationOptions}"
+                                        th:value="${item.dictValue}"
+                                        th:text="${item.dictLabel}"
+                                        th:selected="${item.dictValue == query.educationRequirement}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="experienceRequirement">经验要求
+                            <select class="form-select" id="experienceRequirement" name="experienceRequirement">
+                                <option value="">全部经验</option>
+                                <option th:each="item : ${experienceOptions}"
+                                        th:value="${item.dictValue}"
+                                        th:text="${item.dictLabel}"
+                                        th:selected="${item.dictValue == query.experienceRequirement}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="salaryRange">薪资待遇
+                            <select class="form-select" id="salaryRange" name="salaryRange">
+                                <option value="">全部薪资</option>
+                                <option th:each="item : ${salaryOptions}"
+                                        th:value="${item.dictValue}"
+                                        th:text="${item.dictLabel}"
+                                        th:selected="${item.dictValue == query.salaryRange}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="filter-block full-width">
+                            <span>工作地区</span>
+                            <div data-region-step data-region-api-url="/api/regions" data-region-placeholder="工作地区">
+                                <input type="hidden" name="workProvinceCode" th:value="${query.workProvinceCode}" data-region-province>
+                                <input type="hidden" name="workCityCode" th:value="${query.workCityCode}" data-region-city>
+                                <input type="hidden" name="workCountyCode" th:value="${query.workCountyCode}" data-region-county>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4 d-flex align-items-end">
+                        <div class="filter-actions-inline d-flex gap-2">
+                            <a class="btn btn-outline-secondary" data-ajax-link th:href="@{/jobs(pageSize=${pageSize})}">重置</a>
+                            <button type="submit" class="btn btn-primary">查询</button>
+                        </div>
                     </div>
                 </form>
 
-                <div class="panel-actions youth-page-actions">
-                    <a class="ghost-button" data-drawer-link th:href="@{/jobs/new}">新增</a>
+                <div class="workbench-actions">
+                    <a class="btn btn-primary" data-drawer-link th:href="@{/jobs/new}">新增</a>
                     <button type="button"
-                            class="secondary-button"
+                            class="btn btn-outline-danger"
                             data-batch-delete-button
                             data-batch-form-id="job-batch-delete-form">删除</button>
                 </div>
@@ -87,18 +112,16 @@
                   data-confirm-message="确认删除选中的招聘信息吗？"></form>
 
             <div class="table-responsive">
-                <table class="simple-table">
+                <table class="simple-table table table-hover align-middle mb-0">
                     <thead>
                     <tr>
                         <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
                         <th class="index-cell">序号</th>
-                        <th>岗位名称</th>
                         <th>企业名称</th>
+                        <th>岗位名称</th>
                         <th>专业要求</th>
                         <th>经验要求</th>
                         <th>学历要求</th>
-                        <th>学校类别</th>
-                        <th>学校标签</th>
                         <th>薪资待遇</th>
                         <th>工作地区</th>
                         <th>联系人</th>
@@ -110,41 +133,39 @@
                     <tr th:each="item, itemStat : ${records}">
                         <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
                         <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
-                        <td th:text="${item.jobName}">岗位名称</td>
                         <td th:text="${item.enterpriseName}">企业名称</td>
+                        <td th:text="${item.jobName}">岗位名称</td>
                         <td th:text="${item.majorRequirementSummary}">计算机科学与技术</td>
                         <td th:text="${item.experienceRequirement}">1-3年</td>
                         <td th:text="${item.educationRequirement}">本科</td>
-                        <td th:text="${item.schoolCategorySummary}">双一流</td>
-                        <td th:text="${item.schoolTagSummary}">985</td>
                         <td th:text="${item.salaryRange}">8000-12000元</td>
                         <td th:text="${item.workRegionName}">乐都区</td>
                         <td th:text="${item.contactPerson}">联系人</td>
                         <td th:text="${item.contactPhone}">13800000000</td>
                         <td class="table-actions">
-                            <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/matches'}">匹配学生</a>
-                            <a data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/edit'}">编辑</a>
+                            <a class="btn btn-sm btn-outline-info" data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/matches'}">匹配</a>
+                            <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{'/jobs/' + ${item.id} + '/edit'}">编辑</a>
                             <form th:action="@{'/jobs/' + ${item.id} + '/delete'}"
                                   method="post"
                                   data-confirm-message="确认删除这条招聘信息吗？">
-                                <button type="submit" class="link-button">删除</button>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">删除</button>
                             </form>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(records)}">
-                        <td class="empty-cell" colspan="14">暂无招聘数据</td>
+                        <td class="empty-cell" colspan="12">暂无招聘数据</td>
                     </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="pagination-bar" th:if="${totalCount > 0}">
+            <div class="pagination-bar d-flex flex-wrap justify-content-between align-items-center" th:if="${totalCount > 0}">
                 <div class="pagination-meta"
                      th:text="${'共 ' + totalCount + ' 条，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共 0 条，当前第 1 / 1 页</div>
-                <div class="pagination-tools">
-                    <label class="pagination-page-size">
+                <div class="pagination-tools d-flex align-items-center gap-3">
+                    <label class="pagination-page-size d-inline-flex align-items-center gap-2 mb-0">
                         <span>每页</span>
-                        <select name="pageSize" form="job-list-form" data-page-size-select>
+                        <select class="form-select form-select-sm" name="pageSize" form="job-list-form" data-page-size-select>
                             <option value="10" th:selected="${pageSize == 10}">10</option>
                             <option value="20" th:selected="${pageSize == 20}">20</option>
                             <option value="50" th:selected="${pageSize == 50}">50</option>
@@ -152,36 +173,55 @@
                         </select>
                         <span>条</span>
                     </label>
-                    <div class="pagination-actions">
-                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
-                                th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
-                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
-                                th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
-                        <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
-                        <button class="pagination-link"
-                                th:classappend="${pageNumber == currentPage} ? ' active'"
+                    <nav aria-label="岗位分页">
+                        <ul class="pagination pagination-sm mb-0">
+                            <li class="page-item" th:classappend="${!hasPrevious} ? ' disabled'">
+                                <button class="page-link" type="submit" form="job-list-form" name="page"
+                                        th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                            </li>
+                            <li class="page-item" th:if="${showFirstPage}">
+                                <button class="page-link" type="submit" form="job-list-form" name="page"
+                                        th:value="${firstPage}" th:text="${firstPage}">1</button>
+                            </li>
+                            <li class="page-item disabled" th:if="${showLeadingEllipsis}">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item"
                                 th:each="pageNumber : ${pageNumbers}"
-                                type="submit"
-                                form="job-list-form"
-                                name="page"
-                                th:value="${pageNumber}"
-                                th:text="${pageNumber}"
-                                th:disabled="${pageNumber == currentPage}">1</button>
-                        <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
-                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
-                                th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
-                        <button class="pagination-link" type="submit" form="job-list-form" name="page"
-                                th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
-                    </div>
+                                th:classappend="${pageNumber == currentPage} ? ' active'">
+                                <button class="page-link"
+                                        type="submit"
+                                        form="job-list-form"
+                                        name="page"
+                                        th:value="${pageNumber}"
+                                        th:text="${pageNumber}"
+                                        th:disabled="${pageNumber == currentPage}">1</button>
+                            </li>
+                            <li class="page-item disabled" th:if="${showTrailingEllipsis}">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item" th:if="${showLastPage}">
+                                <button class="page-link" type="submit" form="job-list-form" name="page"
+                                        th:value="${lastPage}" th:text="${lastPage}">99</button>
+                            </li>
+                            <li class="page-item" th:classappend="${!hasNext} ? ' disabled'">
+                                <button class="page-link" type="submit" form="job-list-form" name="page"
+                                        th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
             </div>
-        </section>
-        <aside class="record-drawer" data-drawer-panel hidden>
-            <div class="panel record-drawer-panel">
-                <div data-drawer-content class="record-drawer-content"></div>
             </div>
-        </aside>
+        </section>
+        <div class="offcanvas offcanvas-end record-drawer-canvas" tabindex="-1" data-drawer-offcanvas aria-labelledby="job-drawer-title">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title" id="job-drawer-title" data-drawer-title>详细信息</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="关闭"></button>
+            </div>
+            <div class="offcanvas-body" data-drawer-content></div>
+        </div>
         </div>
     </main>
 </div>

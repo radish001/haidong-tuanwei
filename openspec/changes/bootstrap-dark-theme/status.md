@@ -5,53 +5,30 @@
 ### 已完成 ✅ (2024-04-09)
 
 **Phase 1 - 基础架构**
-- [x] Bootstrap 5.3 深色主题CSS (`bootstrap-dark.css`)
-- [x] Tom Select 深色适配CSS (`tomselect-dark.css`)
-- [x] 级联选择器JS组件 (`region-cascader-tomselect.js`)
-- [x] 多选组件JS (`multiselect-tomselect.js`)
-- [x] Bootstrap侧边栏模板 (`bootstrap-sidebar.html`)
-- [x] Bootstrap顶部栏模板 (`bootstrap-topbar.html`)
-- [x] 基础布局模板 (`bootstrap-layout.html`)
+- [x] Bootstrap 参考资源已完成验证并已归并/移除
+- [x] 正式运行链路已收敛到当前模板、脚本和样式体系
 
 **Phase 2 - 核心页面**
-- [x] 首页Dashboard (`dashboard/index-bootstrap.html`)
-- [x] 青年列表页 (`youth/list-bootstrap.html`)
-- [x] 青年表单页 (`youth/form-bootstrap.html`)
-- [x] 岗位表单页 (`job/form-bootstrap.html`)
+- [x] 首页Dashboard（参考稿已移除，正式页为 `dashboard/index.html`）
+- [x] 青年列表页（参考稿已移除，正式页为 `youth/list.html`）
+- [x] 青年表单页（已并入 `youth/form.html`）
+- [x] 岗位表单页（已并入 `job/form.html`）
 
 **Phase 3 - 文档**
 - [x] 迁移指南 (`BOOTSTRAP_MIGRATION_GUIDE.md`)
 
 ## 交付物清单
 
-### 样式文件
-```
-src/main/resources/static/css/
-├── bootstrap-dark.css      (1,100+ lines) ✅
-└── tomselect-dark.css      (200+ lines) ✅
-```
-
-### 脚本文件
-```
-src/main/resources/static/js/
-├── region-cascader-tomselect.js   (300+ lines) ✅
-└── multiselect-tomselect.js       (200+ lines) ✅
-```
-
 ### 模板文件
 ```
 src/main/resources/templates/
-├── fragments/
-│   ├── bootstrap-layout.html      ✅
-│   ├── bootstrap-sidebar.html     ✅
-│   └── bootstrap-topbar.html      ✅
 ├── dashboard/
-│   └── index-bootstrap.html       ✅
+│   └── index.html                 ✅
 ├── youth/
-│   ├── list-bootstrap.html        ✅
-│   └── form-bootstrap.html        ✅
+│   ├── list.html                  ✅
+│   └── form.html                  ✅（已合并）
 └── job/
-    └── form-bootstrap.html        ✅
+    └── form.html                  ✅（已合并）
 ```
 
 ## 技术亮点
@@ -76,23 +53,8 @@ src/main/resources/templates/
 
 ## 切换使用
 
-**方式1：Controller临时切换**（测试）
-```java
-// YouthController.java
-@GetMapping("/college")
-public String list() {
-    // return "youth/list";  // 旧样式
-    return "youth/list-bootstrap";  // 新样式
-}
-```
-
-**方式2：文件替换**（正式上线）
-```bash
-# 执行脚本切换（需要时运行）
-cd src/main/resources/templates
-mv youth/list.html youth/list-backup.html
-mv youth/list-bootstrap.html youth/list.html
-```
+不再需要切换到 `*-bootstrap` 模板。
+当前仓库已移除参考模板，正式运行入口以当前 `*.html` 正式模板为准。
 
 ## 验证检查项
 

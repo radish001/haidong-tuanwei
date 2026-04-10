@@ -3,17 +3,13 @@
 ## Phase 1: 基础准备 ✅ 已完成
 
 ### 1.1 创建样式文件 ✅
-- [x] 创建 `bootstrap-dark.css`（Bootstrap变量覆盖）
-- [x] 创建 `tomselect-dark.css`（Tom Select深色主题）
-- [x] 创建 `bootstrap-layout.html`（基础布局）
+- [x] 创建并验证 Bootstrap 参考资源，后续已并入正式链路并移除独立参考文件
 
 ### 1.2 组件脚本 ✅
-- [x] 创建 `region-cascader-tomselect.js`（级联选择器）
-- [x] 创建 `multiselect-tomselect.js`（多选组件）
+- [x] 创建并验证 Tom Select / 级联参考脚本，后续已并入正式链路并移除独立参考文件
 
 ### 1.3 布局片段 ✅
-- [x] 创建 `bootstrap-sidebar.html`（侧边栏）
-- [x] 创建 `bootstrap-topbar.html`（顶部栏）
+- [x] 创建并验证 Bootstrap 参考布局片段，后续已并入正式链路并移除独立参考文件
 
 **实际耗时**：3小时 ✅
 
@@ -22,17 +18,17 @@
 ## Phase 2: 核心页面迁移 ✅ 已完成
 
 ### 2.1 Dashboard首页 ✅
-- [x] `dashboard/index-bootstrap.html`（地图+统计卡片+列表）
+- [x] Dashboard 参考稿已验证并并入正式页（当前使用 `dashboard/index.html`）
 - [x] ECharts图表深色适配
 - [x] 响应式网格布局
 
 ### 2.2 青年信息模块 ✅
-- [x] `youth/list-bootstrap.html`（筛选+表格+分页）
-- [x] `youth/form-bootstrap.html`（表单+级联选择器）
+- [x] 青年列表参考稿已验证并并入正式页（当前使用 `youth/list.html`）
+- [x] `youth/form.html`（表单+级联选择器，已由参考稿合并）
 - [x] 级联选择器集成（籍贯、学校所在地、现居住地）
 
 ### 2.3 岗位管理模块 ✅
-- [x] `job/form-bootstrap.html`（表单+多选+级联）
+- [x] `job/form.html`（表单+多选+级联，已由参考稿合并）
 - [x] 多选组件集成（专业要求、学历要求、学校类别、学校标签）
 - [x] 工作地区级联选择器
 
@@ -72,7 +68,7 @@
 - [x] 深色主题样式适配
 
 ### 3.2 多选下拉框
-- [x] 编写 `multiselect-tomselect.js`
+- [x] 编写并验证多选参考脚本，能力已并入正式链路
 - [x] 标签显示和移除功能
 - [x] 搜索过滤
 - [x] 深色主题样式适配

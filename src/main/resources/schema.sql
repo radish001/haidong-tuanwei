@@ -78,7 +78,7 @@ create table if not exists sys_dict_item (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_dict_type_value (dict_type, dict_value),
-    key idx_sys_dict_type_deleted (dict_type, deleted)
+    key idx_sys_dict_type_enabled_deleted_sort (dict_type, enabled, deleted, sort_no, id)
 );
 
 create table if not exists sys_region (
@@ -93,12 +93,14 @@ create table if not exists sys_region (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0,
-    unique key uk_sys_region_code (region_code)
+    unique key uk_sys_region_code (region_code),
+    key idx_sys_region_deleted_level_sort (deleted, region_level, sort_no, id),
+    key idx_sys_region_parent_deleted_sort (parent_id, deleted, sort_no, id)
 );
 
 create table if not exists sys_major_catalog (
     id bigint primary key auto_increment,
-    major_code varchar(64),
+    major_code varchar(64) not null,
     major_name varchar(100) not null,
     category_dict_item_id bigint not null,
     create_time datetime not null default current_timestamp,
@@ -107,7 +109,7 @@ create table if not exists sys_major_catalog (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_major_catalog_code (major_code),
-    unique key uk_sys_major_catalog_name (major_name)
+    key idx_sys_major_category_deleted_code (category_dict_item_id, deleted, major_code)
 );
 
 create table if not exists sys_school_tag (
@@ -123,7 +125,7 @@ create table if not exists sys_school_tag (
 
 create table if not exists sys_school (
     id bigint primary key auto_increment,
-    school_code varchar(64),
+    school_code varchar(64) not null,
     school_name varchar(150) not null,
     category_dict_item_id bigint not null,
     create_time datetime not null default current_timestamp,
@@ -132,7 +134,6 @@ create table if not exists sys_school (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_school_code (school_code),
-    unique key uk_sys_school_name (school_name),
     key idx_sys_school_category_deleted (category_dict_item_id, deleted)
 );
 
@@ -145,7 +146,8 @@ create table if not exists sys_school_tag_rel (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0,
-    unique key uk_sys_school_tag_rel (school_id, tag_id)
+    unique key uk_sys_school_tag_rel (school_id, tag_id),
+    key idx_sys_school_tag_rel_tag_deleted_school (tag_id, deleted, school_id)
 );
 
 create table if not exists youth_info (
@@ -169,6 +171,7 @@ create table if not exists youth_info (
     major_code varchar(64),
     major varchar(100),
     major_category varchar(64),
+    recruitment_year int,
     graduation_date date,
     employment_direction varchar(100),
     phone varchar(20),
@@ -187,325 +190,26 @@ create table if not exists youth_info (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0,
-    key idx_youth_type_deleted (youth_type, deleted),
-    key idx_youth_name_deleted (name, deleted),
-    key idx_youth_phone_deleted (phone, deleted)
+    key idx_youth_deleted_type_id (deleted, youth_type, id),
+    key idx_youth_deleted_type_gender (deleted, youth_type, gender),
+    key idx_youth_deleted_type_ethnicity (deleted, youth_type, ethnicity),
+    key idx_youth_deleted_type_political_status (deleted, youth_type, political_status),
+    key idx_youth_deleted_type_education_level (deleted, youth_type, education_level),
+    key idx_youth_deleted_type_degree_code (deleted, youth_type, degree_code),
+    key idx_youth_deleted_type_school_code (deleted, youth_type, school_code),
+    key idx_youth_deleted_type_major_code (deleted, youth_type, major_code),
+    key idx_youth_deleted_type_birth_date (deleted, youth_type, birth_date),
+    key idx_youth_deleted_type_native_province (deleted, youth_type, native_province_code),
+    key idx_youth_deleted_type_native_city (deleted, youth_type, native_city_code),
+    key idx_youth_deleted_type_native_county (deleted, youth_type, native_county_code),
+    key idx_youth_deleted_type_school_province (deleted, youth_type, school_province_code),
+    key idx_youth_deleted_type_school_city (deleted, youth_type, school_city_code),
+    key idx_youth_deleted_type_school_county (deleted, youth_type, school_county_code),
+    key idx_youth_deleted_type_residence_province (deleted, youth_type, residence_province_code),
+    key idx_youth_deleted_type_residence_city (deleted, youth_type, residence_city_code),
+    key idx_youth_deleted_type_residence_county (deleted, youth_type, residence_county_code),
+    key idx_youth_deleted_type_name_phone (deleted, youth_type, name, phone)
 );
-
-set @major_category_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'major_category'
-);
-set @major_category_column_sql = if(
-    @major_category_column_exists = 0,
-    'alter table youth_info add column major_category varchar(64) after major',
-    'select 1'
-);
-prepare add_major_category_column_stmt from @major_category_column_sql;
-execute add_major_category_column_stmt;
-deallocate prepare add_major_category_column_stmt;
-
-set @major_code_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'sys_major_catalog'
-      and column_name = 'major_code'
-);
-set @major_code_column_sql = if(
-    @major_code_column_exists = 0,
-    'alter table sys_major_catalog add column major_code varchar(64) after id',
-    'select 1'
-);
-prepare add_major_code_column_stmt from @major_code_column_sql;
-execute add_major_code_column_stmt;
-deallocate prepare add_major_code_column_stmt;
-
-set @major_code_index_exists = (
-    select count(*)
-    from information_schema.statistics
-    where table_schema = database()
-      and table_name = 'sys_major_catalog'
-      and index_name = 'uk_sys_major_catalog_code'
-);
-set @major_code_index_sql = if(
-    @major_code_index_exists = 0,
-    'alter table sys_major_catalog add unique key uk_sys_major_catalog_code (major_code)',
-    'select 1'
-);
-prepare add_major_code_index_stmt from @major_code_index_sql;
-execute add_major_code_index_stmt;
-deallocate prepare add_major_code_index_stmt;
-
-update sys_major_catalog
-set major_code = concat('MAJOR', lpad(id, 6, '0'))
-where (major_code is null or major_code = '')
-  and deleted = 0;
-
-set @school_code_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'sys_school'
-      and column_name = 'school_code'
-);
-set @school_code_column_sql = if(
-    @school_code_column_exists = 0,
-    'alter table sys_school add column school_code varchar(64) after id',
-    'select 1'
-);
-prepare add_school_code_column_stmt from @school_code_column_sql;
-execute add_school_code_column_stmt;
-deallocate prepare add_school_code_column_stmt;
-
-set @school_code_index_exists = (
-    select count(*)
-    from information_schema.statistics
-    where table_schema = database()
-      and table_name = 'sys_school'
-      and index_name = 'uk_sys_school_code'
-);
-set @school_code_index_sql = if(
-    @school_code_index_exists = 0,
-    'alter table sys_school add unique key uk_sys_school_code (school_code)',
-    'select 1'
-);
-prepare add_school_code_index_stmt from @school_code_index_sql;
-execute add_school_code_index_stmt;
-deallocate prepare add_school_code_index_stmt;
-
-update sys_school
-set school_code = concat('SCH', lpad(id, 6, '0'))
-where (school_code is null or school_code = '')
-  and deleted = 0;
-
-set @dict_type_value_index_exists = (
-    select count(*)
-    from information_schema.statistics
-    where table_schema = database()
-      and table_name = 'sys_dict_item'
-      and index_name = 'uk_sys_dict_type_value'
-);
-set @dict_type_value_index_sql = if(
-    @dict_type_value_index_exists = 0,
-    'alter table sys_dict_item add unique key uk_sys_dict_type_value (dict_type, dict_value)',
-    'select 1'
-);
-prepare add_dict_type_value_index_stmt from @dict_type_value_index_sql;
-execute add_dict_type_value_index_stmt;
-deallocate prepare add_dict_type_value_index_stmt;
-
-set @native_province_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'native_province_code'
-);
-set @native_province_column_sql = if(
-    @native_province_column_exists = 0,
-    'alter table youth_info add column native_province_code varchar(32) after political_status',
-    'select 1'
-);
-prepare add_native_province_column_stmt from @native_province_column_sql;
-execute add_native_province_column_stmt;
-deallocate prepare add_native_province_column_stmt;
-
-set @native_city_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'native_city_code'
-);
-set @native_city_column_sql = if(
-    @native_city_column_exists = 0,
-    'alter table youth_info add column native_city_code varchar(32) after native_province_code',
-    'select 1'
-);
-prepare add_native_city_column_stmt from @native_city_column_sql;
-execute add_native_city_column_stmt;
-deallocate prepare add_native_city_column_stmt;
-
-set @native_county_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'native_county_code'
-);
-set @native_county_column_sql = if(
-    @native_county_column_exists = 0,
-    'alter table youth_info add column native_county_code varchar(32) after native_city_code',
-    'select 1'
-);
-prepare add_native_county_column_stmt from @native_county_column_sql;
-execute add_native_county_column_stmt;
-deallocate prepare add_native_county_column_stmt;
-
-set @school_province_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'school_province_code'
-);
-set @school_province_column_sql = if(
-    @school_province_column_exists = 0,
-    'alter table youth_info add column school_province_code varchar(32) after school_name',
-    'select 1'
-);
-prepare add_school_province_column_stmt from @school_province_column_sql;
-execute add_school_province_column_stmt;
-deallocate prepare add_school_province_column_stmt;
-
-set @school_city_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'school_city_code'
-);
-set @school_city_column_sql = if(
-    @school_city_column_exists = 0,
-    'alter table youth_info add column school_city_code varchar(32) after school_province_code',
-    'select 1'
-);
-prepare add_school_city_column_stmt from @school_city_column_sql;
-execute add_school_city_column_stmt;
-deallocate prepare add_school_city_column_stmt;
-
-set @school_county_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'school_county_code'
-);
-set @school_county_column_sql = if(
-    @school_county_column_exists = 0,
-    'alter table youth_info add column school_county_code varchar(32) after school_city_code',
-    'select 1'
-);
-prepare add_school_county_column_stmt from @school_county_column_sql;
-execute add_school_county_column_stmt;
-deallocate prepare add_school_county_column_stmt;
-
-set @degree_code_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'degree_code'
-);
-set @degree_code_column_sql = if(
-    @degree_code_column_exists = 0,
-    'alter table youth_info add column degree_code varchar(32) after education_level',
-    'select 1'
-);
-prepare add_degree_code_column_stmt from @degree_code_column_sql;
-execute add_degree_code_column_stmt;
-deallocate prepare add_degree_code_column_stmt;
-
-set @youth_school_code_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'school_code'
-);
-set @youth_school_code_column_sql = if(
-    @youth_school_code_column_exists = 0,
-    'alter table youth_info add column school_code varchar(64) after degree_code',
-    'select 1'
-);
-prepare add_youth_school_code_column_stmt from @youth_school_code_column_sql;
-execute add_youth_school_code_column_stmt;
-deallocate prepare add_youth_school_code_column_stmt;
-
-set @youth_major_code_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'major_code'
-);
-set @youth_major_code_column_sql = if(
-    @youth_major_code_column_exists = 0,
-    'alter table youth_info add column major_code varchar(64) after school_county_code',
-    'select 1'
-);
-prepare add_youth_major_code_column_stmt from @youth_major_code_column_sql;
-execute add_youth_major_code_column_stmt;
-deallocate prepare add_youth_major_code_column_stmt;
-
-update youth_info y
-join sys_school s on s.school_name = y.school_name and s.deleted = 0
-set y.school_code = s.school_code
-where (y.school_code is null or y.school_code = '')
-  and y.deleted = 0;
-
-update youth_info y
-join sys_major_catalog m on m.major_name = y.major and m.deleted = 0
-set y.major_code = m.major_code,
-    y.major_category = coalesce(y.major_category, (
-        select d.dict_label from sys_dict_item d
-        where d.id = m.category_dict_item_id and d.deleted = 0 and d.enabled = 1
-        limit 1
-    ))
-where (y.major_code is null or y.major_code = '')
-  and y.deleted = 0;
-
-set @residence_province_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'residence_province_code'
-);
-set @residence_province_column_sql = if(
-    @residence_province_column_exists = 0,
-    'alter table youth_info add column residence_province_code varchar(32) after phone',
-    'select 1'
-);
-prepare add_residence_province_column_stmt from @residence_province_column_sql;
-execute add_residence_province_column_stmt;
-deallocate prepare add_residence_province_column_stmt;
-
-set @residence_city_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'residence_city_code'
-);
-set @residence_city_column_sql = if(
-    @residence_city_column_exists = 0,
-    'alter table youth_info add column residence_city_code varchar(32) after residence_province_code',
-    'select 1'
-);
-prepare add_residence_city_column_stmt from @residence_city_column_sql;
-execute add_residence_city_column_stmt;
-deallocate prepare add_residence_city_column_stmt;
-
-set @residence_county_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'youth_info'
-      and column_name = 'residence_county_code'
-);
-set @residence_county_column_sql = if(
-    @residence_county_column_exists = 0,
-    'alter table youth_info add column residence_county_code varchar(32) after residence_city_code',
-    'select 1'
-);
-prepare add_residence_county_column_stmt from @residence_county_column_sql;
-execute add_residence_county_column_stmt;
-deallocate prepare add_residence_county_column_stmt;
 
 create table if not exists enterprise_info (
     id bigint primary key auto_increment,
@@ -526,57 +230,14 @@ create table if not exists enterprise_info (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0,
-    key idx_enterprise_name_deleted (enterprise_name, deleted),
-    key idx_enterprise_region_deleted (region_county_code, deleted)
+    key idx_enterprise_deleted_status_name (deleted, status, enterprise_name),
+    key idx_enterprise_deleted_industry (deleted, industry),
+    key idx_enterprise_deleted_nature (deleted, enterprise_nature),
+    key idx_enterprise_deleted_scale (deleted, enterprise_scale),
+    key idx_enterprise_deleted_region_province (deleted, region_province_code),
+    key idx_enterprise_deleted_region_city (deleted, region_city_code),
+    key idx_enterprise_deleted_region_county (deleted, region_county_code)
 );
-
-set @enterprise_region_province_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'enterprise_info'
-      and column_name = 'region_province_code'
-);
-set @enterprise_region_province_column_sql = if(
-    @enterprise_region_province_column_exists = 0,
-    'alter table enterprise_info add column region_province_code varchar(32) after enterprise_scale',
-    'select 1'
-);
-prepare add_enterprise_region_province_column_stmt from @enterprise_region_province_column_sql;
-execute add_enterprise_region_province_column_stmt;
-deallocate prepare add_enterprise_region_province_column_stmt;
-
-set @enterprise_region_city_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'enterprise_info'
-      and column_name = 'region_city_code'
-);
-set @enterprise_region_city_column_sql = if(
-    @enterprise_region_city_column_exists = 0,
-    'alter table enterprise_info add column region_city_code varchar(32) after region_province_code',
-    'select 1'
-);
-prepare add_enterprise_region_city_column_stmt from @enterprise_region_city_column_sql;
-execute add_enterprise_region_city_column_stmt;
-deallocate prepare add_enterprise_region_city_column_stmt;
-
-set @enterprise_region_county_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'enterprise_info'
-      and column_name = 'region_county_code'
-);
-set @enterprise_region_county_column_sql = if(
-    @enterprise_region_county_column_exists = 0,
-    'alter table enterprise_info add column region_county_code varchar(32) after region_city_code',
-    'select 1'
-);
-prepare add_enterprise_region_county_column_stmt from @enterprise_region_county_column_sql;
-execute add_enterprise_region_county_column_stmt;
-deallocate prepare add_enterprise_region_county_column_stmt;
 
 create table if not exists job_post (
     id bigint primary key auto_increment,
@@ -600,8 +261,13 @@ create table if not exists job_post (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0,
-    key idx_job_enterprise_deleted (enterprise_id, deleted),
-    key idx_job_name_deleted (job_name, deleted)
+    key idx_job_deleted_publish_time_id (deleted, publish_time, id),
+    key idx_job_deleted_enterprise_id (deleted, enterprise_id, id),
+    key idx_job_deleted_experience (deleted, experience_requirement),
+    key idx_job_deleted_salary (deleted, salary_range),
+    key idx_job_deleted_work_province (deleted, work_province_code),
+    key idx_job_deleted_work_city (deleted, work_city_code),
+    key idx_job_deleted_work_county (deleted, work_county_code)
 );
 
 create table if not exists job_post_major_rel (
@@ -648,83 +314,6 @@ create table if not exists job_post_school_tag_rel (
     key idx_job_post_school_tag_rel_tag (tag_id)
 );
 
-set @job_salary_range_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'job_post'
-      and column_name = 'salary_range'
-);
-set @job_salary_range_column_sql = if(
-    @job_salary_range_column_exists = 0,
-    'alter table job_post add column salary_range varchar(64) after experience_requirement',
-    'select 1'
-);
-prepare add_job_salary_range_column_stmt from @job_salary_range_column_sql;
-execute add_job_salary_range_column_stmt;
-deallocate prepare add_job_salary_range_column_stmt;
-
-set @job_work_province_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'job_post'
-      and column_name = 'work_province_code'
-);
-set @job_work_province_column_sql = if(
-    @job_work_province_column_exists = 0,
-    'alter table job_post add column work_province_code varchar(32) after recruit_count',
-    'select 1'
-);
-prepare add_job_work_province_column_stmt from @job_work_province_column_sql;
-execute add_job_work_province_column_stmt;
-deallocate prepare add_job_work_province_column_stmt;
-
-set @job_work_city_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'job_post'
-      and column_name = 'work_city_code'
-);
-set @job_work_city_column_sql = if(
-    @job_work_city_column_exists = 0,
-    'alter table job_post add column work_city_code varchar(32) after work_province_code',
-    'select 1'
-);
-prepare add_job_work_city_column_stmt from @job_work_city_column_sql;
-execute add_job_work_city_column_stmt;
-deallocate prepare add_job_work_city_column_stmt;
-
-set @job_work_county_column_exists = (
-    select count(*)
-    from information_schema.columns
-    where table_schema = database()
-      and table_name = 'job_post'
-      and column_name = 'work_county_code'
-);
-set @job_work_county_column_sql = if(
-    @job_work_county_column_exists = 0,
-    'alter table job_post add column work_county_code varchar(32) after work_city_code',
-    'select 1'
-);
-prepare add_job_work_county_column_stmt from @job_work_county_column_sql;
-execute add_job_work_county_column_stmt;
-deallocate prepare add_job_work_county_column_stmt;
-
-insert into job_post_education_rel (job_post_id, education_code, create_by)
-select j.id, j.education_requirement, coalesce(j.create_by, 1)
-from job_post j
-where j.deleted = 0
-  and j.education_requirement is not null
-  and j.education_requirement <> ''
-  and not exists (
-      select 1
-      from job_post_education_rel rel
-      where rel.job_post_id = j.id
-        and rel.education_code = j.education_requirement
-  );
-
 create table if not exists policy_article (
     id bigint primary key auto_increment,
     title varchar(200) not null,
@@ -739,6 +328,6 @@ create table if not exists policy_article (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0,
-    key idx_policy_title_deleted (title, deleted),
-    key idx_policy_status_deleted (status, deleted)
+    key idx_policy_deleted_publish_time_id (deleted, publish_time, id),
+    key idx_policy_deleted_status_id (deleted, status, id)
 );

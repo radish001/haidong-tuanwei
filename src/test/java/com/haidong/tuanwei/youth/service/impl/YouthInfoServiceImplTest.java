@@ -95,7 +95,11 @@ class YouthInfoServiceImplTest {
         try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(templateBytes))) {
             Sheet mainSheet = workbook.getSheet("青年信息导入模板");
             assertThat(mainSheet).isNotNull();
-            assertThat(mainSheet.getRow(0).getCell(13).getStringCellValue()).isEqualTo("联系方式");
+            assertThat(mainSheet.getRow(0).getCell(0).getStringCellValue()).isEqualTo("姓名");
+            assertThat(mainSheet.getRow(0).getCell(2).getStringCellValue()).isEqualTo("民族");
+            assertThat(mainSheet.getRow(0).getCell(5).getStringCellValue()).isEqualTo("招考年份");
+            assertThat(mainSheet.getRow(0).getCell(10).getStringCellValue()).isEqualTo("联系方式");
+            assertThat(mainSheet.getRow(0).getLastCellNum()).isEqualTo((short) 11);
 
             List<String> nativePlaceOptions = sheetValues(workbook.getSheet("hidden_5"));
             assertThat(nativePlaceOptions).containsExactly(
@@ -143,7 +147,11 @@ class YouthInfoServiceImplTest {
         assertThat(fullPathYouth.getSchoolCountyCode()).isEqualTo("630202");
         assertThat(fullPathYouth.getSchoolCode()).isEqualTo("10743");
         assertThat(fullPathYouth.getMajorCode()).isEqualTo("080901");
-        assertThat(fullPathYouth.getDegreeCode()).isEqualTo("学士");
+        assertThat(fullPathYouth.getRecruitmentYear()).isEqualTo(2023);
+        assertThat(fullPathYouth.getPoliticalStatus()).isNull();
+        assertThat(fullPathYouth.getDegreeCode()).isNull();
+        assertThat(fullPathYouth.getGraduationDate()).isNull();
+        assertThat(fullPathYouth.getEmploymentDirection()).isNull();
 
         YouthInfo partialPathYouth = importedRows.get(1);
         assertThat(partialPathYouth.getNativeProvinceCode()).isEqualTo("630000");
@@ -152,10 +160,11 @@ class YouthInfoServiceImplTest {
         assertThat(partialPathYouth.getSchoolProvinceCode()).isEqualTo("630000");
         assertThat(partialPathYouth.getSchoolCityCode()).isEqualTo("630200");
         assertThat(partialPathYouth.getSchoolCountyCode()).isNull();
+        assertThat(partialPathYouth.getRecruitmentYear()).isEqualTo(2023);
     }
 
     @Test
-    void importFromExcelRejectsInvalidRegionPathAndInvalidHeader() throws Exception {
+    void importFromExcelRejectsInvalidRegionPathInvalidYearAndInvalidHeader() throws Exception {
         MockMultipartFile invalidRegionFile = new MockMultipartFile(
                 "file",
                 "invalid-region.xlsx",
@@ -165,6 +174,16 @@ class YouthInfoServiceImplTest {
         assertThat(invalidRegionResult.getSuccessCount()).isZero();
         assertThat(invalidRegionResult.getFailCount()).isEqualTo(1);
         assertThat(invalidRegionResult.getErrors().get(0).getMessage()).contains("籍贯不在区域主数据范围内");
+
+        MockMultipartFile invalidYearFile = new MockMultipartFile(
+                "file",
+                "invalid-year.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                buildYouthImportFile("非法年份青年", "13900000005", "青海省 / 海东市 / 乐都区", "青海省 / 海东市", "20A3"));
+        YouthImportResult invalidYearResult = youthInfoService.importFromExcel("COLLEGE", invalidYearFile, 1L);
+        assertThat(invalidYearResult.getSuccessCount()).isZero();
+        assertThat(invalidYearResult.getFailCount()).isEqualTo(1);
+        assertThat(invalidYearResult.getErrors().get(0).getMessage()).contains("招考年份格式不正确");
 
         MockMultipartFile invalidHeaderFile = new MockMultipartFile(
                 "file",
@@ -195,6 +214,9 @@ class YouthInfoServiceImplTest {
         youthInfo.setSchoolCityCode("630200");
         youthInfo.setSchoolCountyCode("630202");
         youthInfo.setMajor("计算机科学与技术");
+        youthInfo.setRecruitmentYear(2023);
+        youthInfo.setPoliticalStatus("共青团员");
+        youthInfo.setDegreeName("学士");
         youthInfo.setGraduationDate(LocalDate.of(2026, 6, 30));
         youthInfo.setEmploymentDirection("互联网开发");
         youthInfo.setPhone("13900000004");
@@ -205,9 +227,15 @@ class YouthInfoServiceImplTest {
         try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(exportBytes))) {
             Sheet sheet = workbook.getSheetAt(0);
             assertThat(sheet.getRow(0).getCell(0).getStringCellValue()).isEqualTo("姓名");
-            assertThat(sheet.getRow(0).getCell(13).getStringCellValue()).isEqualTo("联系方式");
+            assertThat(sheet.getRow(0).getCell(4).getStringCellValue()).isEqualTo("政治面貌");
+            assertThat(sheet.getRow(0).getCell(7).getStringCellValue()).isEqualTo("学位");
+            assertThat(sheet.getRow(0).getCell(11).getStringCellValue()).isEqualTo("招考年份");
+            assertThat(sheet.getRow(0).getCell(14).getStringCellValue()).isEqualTo("联系方式");
             assertThat(sheet.getRow(1).getCell(5).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
             assertThat(sheet.getRow(1).getCell(9).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
+            assertThat(sheet.getRow(1).getCell(4).getStringCellValue()).isEqualTo("共青团员");
+            assertThat(sheet.getRow(1).getCell(7).getStringCellValue()).isEqualTo("学士");
+            assertThat(sheet.getRow(1).getCell(11).getStringCellValue()).isEqualTo("2023");
         }
     }
 
@@ -253,29 +281,30 @@ class YouthInfoServiceImplTest {
     }
 
     private byte[] buildYouthImportFile(String name, String phone, String nativePlace, String schoolRegion) throws Exception {
+        return buildYouthImportFile(name, phone, nativePlace, schoolRegion, "2023");
+    }
+
+    private byte[] buildYouthImportFile(String name, String phone, String nativePlace, String schoolRegion, String recruitmentYear) throws Exception {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("青年信息导入模板");
             Row headerRow = sheet.createRow(0);
-            String[] headers = {"姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学位",
-                    "学校", "学校所在区域", "专业", "毕业时间", "就业方向", "联系方式"};
+            String[] headers = {"姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
+                    "学校", "学校所在区域", "专业", "联系方式"};
             for (int i = 0; i < headers.length; i++) {
                 headerRow.createCell(i).setCellValue(headers[i]);
             }
             Row row = sheet.createRow(1);
             row.createCell(0).setCellValue(name);
             row.createCell(1).setCellValue("男");
-            row.createCell(2).setCellValue("2001-09-01");
-            row.createCell(3).setCellValue("汉族");
-            row.createCell(4).setCellValue("共青团员");
-            row.createCell(5).setCellValue(nativePlace);
+            row.createCell(2).setCellValue("汉族");
+            row.createCell(3).setCellValue("2001-09-01");
+            row.createCell(4).setCellValue(nativePlace);
+            row.createCell(5).setCellValue(recruitmentYear);
             row.createCell(6).setCellValue("本科");
-            row.createCell(7).setCellValue("学士");
-            row.createCell(8).setCellValue("青海大学");
-            row.createCell(9).setCellValue(schoolRegion);
-            row.createCell(10).setCellValue("计算机科学与技术");
-            row.createCell(11).setCellValue("2026-06-30");
-            row.createCell(12).setCellValue("互联网开发");
-            row.createCell(13).setCellValue(phone);
+            row.createCell(7).setCellValue("青海大学");
+            row.createCell(8).setCellValue(schoolRegion);
+            row.createCell(9).setCellValue("计算机科学与技术");
+            row.createCell(10).setCellValue(phone);
             workbook.write(outputStream);
             return outputStream.toByteArray();
         }
@@ -285,8 +314,8 @@ class YouthInfoServiceImplTest {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("青年信息导入模板");
             Row headerRow = sheet.createRow(0);
-            String[] headers = {"姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学位",
-                    "学校", "学校所在区域", "专业", "毕业时间", "就业方向", lastHeader};
+            String[] headers = {"姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
+                    "学校", "学校所在区域", "专业", lastHeader};
             for (int i = 0; i < headers.length; i++) {
                 headerRow.createCell(i).setCellValue(headers[i]);
             }

@@ -5,45 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>岗位匹配学生</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
-    <main class="content">
+    <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="drawer-shell">
-            <div class="drawer-placeholder">
-                <div class="drawer-placeholder-copy">
-                    <h2>岗位匹配学生</h2>
-                    <p>按岗位已配置的专业、学历、学校类别和学校标签筛选在校大学生。</p>
-                </div>
-            </div>
-
-            <section class="drawer-panel record-drawer-inner match-results-drawer" th:fragment="drawerContent">
-                <div class="panel-header">
-                    <div class="drawer-panel-header">
-                        <div>
-                            <h2 th:text="${jobPost.jobName + ' 匹配学生'}">岗位匹配学生</h2>
-                            <p th:text="${'所属企业：' + jobPost.enterpriseName}">所属企业：企业名称</p>
-                        </div>
-                        <a class="drawer-close-link" th:href="@{/jobs}" data-drawer-close>×</a>
+        <section class="drawer-workspace">
+            <section class="drawer-content-view match-results-drawer" th:fragment="drawerContent">
+                <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h2 class="h4 mb-1" th:text="${jobPost.jobName + ' 匹配学生'}">岗位匹配学生</h2>
+                        <p class="text-secondary mb-0" th:text="${'所属企业：' + jobPost.enterpriseName}">所属企业：企业名称</p>
                     </div>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/jobs}" data-drawer-close aria-label="关闭">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="detail-grid row g-3">
+                    <div class="col-12 col-sm-6"><span>专业要求</span><strong th:text="${#strings.isEmpty(jobPost.majorRequirementSummary) ? '未限制' : jobPost.majorRequirementSummary}">未限制</strong></div>
+                    <div class="col-12 col-sm-6"><span>学历要求</span><strong th:text="${#strings.isEmpty(jobPost.educationRequirement) ? '未限制' : jobPost.educationRequirement}">未限制</strong></div>
+                    <div class="col-12 col-sm-6"><span>学校类别</span><strong th:text="${#strings.isEmpty(jobPost.schoolCategorySummary) ? '未限制' : jobPost.schoolCategorySummary}">未限制</strong></div>
+                    <div class="col-12 col-sm-6"><span>学校标签</span><strong th:text="${#strings.isEmpty(jobPost.schoolTagSummary) ? '未限制' : jobPost.schoolTagSummary}">未限制</strong></div>
                 </div>
 
-                <div class="detail-grid">
-                    <div><span>专业要求</span><strong th:text="${#strings.isEmpty(jobPost.majorRequirementSummary) ? '未限制' : jobPost.majorRequirementSummary}">未限制</strong></div>
-                    <div><span>学历要求</span><strong th:text="${#strings.isEmpty(jobPost.educationRequirement) ? '未限制' : jobPost.educationRequirement}">未限制</strong></div>
-                    <div><span>学校类别</span><strong th:text="${#strings.isEmpty(jobPost.schoolCategorySummary) ? '未限制' : jobPost.schoolCategorySummary}">未限制</strong></div>
-                    <div><span>学校标签</span><strong th:text="${#strings.isEmpty(jobPost.schoolTagSummary) ? '未限制' : jobPost.schoolTagSummary}">未限制</strong></div>
-                </div>
-
-                <form class="pagination-bar" method="get" th:action="@{'/jobs/' + ${jobPost.id} + '/matches'}">
+                <form class="pagination-bar d-flex flex-wrap justify-content-between align-items-center" method="get" th:action="@{'/jobs/' + ${jobPost.id} + '/matches'}">
                     <div class="pagination-meta"
                          th:text="${'共匹配到 ' + totalCount + ' 名学生，当前第 ' + currentPage + ' / ' + totalPages + ' 页'}">共匹配到 0 名学生</div>
-                    <div class="pagination-tools" th:if="${totalCount > 0}">
-                        <label class="pagination-page-size">
+                    <div class="pagination-tools d-flex align-items-center gap-3" th:if="${totalCount > 0}">
+                        <label class="pagination-page-size d-inline-flex align-items-center gap-2 mb-0">
                             <span>每页</span>
-                            <select name="pageSize" data-page-size-select>
+                            <select class="form-select form-select-sm" name="pageSize" data-page-size-select>
                                 <option value="10" th:selected="${pageSize == 10}">10</option>
                                 <option value="20" th:selected="${pageSize == 20}">20</option>
                                 <option value="50" th:selected="${pageSize == 50}">50</option>
@@ -51,31 +44,47 @@
                             </select>
                             <span>条</span>
                         </label>
-                        <div class="pagination-actions">
-                            <button class="pagination-link" type="submit" name="page"
-                                    th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
-                            <button class="pagination-link" type="submit" name="page"
-                                    th:if="${showFirstPage}" th:value="${firstPage}" th:text="${firstPage}">1</button>
-                            <span class="pagination-ellipsis" th:if="${showLeadingEllipsis}">...</span>
-                            <button class="pagination-link"
-                                    th:classappend="${pageNumber == currentPage} ? ' active'"
+                        <nav aria-label="匹配结果分页">
+                            <ul class="pagination pagination-sm mb-0">
+                                <li class="page-item" th:classappend="${!hasPrevious} ? ' disabled'">
+                                    <button class="page-link" type="submit" name="page"
+                                            th:value="${previousPage}" th:disabled="${!hasPrevious}">上一页</button>
+                                </li>
+                                <li class="page-item" th:if="${showFirstPage}">
+                                    <button class="page-link" type="submit" name="page"
+                                            th:value="${firstPage}" th:text="${firstPage}">1</button>
+                                </li>
+                                <li class="page-item disabled" th:if="${showLeadingEllipsis}">
+                                    <span class="page-link">...</span>
+                                </li>
+                                <li class="page-item"
                                     th:each="pageNumber : ${pageNumbers}"
-                                    type="submit"
-                                    name="page"
-                                    th:value="${pageNumber}"
-                                    th:text="${pageNumber}"
-                                    th:disabled="${pageNumber == currentPage}">1</button>
-                            <span class="pagination-ellipsis" th:if="${showTrailingEllipsis}">...</span>
-                            <button class="pagination-link" type="submit" name="page"
-                                    th:if="${showLastPage}" th:value="${lastPage}" th:text="${lastPage}">99</button>
-                            <button class="pagination-link" type="submit" name="page"
-                                    th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
-                        </div>
+                                    th:classappend="${pageNumber == currentPage} ? ' active'">
+                                    <button class="page-link"
+                                            type="submit"
+                                            name="page"
+                                            th:value="${pageNumber}"
+                                            th:text="${pageNumber}"
+                                            th:disabled="${pageNumber == currentPage}">1</button>
+                                </li>
+                                <li class="page-item disabled" th:if="${showTrailingEllipsis}">
+                                    <span class="page-link">...</span>
+                                </li>
+                                <li class="page-item" th:if="${showLastPage}">
+                                    <button class="page-link" type="submit" name="page"
+                                            th:value="${lastPage}" th:text="${lastPage}">99</button>
+                                </li>
+                                <li class="page-item" th:classappend="${!hasNext} ? ' disabled'">
+                                    <button class="page-link" type="submit" name="page"
+                                            th:value="${nextPage}" th:disabled="${!hasNext}">下一页</button>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </form>
 
-                <div class="match-results-table-shell">
-                    <table class="simple-table match-results-table">
+                <div class="match-results-table-shell table-responsive">
+                    <table class="simple-table match-results-table table table-hover align-middle mb-0">
                         <thead>
                         <tr>
                             <th class="index-cell">序号</th>

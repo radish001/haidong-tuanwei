@@ -1,5 +1,5 @@
 (() => {
-    const SELECTOR = ".filter-form select:not([multiple]), .edit-form select:not([multiple]), .pagination-page-size select";
+    const SELECTOR = ".filter-form select:not([multiple]), .edit-form select:not([multiple])";
     const MOBILE_BREAKPOINT = 1180;
     const TOM_SELECT_SCRIPT_URL = "https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js";
     let tomSelectLoader = null;
@@ -37,7 +37,7 @@
         if (select.dataset.noBootstrapEnhance === "true") {
             return false;
         }
-        if (select.closest("[data-region-step]") || select.closest("[data-multi-select-root]")) {
+        if (select.closest("[data-region-step]")) {
             return false;
         }
         if (select.matches("[data-region-province], [data-region-city], [data-region-county]")) {
@@ -103,6 +103,13 @@
         });
 
         document.querySelector("[data-sidebar-backdrop]")?.addEventListener("click", () => setSidebarOpen(false));
+        document.querySelectorAll(".sidebar a.nav-link, .sidebar .navbar-brand").forEach((link) => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth <= MOBILE_BREAKPOINT) {
+                    setSidebarOpen(false);
+                }
+            });
+        });
 
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape") {
@@ -115,6 +122,7 @@
                 setSidebarOpen(false);
             }
         });
+        setSidebarOpen(false);
         document.body.dataset.mobileSidebarReady = "true";
     };
 

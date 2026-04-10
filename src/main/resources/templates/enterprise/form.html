@@ -5,66 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>企业信息表单</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
 </head>
 <body class="admin-body">
 <div class="admin-layout">
     <div th:replace="~{fragments/sidebar :: sidebar}"></div>
     <main class="content container-fluid">
         <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
-        <section class="drawer-shell bootstrap-grid row g-4 align-items-start">
-            <div class="drawer-placeholder col-12 col-xl-4">
-                <div class="drawer-placeholder-copy">
-                    <h2>企业信息</h2>
-                    <p>用于维护企业基础资料和联系信息。</p>
-                </div>
-            </div>
-
-            <section class="drawer-panel record-drawer-inner col-12 col-xl-8" th:fragment="drawerContent">
-                <div class="panel-header">
-                    <div class="drawer-panel-header">
-                        <div>
-                            <h2 th:text="${formTitle}">新增企业信息</h2>
-                            <p>维护企业名称、行业、性质、规模、联系人与区域信息。</p>
-                        </div>
-                        <a class="drawer-close-link" th:href="@{/enterprises}" data-drawer-close>×</a>
+        <section class="drawer-workspace">
+            <section class="drawer-content-view" th:fragment="drawerContent">
+                <div class="drawer-panel-header d-flex flex-wrap justify-content-between align-items-start gap-3">
+                    <div>
+                        <h2 class="h4 mb-1" th:text="${formTitle}">新增企业信息</h2>
+                        <p class="text-secondary mb-0">维护企业名称、行业、性质、规模、联系人与区域信息。</p>
                     </div>
+                    <a class="btn btn-outline-secondary btn-sm" th:href="@{/enterprises}" data-drawer-close aria-label="关闭">
+                        <i class="bi bi-x-lg" aria-hidden="true"></i>
+                    </a>
                 </div>
-                <form th:action="@{${formAction}}" th:object="${enterpriseForm}" method="post" class="edit-form">
-                    <label><span>企业名称</span><input type="text" th:field="*{enterpriseName}"></label>
-                    <label>
+                <form th:action="@{${formAction}}" th:object="${enterpriseForm}" method="post" class="edit-form row g-3">
+                    <label class="col-12 col-md-6"><span>企业名称</span><input class="form-control" type="text" th:field="*{enterpriseName}"></label>
+                    <label class="col-12 col-md-6">
                         <span>行业</span>
-                        <select th:field="*{industry}">
+                        <select class="form-select" th:field="*{industry}">
                             <option value="">请选择</option>
                             <option th:each="item : ${industryOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>企业性质</span>
-                        <select th:field="*{enterpriseNature}">
+                        <select class="form-select" th:field="*{enterpriseNature}">
                             <option value="">请选择</option>
                             <option th:each="item : ${natureOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label>
+                    <label class="col-12 col-md-6">
                         <span>企业规模</span>
-                        <select th:field="*{enterpriseScale}">
+                        <select class="form-select" th:field="*{enterpriseScale}">
                             <option value="">请选择</option>
                             <option th:each="item : ${scaleOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <div class="filter-block full-width" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
+                    <div class="filter-block col-12 col-md-6" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
                         <span>所在地区</span>
                         <input type="hidden" th:field="*{regionProvinceCode}" data-region-province>
                         <input type="hidden" th:field="*{regionCityCode}" data-region-city>
                         <input type="hidden" th:field="*{regionCountyCode}" data-region-county>
                     </div>
-                    <label class="full-width"><span>企业地址</span><input type="text" th:field="*{address}"></label>
-                    <label><span>联系人</span><input type="text" th:field="*{contactPerson}"></label>
-                    <label><span>联系电话</span><input type="text" th:field="*{contactPhone}"></label>
-                    <label class="full-width"><span>企业介绍</span><textarea th:field="*{description}"></textarea></label>
-                    <div class="form-actions full-width">
-                        <a class="ghost-button" th:href="@{/enterprises}" data-drawer-close>取消</a>
-                        <button type="submit">保存</button>
+                    <label class="full-width col-12"><span>企业地址</span><input class="form-control" type="text" th:field="*{address}"></label>
+                    <label class="col-12 col-md-6"><span>联系人</span><input class="form-control" type="text" th:field="*{contactPerson}"></label>
+                    <label class="col-12 col-md-6"><span>联系电话</span><input class="form-control" type="text" th:field="*{contactPhone}"></label>
+                    <label class="full-width col-12"><span>企业介绍</span><textarea class="form-control" th:field="*{description}"></textarea></label>
+                    <div class="form-actions full-width col-12">
+                        <a class="btn btn-outline-secondary" th:href="@{/enterprises}" data-drawer-close>取消</a>
+                        <button type="submit" class="btn btn-primary">保存</button>
                     </div>
                 </form>
             </section>
