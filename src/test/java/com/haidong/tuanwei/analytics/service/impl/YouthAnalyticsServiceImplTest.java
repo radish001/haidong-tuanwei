@@ -10,6 +10,7 @@ import com.haidong.tuanwei.analytics.dto.TagChartView;
 import com.haidong.tuanwei.analytics.dto.TagSchoolStat;
 import com.haidong.tuanwei.analytics.dto.YouthAnalyticsView;
 import com.haidong.tuanwei.analytics.entity.ChartItem;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,27 +18,31 @@ import org.junit.jupiter.api.Test;
 class YouthAnalyticsServiceImplTest {
 
     private YouthAnalyticsDao youthAnalyticsDao;
+    private MasterDataService masterDataService;
     private YouthAnalyticsServiceImpl youthAnalyticsService;
 
     @BeforeEach
     void setUp() {
         youthAnalyticsDao = mock(YouthAnalyticsDao.class);
-        youthAnalyticsService = new YouthAnalyticsServiceImpl(youthAnalyticsDao);
+        masterDataService = mock(MasterDataService.class);
+        youthAnalyticsService = new YouthAnalyticsServiceImpl(youthAnalyticsDao, masterDataService);
     }
 
     @Test
     void getAnalyticsUsesCollegeDashboardDatasetsForCollegeType() {
+        List<Long> configuredTagIds = List.of(1L, 3L);
+        when(masterDataService.getAnalyticsSchoolTagIds()).thenReturn(configuredTagIds);
         when(youthAnalyticsDao.countBySchoolCategory("COLLEGE"))
                 .thenReturn(List.of(chartItem("双一流", 3), chartItem("普通本科", 2)));
         when(youthAnalyticsDao.countByMajorCategory("COLLEGE"))
                 .thenReturn(List.of(chartItem("工学", 4), chartItem("管理学", 1)));
-        when(youthAnalyticsDao.countByColumn("COLLEGE", "gender"))
+        when(youthAnalyticsDao.countByGender("COLLEGE"))
                 .thenReturn(List.of(chartItem("男", 3), chartItem("女", 2)));
         when(youthAnalyticsDao.countByEducationLevel("COLLEGE"))
                 .thenReturn(List.of(chartItem("本科", 4), chartItem("专科", 1)));
-        when(youthAnalyticsDao.countByColumn("COLLEGE", "ethnicity"))
+        when(youthAnalyticsDao.countByEthnicity("COLLEGE"))
                 .thenReturn(List.of(chartItem("汉族", 5)));
-        when(youthAnalyticsDao.countHaidongNativeSchoolsByTag("COLLEGE", "630200"))
+        when(youthAnalyticsDao.countHaidongNativeSchoolsByTag("COLLEGE", "630200", configuredTagIds))
                 .thenReturn(List.of(
                         tagSchoolStat("985", "清华大学", 1),
                         tagSchoolStat("985", "北京大学", 1),
@@ -66,6 +71,20 @@ class YouthAnalyticsServiceImplTest {
         assertThat(secondTagChart.getTitle()).isEqualTo("双一流");
         assertThat(secondTagChart.getData()).extracting(ChartItem::getName, ChartItem::getValue)
                 .containsExactly(tuple("兰州大学", 2), tuple("复旦大学", 1));
+    }
+
+    @Test
+    void getAnalyticsReturnsEmptyTagChartsWhenNoTagsConfigured() {
+        when(masterDataService.getAnalyticsSchoolTagIds()).thenReturn(List.of());
+        when(youthAnalyticsDao.countBySchoolCategory("COLLEGE")).thenReturn(List.of());
+        when(youthAnalyticsDao.countByMajorCategory("COLLEGE")).thenReturn(List.of());
+        when(youthAnalyticsDao.countByGender("COLLEGE")).thenReturn(List.of());
+        when(youthAnalyticsDao.countByEducationLevel("COLLEGE")).thenReturn(List.of());
+        when(youthAnalyticsDao.countByEthnicity("COLLEGE")).thenReturn(List.of());
+
+        YouthAnalyticsView analytics = youthAnalyticsService.getAnalytics("COLLEGE");
+
+        assertThat(analytics.getHaidongSchoolTagDistributions()).isEmpty();
     }
 
     @Test

@@ -146,6 +146,15 @@ create table if not exists sys_school_tag_rel (
     unique (school_id, tag_id)
 );
 
+create table if not exists sys_analytics_school_tag (
+    id bigint primary key auto_increment,
+    tag_id bigint not null,
+    create_time timestamp not null default current_timestamp,
+    create_by bigint,
+    deleted tinyint not null default 0,
+    unique (tag_id)
+);
+
 create table if not exists youth_info (
     id bigint primary key auto_increment,
     youth_type varchar(32) not null,

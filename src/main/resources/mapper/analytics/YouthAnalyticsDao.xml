@@ -145,6 +145,10 @@
             and yi.youth_type = #{youthType}
             and <include refid="haidongNativeCondition"/>
         where t.deleted = 0
+          and t.id in
+            <foreach item="tagId" collection="tagIds" open="(" separator="," close=")">
+                #{tagId}
+            </foreach>
         group by t.id, t.tag_name, s.id, s.school_name
         order by t.tag_name, item_value desc, s.school_name
     </select>

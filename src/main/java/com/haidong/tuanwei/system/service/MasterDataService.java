@@ -63,4 +63,8 @@ public interface MasterDataService {
     byte[] generateSchoolImportTemplate();
 
     DataImportResult importSchoolsFromExcel(MultipartFile file);
+
+    List<Long> getAnalyticsSchoolTagIds();
+
+    void saveAnalyticsSchoolTagIds(List<Long> tagIds);
 }

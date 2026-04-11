@@ -113,8 +113,8 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             Sheet mainSheet = workbook.createSheet("青年信息导入模板");
             createHeader(mainSheet, IMPORT_TEMPLATE_HEADERS);
 
-            List<String> genderOptions = dictionaryValues("gender");
-            List<String> ethnicityOptions = dictionaryValues("ethnicity");
+            List<String> genderOptions = dictionaryLabels("gender");
+            List<String> ethnicityOptions = dictionaryLabels("ethnicity");
             List<String> regionOptions = regionPaths();
             List<String> educationOptions = dictionaryLabels("education_level");
             List<String> schoolOptions = schoolNames();

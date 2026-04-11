@@ -6,6 +6,7 @@ import com.haidong.tuanwei.analytics.dto.TagChartView;
 import com.haidong.tuanwei.analytics.dto.YouthAnalyticsView;
 import com.haidong.tuanwei.analytics.entity.ChartItem;
 import com.haidong.tuanwei.analytics.service.YouthAnalyticsService;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
     private static final String HAIDONG_CITY_CODE = "630200";
 
     private final YouthAnalyticsDao youthAnalyticsDao;
+    private final MasterDataService masterDataService;
 
     @Override
     public YouthAnalyticsView getAnalytics(String youthType) {
@@ -38,14 +40,22 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
     }
 
     private YouthAnalyticsView buildCollegeAnalytics(String youthType) {
-        List<TagSchoolStat> tagSchoolStats = youthAnalyticsDao.countHaidongNativeSchoolsByTag(youthType, HAIDONG_CITY_CODE);
+        List<Long> configuredTagIds = masterDataService.getAnalyticsSchoolTagIds();
+        List<TagChartView> tagCharts;
+        if (configuredTagIds.isEmpty()) {
+            tagCharts = List.of();
+        } else {
+            List<TagSchoolStat> tagSchoolStats = youthAnalyticsDao.countHaidongNativeSchoolsByTag(
+                    youthType, HAIDONG_CITY_CODE, configuredTagIds);
+            tagCharts = buildTagCharts(tagSchoolStats);
+        }
         return YouthAnalyticsView.builder()
                 .schoolCategoryDistribution(youthAnalyticsDao.countBySchoolCategory(youthType))
                 .majorCategoryDistribution(youthAnalyticsDao.countByMajorCategory(youthType))
                 .genderDistribution(youthAnalyticsDao.countByGender(youthType))
                 .educationDistribution(youthAnalyticsDao.countByEducationLevel(youthType))
                 .ethnicityDistribution(youthAnalyticsDao.countByEthnicity(youthType))
-                .haidongSchoolTagDistributions(buildTagCharts(tagSchoolStats))
+                .haidongSchoolTagDistributions(tagCharts)
                 .build();
     }
 

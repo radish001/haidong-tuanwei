@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.AnalyticsSchoolTagDao">
+
+    <select id="findAllTagIds" resultType="long">
+        select tag_id
+        from sys_analytics_school_tag
+        where deleted = 0
+        order by tag_id
+    </select>
+
+    <update id="deleteAll">
+        update sys_analytics_school_tag
+        set deleted = 1
+        where deleted = 0
+    </update>
+
+    <update id="deleteByTagId">
+        update sys_analytics_school_tag
+        set deleted = 1
+        where tag_id = #{tagId}
+          and deleted = 0
+    </update>
+
+    <insert id="insert">
+        insert into sys_analytics_school_tag (tag_id, deleted)
+        values (#{tagId}, 0)
+        on duplicate key update deleted = 0
+    </insert>
+</mapper>

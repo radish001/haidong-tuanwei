@@ -4,6 +4,7 @@ import com.haidong.tuanwei.common.util.ExcelUtils;
 import com.haidong.tuanwei.system.dao.DictionaryDao;
 import com.haidong.tuanwei.job.dao.JobPostDao;
 import com.haidong.tuanwei.system.dao.MajorCatalogDao;
+import com.haidong.tuanwei.system.dao.AnalyticsSchoolTagDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.system.dao.SchoolTagDao;
 import com.haidong.tuanwei.system.dto.DataImportError;
@@ -45,6 +46,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final SchoolDao schoolDao;
     private final DictionaryDao dictionaryDao;
     private final JobPostDao jobPostDao;
+    private final AnalyticsSchoolTagDao analyticsSchoolTagDao;
 
     @Override
     public List<MajorCatalog> searchMajors(String keyword, int page, int pageSize) {
@@ -170,6 +172,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (jobPostDao.countSchoolTagUsage(id) > 0) {
             throw new IllegalStateException("该学校标签已被招聘岗位使用，无法删除");
         }
+        analyticsSchoolTagDao.deleteByTagId(id);
         schoolTagDao.softDelete(id);
     }
 
@@ -570,5 +573,23 @@ public class MasterDataServiceImpl implements MasterDataService {
             throw new IllegalStateException("学校不存在或已删除");
         }
         return school;
+    }
+
+    @Override
+    public List<Long> getAnalyticsSchoolTagIds() {
+        return analyticsSchoolTagDao.findAllTagIds();
+    }
+
+    @Override
+    @Transactional
+    public void saveAnalyticsSchoolTagIds(List<Long> tagIds) {
+        analyticsSchoolTagDao.deleteAll();
+        if (tagIds != null) {
+            for (Long tagId : tagIds) {
+                if (tagId != null && schoolTagDao.findById(tagId) != null) {
+                    analyticsSchoolTagDao.insert(tagId);
+                }
+            }
+        }
     }
 }

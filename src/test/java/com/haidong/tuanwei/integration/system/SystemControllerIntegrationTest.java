@@ -370,4 +370,122 @@ class SystemControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(redirectedUrl(BASE_URL + "?tab=common&section=region"));
     }
 
+    @Test
+    void analyticsTabShouldLoadWithSchoolTags() throws Exception {
+        mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "analytics"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("system/dictionaries"))
+                .andExpect(model().attribute("viewKind", "analytics-haidong-tag"))
+                .andExpect(model().attributeExists("allSchoolTags", "selectedTagIds"));
+    }
+
+    @Test
+    void saveAnalyticsSchoolTagsShouldPersistSelection() throws Exception {
+        mockMvc.perform(post("/system/analytics/haidong-school-tags")
+                        .session(adminSession)
+                        .param("tagIds", "1", "3"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "海东籍顶尖高校分析配置保存成功"));
+
+        MvcResult result = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "analytics"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Long> selectedTagIds =
+                (java.util.List<Long>) result.getModelAndView().getModel().get("selectedTagIds");
+
+        assertThat(selectedTagIds).containsExactlyInAnyOrder(1L, 3L);
+    }
+
+    @Test
+    void saveAnalyticsSchoolTagsWithEmptySelectionShouldClear() throws Exception {
+        // first save some
+        mockMvc.perform(post("/system/analytics/haidong-school-tags")
+                        .session(adminSession)
+                        .param("tagIds", "1", "2"))
+                .andExpect(status().is3xxRedirection());
+
+        // then clear
+        mockMvc.perform(post("/system/analytics/haidong-school-tags")
+                        .session(adminSession))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "海东籍顶尖高校分析配置保存成功"));
+
+        MvcResult result = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "analytics"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Long> selectedTagIds =
+                (java.util.List<Long>) result.getModelAndView().getModel().get("selectedTagIds");
+
+        assertThat(selectedTagIds).isEmpty();
+    }
+
+    @Test
+    void saveAnalyticsSchoolTagsShouldIgnoreInvalidTagIds() throws Exception {
+        mockMvc.perform(post("/system/analytics/haidong-school-tags")
+                        .session(adminSession)
+                        .param("tagIds", "1", "99999"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult result = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "analytics"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Long> selectedTagIds =
+                (java.util.List<Long>) result.getModelAndView().getModel().get("selectedTagIds");
+
+        assertThat(selectedTagIds).containsExactly(1L);
+    }
+
+    @Test
+    void deleteSchoolTagShouldCascadeRemoveFromAnalyticsConfig() throws Exception {
+        String tagName = "CASCADE_TAG-" + System.currentTimeMillis();
+        mockMvc.perform(post("/system/school-tags")
+                        .session(adminSession)
+                        .param("tagName", tagName))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult tagResult = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "school-category")
+                        .param("section", "school-tag"))
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.system.entity.SchoolTag> tags =
+                (java.util.List<com.haidong.tuanwei.system.entity.SchoolTag>) tagResult
+                        .getModelAndView().getModel().get("records");
+        Long newTagId = tags.stream()
+                .filter(r -> r.getTagName().equals(tagName))
+                .findFirst()
+                .orElseThrow()
+                .getId();
+
+        mockMvc.perform(post("/system/analytics/haidong-school-tags")
+                        .session(adminSession)
+                        .param("tagIds", String.valueOf(newTagId)))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post("/system/school-tags/" + newTagId + "/delete").session(adminSession))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "学校标签删除成功"));
+
+        MvcResult analyticsResult = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "analytics"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<Long> selectedTagIds =
+                (java.util.List<Long>) analyticsResult.getModelAndView().getModel().get("selectedTagIds");
+
+        assertThat(selectedTagIds).doesNotContain(newTagId);
+    }
+
 }
