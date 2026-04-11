@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业信息详情</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content container-fluid">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <section class="drawer-workspace">
+            <section class="drawer-content-view" th:fragment="drawerContent">
+                <div class="drawer-panel-header">
+                    <h2 class="h4 mb-1" th:text="${record.enterpriseName + ' 详情'}">企业信息详情</h2>
+                </div>
+
+                <div class="detail-grid row g-3">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>企业名称</span><strong th:text="${record.enterpriseName}">企业名称</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>行业</span><strong th:text="${record.industry}">行业</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>企业性质</span><strong th:text="${record.enterpriseNature}">企业性质</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>企业规模</span><strong th:text="${record.enterpriseScale}">企业规模</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>所在区域</span><strong th:text="${record.regionName}">所在区域</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>统一社会信用代码</span><strong th:text="${record.unifiedSocialCreditCode}">统一社会信用代码</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6">
+                        <span>营业执照</span>
+                        <strong>
+                            <a th:if="${record.businessLicensePath != null and record.businessLicensePath != ''}"
+                               th:href="@{/enterprises/{id}/business-license(id=${record.id})}"
+                               target="_blank"
+                               rel="noopener noreferrer">查看营业执照</a>
+                            <span th:if="${record.businessLicensePath == null or record.businessLicensePath == ''}">未上传</span>
+                        </strong>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系人</span><strong th:text="${record.contactPerson}">联系人</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系电话</span><strong th:text="${record.contactPhone}">联系电话</strong></div>
+                    <div class="col-12"><span>企业地址</span><strong th:text="${record.address}">企业地址</strong></div>
+                    <div class="col-12"><span>企业介绍</span><strong th:text="${record.description}">企业介绍</strong></div>
+                </div>
+
+                <div class="form-actions mt-3">
+                    <a class="btn btn-outline-secondary" th:href="@{/enterprises}" data-drawer-close>返回列表</a>
+                    <a class="btn btn-primary" data-drawer-link th:href="@{'/enterprises/' + ${record.id} + '/edit'}">编辑</a>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

@@ -35,3 +35,4 @@ build/
 ### Local runtime / editor history ###
 logs/
 .history/
+uploads/

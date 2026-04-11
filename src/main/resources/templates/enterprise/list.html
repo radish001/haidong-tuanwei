@@ -128,6 +128,7 @@
                         <td th:text="${item.contactPerson}">联系人</td>
                         <td th:text="${item.contactPhone}">13800000000</td>
                         <td class="table-actions">
+                            <a class="btn btn-sm btn-outline-info" data-drawer-link th:href="@{'/enterprises/' + ${item.id}}">详情</a>
                             <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{'/enterprises/' + ${item.id} + '/edit'}">编辑</a>
                             <form th:action="@{'/enterprises/' + ${item.id} + '/delete'}"
                                   method="post"

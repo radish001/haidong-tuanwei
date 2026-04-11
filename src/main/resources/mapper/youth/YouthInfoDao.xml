@@ -62,6 +62,12 @@
         <if test="query != null and query.ethnicity != null and query.ethnicity != ''">
             and y.ethnicity = #{query.ethnicity}
         </if>
+        <if test="query != null and query.birthDate != null and query.birthDate != ''">
+            and date_format(y.birth_date, '%Y-%m') = #{query.birthDate}
+        </if>
+        <if test="query != null and query.recruitmentYear != null">
+            and y.recruitment_year = #{query.recruitmentYear}
+        </if>
         <if test="query != null and query.politicalStatus != null and query.politicalStatus != ''">
             and y.political_status = #{query.politicalStatus}
         </if>
@@ -107,6 +113,9 @@
         <if test="query != null and query.schoolCode != null and query.schoolCode != ''">
             and y.school_code = #{query.schoolCode}
         </if>
+        <if test="query != null and query.majorCode != null and query.majorCode != ''">
+            and y.major_code = #{query.majorCode}
+        </if>
         <if test="query != null and query.majorCodes != null and !query.majorCodes.isEmpty()">
             and y.major_code in
             <foreach collection="query.majorCodes" item="majorCode" open="(" separator="," close=")">
@@ -135,6 +144,9 @@
                   </foreach>
             )
         </if>
+        <if test="query != null and query.phone != null and query.phone != ''">
+            and y.phone like concat('%', #{query.phone}, '%')
+        </if>
     </sql>
 
     <select id="search" resultMap="YouthInfoResultMap">
@@ -155,7 +167,7 @@
                concat_ws('-', sp.region_name, sc.region_name, sct.region_name) as school_region_name,
                y.major_code,
                coalesce(m.major_name, y.major) as major,
-               coalesce(mc.dict_label, y.major_category) as major_category,
+               coalesce(mc.dict_label, mcd.dict_label, y.major_category) as major_category,
                y.recruitment_year,
                y.graduation_date, y.employment_direction, y.phone,
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
@@ -176,6 +188,8 @@
         left join sys_school s on s.school_code = y.school_code and s.deleted = 0
         left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
         left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
+        left join sys_dict_item mcd on mcd.dict_type = 'major_category' and mcd.dict_value = y.major_category
+            and mcd.enabled = 1 and mcd.deleted = 0
         left join sys_region np on np.region_code = y.native_province_code and np.deleted = 0
         left join sys_region nc on nc.region_code = y.native_city_code and nc.deleted = 0
         left join sys_region nct on nct.region_code = y.native_county_code and nct.deleted = 0
@@ -222,7 +236,7 @@
                concat_ws('-', sp.region_name, sc.region_name, sct.region_name) as school_region_name,
                y.major_code,
                coalesce(m.major_name, y.major) as major,
-               coalesce(mc.dict_label, y.major_category) as major_category,
+               coalesce(mc.dict_label, mcd.dict_label, y.major_category) as major_category,
                y.recruitment_year,
                y.graduation_date, y.employment_direction, y.phone,
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
@@ -243,6 +257,8 @@
         left join sys_school s on s.school_code = y.school_code and s.deleted = 0
         left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
         left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
+        left join sys_dict_item mcd on mcd.dict_type = 'major_category' and mcd.dict_value = y.major_category
+            and mcd.enabled = 1 and mcd.deleted = 0
         left join sys_region np on np.region_code = y.native_province_code and np.deleted = 0
         left join sys_region nc on nc.region_code = y.native_city_code and nc.deleted = 0
         left join sys_region nct on nct.region_code = y.native_county_code and nct.deleted = 0

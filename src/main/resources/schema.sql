@@ -229,6 +229,8 @@ create table if not exists enterprise_info (
     region_province_code varchar(32),
     region_city_code varchar(32),
     region_county_code varchar(32),
+    unified_social_credit_code varchar(64),
+    business_license_path varchar(255),
     address varchar(255),
     contact_person varchar(50),
     contact_phone varchar(20),

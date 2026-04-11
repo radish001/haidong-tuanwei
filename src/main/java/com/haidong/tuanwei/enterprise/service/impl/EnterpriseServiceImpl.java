@@ -79,6 +79,8 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         enterprise.setRegionProvinceCode(regionSelection.getProvinceCode());
         enterprise.setRegionCityCode(regionSelection.getCityCode());
         enterprise.setRegionCountyCode(regionSelection.getCountyCode());
+        enterprise.setUnifiedSocialCreditCode(request.getUnifiedSocialCreditCode());
+        enterprise.setBusinessLicensePath(request.getBusinessLicensePath());
         enterprise.setAddress(request.getAddress());
         enterprise.setContactPerson(request.getContactPerson());
         enterprise.setContactPhone(request.getContactPhone());

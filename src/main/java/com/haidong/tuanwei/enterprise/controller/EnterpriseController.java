@@ -9,8 +9,22 @@ import com.haidong.tuanwei.enterprise.entity.EnterpriseInfo;
 import com.haidong.tuanwei.enterprise.service.EnterpriseService;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,14 +35,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
 public class EnterpriseController {
 
+    private static final DateTimeFormatter LICENSE_TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+
     private final EnterpriseService enterpriseService;
     private final DictionaryService dictionaryService;
+
+    @Value("${app.upload.enterprise-license-dir:uploads/enterprise-license}")
+    private String enterpriseLicenseDir;
 
     @GetMapping("/enterprises")
     public String enterprises(@ModelAttribute("query") EnterpriseSearchRequest query,
@@ -57,8 +77,18 @@ public class EnterpriseController {
         return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
     }
 
+    @GetMapping("/enterprises/{id}")
+    public String enterpriseDetail(@PathVariable Long id,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        model.addAttribute("pageTitle", "企业信息详情");
+        model.addAttribute("record", enterpriseService.getById(id));
+        return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/detail :: drawerContent" : "enterprise/detail";
+    }
+
     @PostMapping("/enterprises")
     public String createEnterprise(@Valid @ModelAttribute("enterpriseForm") EnterpriseFormRequest request,
+            @RequestParam(value = "businessLicenseFile", required = false) MultipartFile businessLicenseFile,
             BindingResult bindingResult,
             @AuthenticationPrincipal AdminUserDetails currentUser,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
@@ -72,6 +102,8 @@ public class EnterpriseController {
             return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
         }
         try {
+            request.setBusinessLicensePath(resolveBusinessLicensePath(
+                    request.getBusinessLicensePath(), request.getEnterpriseName(), businessLicenseFile));
             enterpriseService.create(request, currentUser.getId());
         } catch (IllegalStateException ex) {
             model.addAttribute("pageTitle", "企业信息");
@@ -100,6 +132,7 @@ public class EnterpriseController {
     @PostMapping("/enterprises/{id}")
     public String updateEnterprise(@PathVariable Long id,
             @Valid @ModelAttribute("enterpriseForm") EnterpriseFormRequest request,
+            @RequestParam(value = "businessLicenseFile", required = false) MultipartFile businessLicenseFile,
             BindingResult bindingResult,
             @AuthenticationPrincipal AdminUserDetails currentUser,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
@@ -113,6 +146,8 @@ public class EnterpriseController {
             return AjaxRequestSupport.isAjax(requestedWith) ? "enterprise/form :: drawerContent" : "enterprise/form";
         }
         try {
+            request.setBusinessLicensePath(resolveBusinessLicensePath(
+                    request.getBusinessLicensePath(), request.getEnterpriseName(), businessLicenseFile));
             enterpriseService.update(id, request, currentUser.getId());
         } catch (IllegalStateException ex) {
             model.addAttribute("pageTitle", "企业信息");
@@ -124,6 +159,34 @@ public class EnterpriseController {
         }
         redirectAttributes.addFlashAttribute("successMessage", "企业信息更新成功");
         return "redirect:/enterprises";
+    }
+
+    @GetMapping("/enterprises/{id}/business-license")
+    public ResponseEntity<Resource> downloadBusinessLicense(@PathVariable Long id) {
+        EnterpriseInfo enterprise = enterpriseService.getById(id);
+        if (enterprise == null || enterprise.getBusinessLicensePath() == null || enterprise.getBusinessLicensePath().isBlank()) {
+            throw new IllegalStateException("营业执照文件不存在");
+        }
+        Path basePath = Paths.get(enterpriseLicenseDir).toAbsolutePath().normalize();
+        Path filePath = basePath.resolve(enterprise.getBusinessLicensePath()).normalize();
+        if (!filePath.startsWith(basePath) || !Files.exists(filePath) || !Files.isRegularFile(filePath)) {
+            throw new IllegalStateException("营业执照文件不存在");
+        }
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null || contentType.isBlank()) {
+                contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
+            String encodedName = URLEncoder.encode(filePath.getFileName().toString(), StandardCharsets.UTF_8).replace("+", "%20");
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION,
+                            "inline; filename=\"license\"; filename*=UTF-8''" + encodedName)
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+        } catch (IOException ex) {
+            throw new IllegalStateException("营业执照文件读取失败", ex);
+        }
     }
 
     @PostMapping("/enterprises/{id}/delete")
@@ -158,6 +221,8 @@ public class EnterpriseController {
         form.setRegionProvinceCode(enterprise.getRegionProvinceCode());
         form.setRegionCityCode(enterprise.getRegionCityCode());
         form.setRegionCountyCode(enterprise.getRegionCountyCode());
+        form.setUnifiedSocialCreditCode(enterprise.getUnifiedSocialCreditCode());
+        form.setBusinessLicensePath(enterprise.getBusinessLicensePath());
         form.setAddress(enterprise.getAddress());
         form.setContactPerson(enterprise.getContactPerson());
         form.setContactPhone(enterprise.getContactPhone());
@@ -176,5 +241,50 @@ public class EnterpriseController {
         model.addAttribute("industryOptions", dictionaryService.getByType("enterprise_industry"));
         model.addAttribute("natureOptions", dictionaryService.getByType("enterprise_nature"));
         model.addAttribute("scaleOptions", dictionaryService.getByType("enterprise_scale"));
+    }
+
+    private String resolveBusinessLicensePath(String currentPath, String enterpriseName, MultipartFile businessLicenseFile) {
+        if (businessLicenseFile == null || businessLicenseFile.isEmpty()) {
+            return currentPath;
+        }
+        String originalName = businessLicenseFile.getOriginalFilename();
+        String baseName = "license";
+        String suffix = "";
+        if (originalName != null && !originalName.isBlank()) {
+            int lastDot = originalName.lastIndexOf('.');
+            if (lastDot >= 0) {
+                if (lastDot > 0) {
+                    baseName = originalName.substring(0, lastDot);
+                }
+                suffix = originalName.substring(lastDot);
+            } else {
+                baseName = originalName;
+            }
+        }
+        String safeBaseName = sanitizeFileNamePart(baseName);
+        String safeEnterpriseName = sanitizeFileNamePart(enterpriseName == null ? "enterprise" : enterpriseName);
+        String timestamp = LocalDateTime.now().format(LICENSE_TIMESTAMP_FORMATTER);
+        String targetFileName = safeBaseName + "_" + safeEnterpriseName + "_" + timestamp + suffix;
+        Path basePath = Paths.get(enterpriseLicenseDir).toAbsolutePath().normalize();
+        Path enterpriseDirPath = basePath.resolve(safeEnterpriseName).normalize();
+        Path targetPath = enterpriseDirPath.resolve(targetFileName).normalize();
+        if (!targetPath.startsWith(basePath)) {
+            throw new IllegalStateException("营业执照文件名不合法");
+        }
+        try {
+            Files.createDirectories(enterpriseDirPath);
+            businessLicenseFile.transferTo(targetPath);
+            return safeEnterpriseName + "/" + targetFileName;
+        } catch (IOException ex) {
+            throw new IllegalStateException("营业执照上传失败", ex);
+        }
+    }
+
+    private String sanitizeFileNamePart(String value) {
+        if (value == null || value.isBlank()) {
+            return "file";
+        }
+        String sanitized = value.trim().replaceAll("[\\\\/:*?\"<>|\\s]+", "_");
+        return sanitized.isBlank() ? "file" : sanitized;
     }
 }

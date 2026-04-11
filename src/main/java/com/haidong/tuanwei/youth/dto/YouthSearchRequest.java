@@ -10,6 +10,8 @@ public class YouthSearchRequest {
     private String name;
     private String gender;
     private String ethnicity;
+    private String birthDate;
+    private Integer recruitmentYear;
     private String politicalStatus;
     private String educationLevel;
     private String degreeCode;
@@ -24,7 +26,9 @@ public class YouthSearchRequest {
     private String schoolCountyCode;
     private String ageRange;
     private String schoolCode;
+    private String majorCode;
     private String majorCategory;
+    private String phone;
     private List<String> educationCodes = new ArrayList<>();
     private List<String> majorCodes = new ArrayList<>();
     private List<Long> schoolCategoryIds = new ArrayList<>();

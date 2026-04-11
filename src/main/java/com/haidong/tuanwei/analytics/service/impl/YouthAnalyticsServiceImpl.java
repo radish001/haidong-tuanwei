@@ -70,7 +70,8 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
         }
         for (TagSchoolStat item : tagSchoolStats) {
             chartsByTag.computeIfAbsent(item.getTagName(), key -> new ArrayList<>())
-                    .add(chartItem(item.getSchoolName(), item.getValue() == null ? 0 : item.getValue()));
+                    .add(chartItem(item.getSchoolName(), item.getValue() == null ? 0 : item.getValue(),
+                            item.getSchoolCode()));
         }
         List<TagChartView> charts = new ArrayList<>();
         for (Map.Entry<String, List<ChartItem>> entry : chartsByTag.entrySet()) {
@@ -82,10 +83,11 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
         return charts;
     }
 
-    private ChartItem chartItem(String name, int value) {
+    private ChartItem chartItem(String name, int value, String code) {
         ChartItem item = new ChartItem();
         item.setName(name);
         item.setValue(value);
+        item.setCode(code);
         return item;
     }
 }

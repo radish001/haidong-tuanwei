@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>招聘信息详情</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+</head>
+<body class="admin-body">
+<div class="admin-layout">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+    <main class="content container-fluid">
+        <div th:replace="~{fragments/topbar :: topbar(${pageTitle})}"></div>
+
+        <section class="drawer-workspace">
+            <section class="drawer-content-view" th:fragment="drawerContent">
+                <div class="drawer-panel-header">
+                    <h2 class="h4 mb-1" th:text="${record.jobName + ' 详情'}">招聘信息详情</h2>
+                </div>
+
+                <div class="detail-grid row g-3">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>所属企业</span><strong th:text="${record.enterpriseName}">所属企业</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>岗位名称</span><strong th:text="${record.jobName}">岗位名称</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>岗位类别</span><strong th:text="${record.jobCategory}">岗位类别</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>学历要求</span><strong th:text="${record.educationRequirement}">学历要求</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>专业要求</span><strong th:text="${record.majorRequirementSummary}">专业要求</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>院校类别要求</span><strong th:text="${record.schoolCategorySummary}">院校类别要求</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>院校标签要求</span><strong th:text="${record.schoolTagSummary}">院校标签要求</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>经验要求</span><strong th:text="${experienceRequirementLabel}">经验要求</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>薪资待遇</span><strong th:text="${salaryRangeLabel}">薪资待遇</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>招聘人数</span><strong th:text="${record.recruitCount}">招聘人数</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>工作地区</span><strong th:text="${record.workRegionName}">工作地区</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系人</span><strong th:text="${record.contactPerson}">联系人</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系电话</span><strong th:text="${record.contactPhone}">联系电话</strong></div>
+                    <div class="col-12"><span>岗位描述</span><strong th:text="${record.jobDescription}">岗位描述</strong></div>
+                </div>
+
+                <div class="form-actions mt-3">
+                    <a class="btn btn-outline-secondary" th:href="@{/jobs}" data-drawer-close>返回列表</a>
+                    <a class="btn btn-outline-info" data-drawer-link th:href="@{'/jobs/' + ${record.id} + '/matches'}">匹配</a>
+                    <a class="btn btn-primary" data-drawer-link th:href="@{'/jobs/' + ${record.id} + '/edit'}">编辑</a>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>

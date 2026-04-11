@@ -66,6 +66,20 @@ public class JobController {
         return AjaxRequestSupport.isAjax(requestedWith) ? "job/form :: drawerContent" : "job/form";
     }
 
+    @GetMapping("/jobs/{id}")
+    public String jobDetail(@PathVariable Long id,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        JobPost record = jobPostService.getById(id);
+        model.addAttribute("pageTitle", "招聘信息详情");
+        model.addAttribute("record", record);
+        model.addAttribute("experienceRequirementLabel",
+                resolveDictLabel("experience_requirement", record == null ? null : record.getExperienceRequirement()));
+        model.addAttribute("salaryRangeLabel",
+                resolveDictLabel("salary_range", record == null ? null : record.getSalaryRange()));
+        return AjaxRequestSupport.isAjax(requestedWith) ? "job/detail :: drawerContent" : "job/detail";
+    }
+
     @PostMapping("/jobs")
     public String createJob(@Valid @ModelAttribute("jobForm") JobFormRequest request,
             BindingResult bindingResult,
@@ -254,5 +268,16 @@ public class JobController {
         model.addAttribute("showLeadingEllipsis", startPage > 1);
         model.addAttribute("showLastPage", false);
         model.addAttribute("showTrailingEllipsis", endPage < totalPages);
+    }
+
+    private String resolveDictLabel(String dictType, String dictValue) {
+        if (dictValue == null || dictValue.isBlank()) {
+            return "";
+        }
+        return dictionaryService.getByType(dictType).stream()
+                .filter(item -> dictValue.equals(item.getDictValue()))
+                .findFirst()
+                .map(item -> item.getDictLabel())
+                .orElse(dictValue);
     }
 }

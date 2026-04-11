@@ -50,32 +50,32 @@
 
         <section class="stats-grid row g-4">
             <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card card border-0 h-100">
+            <a class="stat-card stat-card-link card border-0 h-100" th:href="@{/youth/college}">
                 <span class="stat-label">青年总数</span>
                 <strong th:text="${stats.youthCount}">0</strong>
                 <div class="stat-meta">在库青年信息总量</div>
-            </article>
+            </a>
             </div>
             <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card card border-0 h-100">
+            <a class="stat-card stat-card-link card border-0 h-100" th:href="@{/enterprise}">
                 <span class="stat-label">企业总数</span>
                 <strong th:text="${stats.enterpriseCount}">0</strong>
                 <div class="stat-meta">在库企业主体数量</div>
-            </article>
+            </a>
             </div>
             <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card card border-0 h-100">
+            <a class="stat-card stat-card-link card border-0 h-100" th:href="@{/jobs}">
                 <span class="stat-label">岗位总数</span>
                 <strong th:text="${stats.jobCount}">0</strong>
                 <div class="stat-meta">在库岗位信息数量</div>
-            </article>
+            </a>
             </div>
             <div class="col-12 col-sm-6 col-xl-3">
-            <article class="stat-card card border-0 h-100">
+            <a class="stat-card stat-card-link card border-0 h-100" th:href="@{/policies}">
                 <span class="stat-label">政策总数</span>
                 <strong th:text="${stats.policyCount}">0</strong>
                 <div class="stat-meta">已录入政策数量</div>
-            </article>
+            </a>
             </div>
         </section>
 
@@ -199,7 +199,8 @@
             .filter(item => item.regionName)
             .map(item => ({
                 name: nameFormatter ? nameFormatter(item.regionName) : item.regionName,
-                value: Number(item.total || 0)
+                value: Number(item.total || 0),
+                regionCode: item.regionCode
             }));
     }
 
@@ -211,6 +212,7 @@
 
     function renderMap(elementId, mapName, data, options) {
         const element = document.getElementById(elementId);
+        element.style.cursor = 'pointer';
         const chart = echarts.init(element);
         const maxValue = Math.max(...data.map(item => item.value), 0);
         const hasData = data.length > 0 && maxValue > 0;
@@ -274,6 +276,13 @@
                 data
             }]
         });
+        if (options.clickFilterParam) {
+            chart.on('click', function(params) {
+                if (params.data && params.data.regionCode) {
+                    window.location.href = '/youth/college?' + options.clickFilterParam + '=' + encodeURIComponent(params.data.regionCode);
+                }
+            });
+        }
         window.addEventListener('resize', () => chart.resize());
     }
 
@@ -298,13 +307,15 @@
                 zoom: 1.1,
                 layoutCenter: ['50%', '52%'],
                 layoutSize: '106%',
-                showLabel: false
+                showLabel: false,
+                clickFilterParam: 'schoolProvinceCode'
             });
             renderMap('haidongCollegeMap', 'haidong-students', haidongData, {
                 zoom: 1.02,
                 layoutSize: '92%',
                 showLabel: true,
-                fontSize: 12
+                fontSize: 12,
+                clickFilterParam: 'nativeCountyCode'
             });
         } catch (error) {
             document.getElementById('chinaCollegeMap').innerHTML = '<div class="map-empty">中国地图资源加载失败</div>';

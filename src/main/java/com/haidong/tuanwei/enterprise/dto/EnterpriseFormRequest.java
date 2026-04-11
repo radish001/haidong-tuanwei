@@ -17,6 +17,8 @@ public class EnterpriseFormRequest {
     private String regionProvinceCode;
     private String regionCityCode;
     private String regionCountyCode;
+    private String unifiedSocialCreditCode;
+    private String businessLicensePath;
     private String address;
     private String contactPerson;
     private String contactPhone;

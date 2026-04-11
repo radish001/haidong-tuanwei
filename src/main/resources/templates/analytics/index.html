@@ -156,10 +156,11 @@
         attachResize(chart);
     }
 
-    function renderHorizontalBar(elementId, title, rawData) {
+    function renderHorizontalBar(elementId, title, rawData, clickFilterParam) {
         const data = parseData(rawData);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
+        if (clickFilterParam) document.getElementById(elementId).style.cursor = 'pointer';
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
             grid: {left: 70, right: 24, top: 60, bottom: 30},
@@ -175,7 +176,7 @@
             },
             series: [{
                 type: 'bar',
-                data: data.map(item => item.value),
+                data: data.map(item => ({value: item.value, code: item.code})),
                 itemStyle: {
                     color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
                         {offset: 0, color: '#6be6ff'},
@@ -186,13 +187,20 @@
                 barMaxWidth: 18
             }]
         }));
+        if (clickFilterParam) {
+            chart.on('click', function(params) {
+                var code = params.data && params.data.code;
+                if (code) window.location.href = '/youth/college?' + clickFilterParam + '=' + encodeURIComponent(code);
+            });
+        }
         attachResize(chart);
     }
 
-    function renderVerticalBar(elementId, title, rawData) {
+    function renderVerticalBar(elementId, title, rawData, clickFilterParam) {
         const data = parseData(rawData);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
+        if (clickFilterParam) document.getElementById(elementId).style.cursor = 'pointer';
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
             grid: {left: 40, right: 24, top: 60, bottom: 70},
@@ -212,7 +220,7 @@
             },
             series: [{
                 type: 'bar',
-                data: data.map(item => item.value),
+                data: data.map(item => ({value: item.value, code: item.code})),
                 itemStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                         {offset: 0, color: '#7be7ff'},
@@ -223,6 +231,12 @@
                 barMaxWidth: 28
             }]
         }));
+        if (clickFilterParam) {
+            chart.on('click', function(params) {
+                var code = params.data && params.data.code;
+                if (code) window.location.href = '/youth/college?' + clickFilterParam + '=' + encodeURIComponent(code);
+            });
+        }
         attachResize(chart);
     }
 
@@ -244,7 +258,9 @@
         const seriesCenter = options.seriesCenter ?? ['50%', '50%'];
         const seriesRadius = options.seriesRadius ?? (donut ? ['36%', '58%'] : '58%');
         const titleTop = options.titleTop ?? 10;
+        const clickFilterParam = options.clickFilterParam;
         const colors = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
+        if (clickFilterParam) document.getElementById(elementId).style.cursor = 'pointer';
         chart.setOption(Object.assign(baseOption(title), {
             title: {
                 text: title,
@@ -273,21 +289,28 @@
                 data: data.map((item, index) => ({
                     name: item.name,
                     value: item.value,
+                    code: item.code,
                     itemStyle: {
                         color: colors[index % colors.length]
                     }
                 }))
             }]
         }));
+        if (clickFilterParam) {
+            chart.on('click', function(params) {
+                var code = params.data && params.data.code;
+                if (code) window.location.href = '/youth/college?' + clickFilterParam + '=' + encodeURIComponent(code);
+            });
+        }
         attachResize(chart);
     }
 
-    function renderMirrorBar(elementId, title, rawData) {
+    function renderMirrorBar(elementId, title, rawData, clickFilterParam) {
         const data = parseData(rawData);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
+        if (clickFilterParam) document.getElementById(elementId).style.cursor = 'pointer';
         const categories = data.map(item => item.name);
-        const values = data.map(item => item.value);
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {
                 trigger: 'axis',
@@ -352,7 +375,7 @@
                     type: 'bar',
                     xAxisIndex: 0,
                     yAxisIndex: 0,
-                    data: values.map(value => -value),
+                    data: data.map(item => ({value: -item.value, code: item.code})),
                     itemStyle: {color: '#4dc3ff', borderRadius: [8, 0, 0, 8]},
                     barMaxWidth: 22
                 },
@@ -360,12 +383,18 @@
                     type: 'bar',
                     xAxisIndex: 1,
                     yAxisIndex: 2,
-                    data: values,
+                    data: data.map(item => ({value: item.value, code: item.code})),
                     itemStyle: {color: '#66e3b5', borderRadius: [0, 8, 8, 0]},
                     barMaxWidth: 22
                 }
             ]
         }));
+        if (clickFilterParam) {
+            chart.on('click', function(params) {
+                var code = params.data && params.data.code;
+                if (code) window.location.href = '/youth/college?' + clickFilterParam + '=' + encodeURIComponent(code);
+            });
+        }
         attachResize(chart);
     }
 
@@ -398,6 +427,7 @@
             const colorPalette = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
             requestAnimationFrame(() => {
                 const chart = echarts.init(chartEl);
+                chartEl.style.cursor = 'pointer';
                 chart.setOption(Object.assign(baseOption(item.title), {
                     title: {
                         text: item.title,
@@ -433,12 +463,24 @@
                         data: entries.map((entry, entryIndex) => ({
                             name: entry.name,
                             value: entry.value,
+                            code: entry.code,
                             itemStyle: {
                                 color: colorPalette[entryIndex % colorPalette.length]
                             }
                         }))
                     }]
                 }));
+                chart.on('click', function(params) {
+                    const code = params.data && params.data.code;
+                    if (code) {
+                        const query = new URLSearchParams({
+                            schoolCode: code,
+                            nativeProvinceCode: '630000',
+                            nativeCityCode: '630200'
+                        });
+                        window.location.href = '/youth/college?' + query.toString();
+                    }
+                });
                 chart.resize();
                 attachResize(chart);
             });
@@ -446,11 +488,11 @@
     }
 
     if (isCollegeAnalytics) {
-        renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true);
-        renderVerticalBar('majorCategoryChart', '专业类别分布', majorCategoryData);
-        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false);
-        renderHorizontalBar('educationChart', '学历分布', educationData);
-        renderMirrorBar('genderChart', '性别分布', genderData);
+        renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true, {clickFilterParam: 'schoolCategoryIds'});
+        renderVerticalBar('majorCategoryChart', '专业类别分布', majorCategoryData, 'majorCategory');
+        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {clickFilterParam: 'ethnicity'});
+        renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel');
+        renderMirrorBar('genderChart', '性别分布', genderData, 'gender');
         renderTagCharts('haidongTagCharts', haidongTagData);
     } else {
     renderAreaChart('ageChart', '年龄结构', ageData);

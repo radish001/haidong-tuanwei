@@ -14,6 +14,8 @@ public class EnterpriseInfo {
     private String regionCityCode;
     private String regionCountyCode;
     private String regionName;
+    private String unifiedSocialCreditCode;
+    private String businessLicensePath;
     private String address;
     private String contactPerson;
     private String contactPhone;

@@ -17,7 +17,7 @@
                 <div class="drawer-panel-header">
                     <h2 class="h4 mb-1" th:text="${formTitle}">新增企业信息</h2>
                 </div>
-                <form th:action="@{${formAction}}" th:object="${enterpriseForm}" method="post" class="edit-form row g-3" novalidate>
+                <form th:action="@{${formAction}}" th:object="${enterpriseForm}" method="post" enctype="multipart/form-data" class="edit-form row g-3" novalidate>
                     <div class="alert error-alert validation-error-banner col-12" th:if="${formError}" th:text="${formError}"></div>
                     <div class="alert error-alert validation-error-banner col-12" th:if="${#fields.hasAnyErrors()}">请检查并填写所有必填项</div>
                     <label class="col-12 col-md-6"><span>企业名称</span><input class="form-control" type="text" th:field="*{enterpriseName}" required></label>
@@ -48,6 +48,16 @@
                         <input type="hidden" th:field="*{regionCityCode}" data-region-city>
                         <input type="hidden" th:field="*{regionCountyCode}" data-region-county>
                     </div>
+                    <label class="col-12 col-md-6"><span>统一社会信用代码</span><input class="form-control" type="text" th:field="*{unifiedSocialCreditCode}" placeholder="请输入统一社会信用代码"></label>
+                    <label class="col-12 col-md-6">
+                        <span>营业执照</span>
+                        <input class="form-control" type="file" name="businessLicenseFile" accept=".pdf,.jpg,.jpeg,.png,.webp">
+                        <input type="hidden" th:field="*{businessLicensePath}">
+                        <div class="form-text" th:if="${enterpriseForm.businessLicensePath != null and enterpriseForm.businessLicensePath != ''}">
+                            已上传文件：
+                            <a th:href="@{/enterprises/{id}/business-license(id=${enterpriseForm.id})}" target="_blank" rel="noopener noreferrer">点击查看</a>
+                        </div>
+                    </label>
                     <label class="full-width col-12"><span>企业地址</span><input class="form-control" type="text" th:field="*{address}"></label>
                     <label class="col-12 col-md-6"><span>联系人</span><input class="form-control" type="text" th:field="*{contactPerson}"></label>
                     <label class="col-12 col-md-6"><span>联系电话</span><input class="form-control" type="text" th:field="*{contactPhone}"></label>

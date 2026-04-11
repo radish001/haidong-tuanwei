@@ -7,11 +7,13 @@
     <resultMap id="ChartItemResultMap" type="com.haidong.tuanwei.analytics.entity.ChartItem">
         <result property="name" column="name"/>
         <result property="value" column="item_value"/>
+        <result property="code" column="code"/>
     </resultMap>
 
     <resultMap id="TagSchoolStatResultMap" type="com.haidong.tuanwei.analytics.dto.TagSchoolStat">
         <result property="tagName" column="tag_name"/>
         <result property="schoolName" column="school_name"/>
+        <result property="schoolCode" column="school_code"/>
         <result property="value" column="item_value"/>
     </resultMap>
 
@@ -61,7 +63,8 @@
     </select>
 
     <select id="countByEducationLevel" resultMap="ChartItemResultMap">
-        select coalesce(d.dict_label, yi.education_level) as name, count(*) as item_value
+        select coalesce(d.dict_label, yi.education_level) as name, count(*) as item_value,
+               yi.education_level as code
         from youth_info yi
         left join sys_dict_item d on d.dict_type = 'education_level'
             and d.dict_value = yi.education_level
@@ -76,7 +79,8 @@
     </select>
 
     <select id="countByGender" resultMap="ChartItemResultMap">
-        select coalesce(d.dict_label, yi.gender) as name, count(*) as item_value
+        select coalesce(d.dict_label, yi.gender) as name, count(*) as item_value,
+               yi.gender as code
         from youth_info yi
         left join sys_dict_item d on d.dict_type = 'gender'
             and d.dict_value = yi.gender
@@ -91,7 +95,8 @@
     </select>
 
     <select id="countByEthnicity" resultMap="ChartItemResultMap">
-        select coalesce(d.dict_label, yi.ethnicity) as name, count(*) as item_value
+        select coalesce(d.dict_label, yi.ethnicity) as name, count(*) as item_value,
+               yi.ethnicity as code
         from youth_info yi
         left join sys_dict_item d on d.dict_type = 'ethnicity'
             and d.dict_value = yi.ethnicity
@@ -106,7 +111,8 @@
     </select>
 
     <select id="countBySchoolCategory" resultMap="ChartItemResultMap">
-        select d.dict_label as name, count(yi.id) as item_value
+        select d.dict_label as name, count(yi.id) as item_value,
+               cast(d.id as char) as code
         from sys_dict_item d
         left join sys_school s on s.category_dict_item_id = d.id and s.deleted = 0
         left join youth_info yi on yi.school_code = s.school_code
@@ -120,7 +126,8 @@
     </select>
 
     <select id="countByMajorCategory" resultMap="ChartItemResultMap">
-        select d.dict_label as name, count(yi.id) as item_value
+        select d.dict_label as name, count(yi.id) as item_value,
+               d.dict_value as code
         from sys_dict_item d
         left join sys_major_catalog m on m.category_dict_item_id = d.id and m.deleted = 0
         left join youth_info yi on yi.major_code = m.major_code
@@ -136,6 +143,7 @@
     <select id="countHaidongNativeSchoolsByTag" resultMap="TagSchoolStatResultMap">
         select t.tag_name,
                s.school_name,
+               s.school_code,
                count(yi.id) as item_value
         from sys_school_tag t
         join sys_school_tag_rel rel on rel.tag_id = t.id and rel.deleted = 0

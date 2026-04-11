@@ -7,4 +7,5 @@ public class ChartItem {
 
     private String name;
     private Integer value;
+    private String code;
 }

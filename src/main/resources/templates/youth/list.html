@@ -30,18 +30,12 @@
             <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
             <div class="workbench-toolbar">
                 <form class="filter-form workbench-filter-form youth-filter-grid row g-3 bootstrap-filter-form" method="get" id="youth-list-form" data-ajax-form>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="ageRange">年龄:
-                            <select class="form-select" id="ageRange" name="ageRange">
-                                <option value="">全部年龄</option>
-                                <option value="16-18" th:selected="${query.ageRange == '16-18'}">16-18岁</option>
-                                <option value="19-22" th:selected="${query.ageRange == '19-22'}">19-22岁</option>
-                                <option value="23-26" th:selected="${query.ageRange == '23-26'}">23-26岁</option>
-                                <option value="27-30" th:selected="${query.ageRange == '27-30'}">27-30岁</option>
-                            </select>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                        <label for="name">姓名:
+                            <input class="form-control" id="name" type="text" name="name" th:value="${query.name}" placeholder="输入姓名">
                         </label>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
                         <label for="gender">性别:
                             <select class="form-select" id="gender" name="gender">
                                 <option value="">全部性别</option>
@@ -50,66 +44,12 @@
                             </select>
                         </label>
                     </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
                         <label for="ethnicity">民族:
                             <select class="form-select" id="ethnicity" name="ethnicity">
                                 <option value="">全部民族</option>
                                 <option th:each="item : ${ethnicities}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
                                         th:selected="${item.dictValue == query.ethnicity}"></option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="politicalStatus">政治面貌:
-                            <select class="form-select" id="politicalStatus" name="politicalStatus">
-                                <option value="">全部政治面貌</option>
-                                <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
-                                        th:selected="${item.dictValue == query.politicalStatus}"></option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="educationLevel">学历:
-                            <select class="form-select" id="educationLevel" name="educationLevel">
-                                <option value="">全部学历</option>
-                                <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
-                                        th:selected="${item.dictValue == query.educationLevel}"></option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="degreeCode">学位:
-                            <select class="form-select" id="degreeCode" name="degreeCode">
-                                <option value="">全部学位</option>
-                                <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
-                                        th:selected="${item.dictValue == query.degreeCode}"></option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="name">姓名:
-                            <input class="form-control" id="name" type="text" name="name" th:value="${query.name}" placeholder="输入姓名">
-                        </label>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="schoolCode">就读院校:
-                            <select class="form-select" id="schoolCode" name="schoolCode">
-                                <option value="">全部院校</option>
-                                <option th:each="item : ${schools}"
-                                        th:value="${item.schoolCode}"
-                                        th:text="${item.schoolName}"
-                                        th:selected="${item.schoolCode == query.schoolCode}"></option>
-                            </select>
-                        </label>
-                    </div>
-                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
-                        <label for="majorCategory">专业类别:
-                            <select class="form-select" id="majorCategory" name="majorCategory">
-                                <option value="">全部专业类别</option>
-                                <option th:each="item : ${majorCategories}"
-                                        th:value="${item.dictValue}"
-                                        th:text="${item.dictLabel}"
-                                        th:selected="${item.dictValue == query.majorCategory}"></option>
                             </select>
                         </label>
                     </div>
@@ -123,7 +63,54 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6 col-xl-4 d-flex align-items-end">
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                        <label for="recruitmentYear">招考年份:
+                            <input class="form-control" id="recruitmentYear" type="text" name="recruitmentYear"
+                                   th:value="${query.recruitmentYear}" inputmode="numeric" maxlength="4" placeholder="输入招考年份">
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                        <label for="educationLevel">学历:
+                            <select class="form-select" id="educationLevel" name="educationLevel">
+                                <option value="">全部学历</option>
+                                <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"
+                                        th:selected="${item.dictValue == query.educationLevel}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                        <label for="schoolCode">学校:
+                            <select class="form-select" id="schoolCode" name="schoolCode">
+                                <option value="">全部院校</option>
+                                <option th:each="item : ${schools}"
+                                        th:value="${item.schoolCode}"
+                                        th:text="${item.schoolName}"
+                                        th:selected="${item.schoolCode == query.schoolCode}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                        <label for="majorCategory">专业类别:
+                            <select class="form-select" id="majorCategory" name="majorCategory">
+                                <option value="">全部专业类别</option>
+                                <option th:each="item : ${majorCategories}"
+                                        th:value="${item.dictValue}"
+                                        th:text="${item.dictLabel}"
+                                        th:selected="${item.dictValue == query.majorCategory}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="filter-block full-width">
+                            <span>学校所在区域:</span>
+                            <div data-region-step data-region-api-url="/api/regions" data-region-placeholder="学校所在区域">
+                                <input type="hidden" name="schoolProvinceCode" th:value="${query.schoolProvinceCode}" data-region-province>
+                                <input type="hidden" name="schoolCityCode" th:value="${query.schoolCityCode}" data-region-city>
+                                <input type="hidden" name="schoolCountyCode" th:value="${query.schoolCountyCode}" data-region-county>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4 d-flex align-items-end filter-actions-cell">
                         <div class="filter-actions-inline d-flex gap-2">
                             <a class="btn btn-outline-secondary" data-ajax-link th:href="@{/youth/college(pageSize=${pageSize})}">重置</a>
                             <button type="submit" class="btn btn-primary">查询</button>
