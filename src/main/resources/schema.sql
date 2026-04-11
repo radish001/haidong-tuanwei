@@ -11,7 +11,7 @@ create table if not exists sys_user (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_user_username (username)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_role (
     id bigint primary key auto_increment,
@@ -24,7 +24,7 @@ create table if not exists sys_role (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_role_code (role_code)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_menu (
     id bigint primary key auto_increment,
@@ -39,7 +39,7 @@ create table if not exists sys_menu (
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
     deleted tinyint not null default 0
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_user_role (
     id bigint primary key auto_increment,
@@ -51,7 +51,7 @@ create table if not exists sys_user_role (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_user_role (user_id, role_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_role_menu (
     id bigint primary key auto_increment,
@@ -63,7 +63,7 @@ create table if not exists sys_role_menu (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_role_menu (role_id, menu_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_dict_item (
     id bigint primary key auto_increment,
@@ -79,7 +79,7 @@ create table if not exists sys_dict_item (
     deleted tinyint not null default 0,
     unique key uk_sys_dict_type_value (dict_type, dict_value),
     key idx_sys_dict_type_enabled_deleted_sort (dict_type, enabled, deleted, sort_no, id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_region (
     id bigint primary key auto_increment,
@@ -96,7 +96,7 @@ create table if not exists sys_region (
     unique key uk_sys_region_code (region_code),
     key idx_sys_region_deleted_level_sort (deleted, region_level, sort_no, id),
     key idx_sys_region_parent_deleted_sort (parent_id, deleted, sort_no, id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_major_catalog (
     id bigint primary key auto_increment,
@@ -110,7 +110,7 @@ create table if not exists sys_major_catalog (
     deleted tinyint not null default 0,
     unique key uk_sys_major_catalog_code (major_code),
     key idx_sys_major_category_deleted_code (category_dict_item_id, deleted, major_code)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_school_tag (
     id bigint primary key auto_increment,
@@ -121,7 +121,7 @@ create table if not exists sys_school_tag (
     update_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_school_tag_name (tag_name)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_school (
     id bigint primary key auto_increment,
@@ -135,7 +135,7 @@ create table if not exists sys_school (
     deleted tinyint not null default 0,
     unique key uk_sys_school_code (school_code),
     key idx_sys_school_category_deleted (category_dict_item_id, deleted)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_school_tag_rel (
     id bigint primary key auto_increment,
@@ -148,7 +148,7 @@ create table if not exists sys_school_tag_rel (
     deleted tinyint not null default 0,
     unique key uk_sys_school_tag_rel (school_id, tag_id),
     key idx_sys_school_tag_rel_tag_deleted_school (tag_id, deleted, school_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_analytics_school_tag (
     id bigint primary key auto_increment,
@@ -157,7 +157,7 @@ create table if not exists sys_analytics_school_tag (
     create_by bigint,
     deleted tinyint not null default 0,
     unique key uk_sys_analytics_school_tag (tag_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists youth_info (
     id bigint primary key auto_increment,
@@ -218,7 +218,7 @@ create table if not exists youth_info (
     key idx_youth_deleted_type_residence_city (deleted, youth_type, residence_city_code),
     key idx_youth_deleted_type_residence_county (deleted, youth_type, residence_county_code),
     key idx_youth_deleted_type_name_phone (deleted, youth_type, name, phone)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists enterprise_info (
     id bigint primary key auto_increment,
@@ -246,7 +246,7 @@ create table if not exists enterprise_info (
     key idx_enterprise_deleted_region_province (deleted, region_province_code),
     key idx_enterprise_deleted_region_city (deleted, region_city_code),
     key idx_enterprise_deleted_region_county (deleted, region_county_code)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists job_post (
     id bigint primary key auto_increment,
@@ -277,7 +277,7 @@ create table if not exists job_post (
     key idx_job_deleted_work_province (deleted, work_province_code),
     key idx_job_deleted_work_city (deleted, work_city_code),
     key idx_job_deleted_work_county (deleted, work_county_code)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists job_post_major_rel (
     id bigint primary key auto_increment,
@@ -288,7 +288,7 @@ create table if not exists job_post_major_rel (
     unique key uk_job_post_major_rel (job_post_id, major_code),
     key idx_job_post_major_rel_job (job_post_id),
     key idx_job_post_major_rel_major (major_code)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists job_post_education_rel (
     id bigint primary key auto_increment,
@@ -299,7 +299,7 @@ create table if not exists job_post_education_rel (
     unique key uk_job_post_education_rel (job_post_id, education_code),
     key idx_job_post_education_rel_job (job_post_id),
     key idx_job_post_education_rel_education (education_code)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists job_post_school_category_rel (
     id bigint primary key auto_increment,
@@ -310,7 +310,7 @@ create table if not exists job_post_school_category_rel (
     unique key uk_job_post_school_category_rel (job_post_id, category_dict_item_id),
     key idx_job_post_school_category_rel_job (job_post_id),
     key idx_job_post_school_category_rel_category (category_dict_item_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists job_post_school_tag_rel (
     id bigint primary key auto_increment,
@@ -321,7 +321,7 @@ create table if not exists job_post_school_tag_rel (
     unique key uk_job_post_school_tag_rel (job_post_id, tag_id),
     key idx_job_post_school_tag_rel_job (job_post_id),
     key idx_job_post_school_tag_rel_tag (tag_id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists policy_article (
     id bigint primary key auto_increment,
@@ -339,4 +339,4 @@ create table if not exists policy_article (
     deleted tinyint not null default 0,
     key idx_policy_deleted_publish_time_id (deleted, publish_time, id),
     key idx_policy_deleted_status_id (deleted, status, id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
