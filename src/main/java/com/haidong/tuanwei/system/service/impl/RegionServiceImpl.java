@@ -9,9 +9,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class RegionServiceImpl implements RegionService {
 
@@ -63,6 +65,8 @@ public class RegionServiceImpl implements RegionService {
         region.setRegionLevel(request.getRegionLevel());
         region.setSortNo(0);
         regionDao.insert(region);
+        log.info("Region created: id={}, level={}, code={}, parentId={}",
+                region.getId(), region.getRegionLevel(), region.getRegionCode(), region.getParentId());
     }
 
     @Override
@@ -100,6 +104,8 @@ public class RegionServiceImpl implements RegionService {
         existing.setRegionName(request.getRegionName());
         existing.setRegionLevel(request.getRegionLevel());
         regionDao.update(existing);
+        log.info("Region updated: id={}, level={}, code={}, parentId={}",
+                id, existing.getRegionLevel(), existing.getRegionCode(), existing.getParentId());
     }
 
     @Override
@@ -112,6 +118,7 @@ public class RegionServiceImpl implements RegionService {
             throw new IllegalStateException("该区域已被业务数据使用，无法删除");
         }
         regionDao.softDelete(id);
+        log.info("Region deleted: id={}, level={}, code={}", id, existing.getRegionLevel(), existing.getRegionCode());
     }
 
     private String buildFullName(Region region, Map<Long, Region> sourceMap) {

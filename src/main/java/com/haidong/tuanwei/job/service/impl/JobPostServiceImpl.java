@@ -19,9 +19,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class JobPostServiceImpl implements JobPostService {
 
@@ -60,6 +62,8 @@ public class JobPostServiceImpl implements JobPostService {
         jobPost.setStatus(1);
         jobPostDao.insert(jobPost);
         replaceSelections(jobPost.getId(), request, operatorId);
+        log.info("Job post created: id={}, operatorId={}, enterpriseId={}",
+                jobPost.getId(), operatorId, jobPost.getEnterpriseId());
     }
 
     @Override
@@ -69,11 +73,14 @@ public class JobPostServiceImpl implements JobPostService {
         jobPost.setStatus(1);
         jobPostDao.update(jobPost);
         replaceSelections(id, request, operatorId);
+        log.info("Job post updated: id={}, operatorId={}, enterpriseId={}",
+                id, operatorId, jobPost.getEnterpriseId());
     }
 
     @Override
     public void delete(Long id, Long operatorId) {
         jobPostDao.softDelete(id, operatorId);
+        log.info("Job post deleted: id={}, operatorId={}", id, operatorId);
     }
 
     @Override
@@ -81,7 +88,10 @@ public class JobPostServiceImpl implements JobPostService {
         if (ids == null || ids.isEmpty()) {
             return 0;
         }
-        return jobPostDao.softDeleteBatch(ids, operatorId);
+        int deletedCount = jobPostDao.softDeleteBatch(ids, operatorId);
+        log.info("Job posts batch deleted: requestedCount={}, deletedCount={}, operatorId={}",
+                ids.size(), deletedCount, operatorId);
+        return deletedCount;
     }
 
     private JobPost toEntity(JobFormRequest request) {

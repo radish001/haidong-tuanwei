@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class JobController {
 
@@ -83,6 +85,8 @@ public class JobController {
         try {
             jobPostService.create(request, currentUser.getId());
         } catch (IllegalStateException ex) {
+            log.warn("Job post create failed: operatorId={}, reason={}",
+                    currentUser == null ? null : currentUser.getId(), ex.getMessage());
             model.addAttribute("pageTitle", "招聘信息");
             model.addAttribute("formTitle", "新增招聘岗位");
             model.addAttribute("formAction", "/jobs");
@@ -124,6 +128,8 @@ public class JobController {
         try {
             jobPostService.update(id, request, currentUser.getId());
         } catch (IllegalStateException ex) {
+            log.warn("Job post update failed: id={}, operatorId={}, reason={}",
+                    id, currentUser == null ? null : currentUser.getId(), ex.getMessage());
             model.addAttribute("pageTitle", "招聘信息");
             model.addAttribute("formTitle", "编辑招聘岗位");
             model.addAttribute("formAction", "/jobs/" + id);

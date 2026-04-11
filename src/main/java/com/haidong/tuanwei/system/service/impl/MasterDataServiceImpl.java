@@ -7,7 +7,6 @@ import com.haidong.tuanwei.system.dao.MajorCatalogDao;
 import com.haidong.tuanwei.system.dao.AnalyticsSchoolTagDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.system.dao.SchoolTagDao;
-import com.haidong.tuanwei.system.dto.DataImportError;
 import com.haidong.tuanwei.system.dto.DataImportResult;
 import com.haidong.tuanwei.system.dto.MajorForm;
 import com.haidong.tuanwei.system.dto.SchoolForm;
@@ -24,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MasterDataServiceImpl implements MasterDataService {
 
@@ -86,6 +87,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         majorCatalog.setMajorName(majorName);
         majorCatalog.setCategoryDictItemId(category.getId());
         majorCatalogDao.insert(majorCatalog);
+        log.info("Major created: id={}, code={}", majorCatalog.getId(), majorCatalog.getMajorCode());
     }
 
     @Override
@@ -106,6 +108,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         existing.setMajorName(majorName);
         existing.setCategoryDictItemId(category.getId());
         majorCatalogDao.update(existing);
+        log.info("Major updated: id={}, code={}", id, existing.getMajorCode());
     }
 
     @Override
@@ -118,6 +121,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             throw new IllegalStateException("该专业名称已被招聘岗位使用，无法删除");
         }
         majorCatalogDao.softDelete(id);
+        log.info("Major deleted: id={}, code={}", id, existing.getMajorCode());
     }
 
     @Override
@@ -150,6 +154,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         SchoolTag schoolTag = new SchoolTag();
         schoolTag.setTagName(request.getTagName().trim());
         schoolTagDao.insert(schoolTag);
+        log.info("School tag created: id={}, name={}", schoolTag.getId(), schoolTag.getTagName());
     }
 
     @Override
@@ -161,11 +166,12 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
         existing.setTagName(request.getTagName().trim());
         schoolTagDao.update(existing);
+        log.info("School tag updated: id={}, name={}", id, existing.getTagName());
     }
 
     @Override
     public void deleteSchoolTag(Long id) {
-        requireSchoolTag(id);
+        SchoolTag existing = requireSchoolTag(id);
         if (schoolTagDao.countSchoolUsage(id) > 0) {
             throw new IllegalStateException("该学校标签存在关联学校，无法删除");
         }
@@ -174,6 +180,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
         analyticsSchoolTagDao.deleteByTagId(id);
         schoolTagDao.softDelete(id);
+        log.info("School tag deleted: id={}, name={}", id, existing.getTagName());
     }
 
     @Override
@@ -228,6 +235,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         school.setCategoryDictItemId(category.getId());
         schoolDao.insert(school);
         replaceSchoolTags(school.getId(), request.getTagIds());
+        log.info("School created: id={}, code={}, tagCount={}",
+                school.getId(), school.getSchoolCode(), request.getTagIds() == null ? 0 : request.getTagIds().size());
     }
 
     @Override
@@ -249,6 +258,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         existing.setCategoryDictItemId(category.getId());
         schoolDao.update(existing);
         replaceSchoolTags(id, request.getTagIds());
+        log.info("School updated: id={}, code={}, tagCount={}",
+                id, existing.getSchoolCode(), request.getTagIds() == null ? 0 : request.getTagIds().size());
     }
 
     @Override
@@ -259,6 +270,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
         schoolDao.softDelete(id);
         schoolDao.deleteTagRelations(id);
+        log.info("School deleted: id={}, code={}", id, existing.getSchoolCode());
     }
 
     @Override
@@ -279,6 +291,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
             return ExcelUtils.toBytes(workbook);
         } catch (IOException e) {
+            log.error("Failed to generate major import template", e);
             throw new IllegalStateException("专业导入模板生成失败", e);
         }
     }
@@ -294,6 +307,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             String[] expectedHeaders = {"专业编码", "专业名称", "学科门类"};
             if (!validateImportHeader(sheet, expectedHeaders)) {
                 result.addError(1, "导入模板列顺序或表头不正确，请使用最新模板");
+                log.warn("Major import rejected because template header was invalid: fileName={}", file.getOriginalFilename());
                 return result;
             }
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
@@ -306,6 +320,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 rows.add(new String[]{code, name, categoryLabel, String.valueOf(rowIndex + 1)});
             }
         } catch (IOException e) {
+            log.error("Failed to read major import file: fileName={}", file.getOriginalFilename(), e);
             throw new IllegalStateException("导入文件读取失败", e);
         }
 
@@ -331,6 +346,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
 
         if (!result.getErrors().isEmpty()) {
+            log.warn("Major import validation failed: fileName={}, failCount={}",
+                    file.getOriginalFilename(), result.getFailCount());
             return result;
         }
 
@@ -345,6 +362,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                 int displayRow = Integer.parseInt(rowByCode.get(m.getMajorCode()));
                 result.addError(displayRow, "专业编码 \"" + m.getMajorCode() + "\" 已存在（" + m.getMajorName() + "）");
             }
+            log.warn("Major import rejected because codes already existed: fileName={}, failCount={}",
+                    file.getOriginalFilename(), result.getFailCount());
             return result;
         }
 
@@ -356,6 +375,8 @@ public class MasterDataServiceImpl implements MasterDataService {
             majorCatalogDao.insert(major);
             result.addSuccess();
         }
+        log.info("Major import finished: fileName={}, successCount={}, failCount={}",
+                file.getOriginalFilename(), result.getSuccessCount(), result.getFailCount());
         return result;
     }
 
@@ -377,6 +398,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             }
             return ExcelUtils.toBytes(workbook);
         } catch (IOException e) {
+            log.error("Failed to generate school import template", e);
             throw new IllegalStateException("学校导入模板生成失败", e);
         }
     }
@@ -392,6 +414,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             String[] expectedHeaders = {"学校编码", "学校名称", "学校类别"};
             if (!validateImportHeader(sheet, expectedHeaders)) {
                 result.addError(1, "导入模板列顺序或表头不正确，请使用最新模板");
+                log.warn("School import rejected because template header was invalid: fileName={}", file.getOriginalFilename());
                 return result;
             }
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
@@ -404,6 +427,7 @@ public class MasterDataServiceImpl implements MasterDataService {
                 rows.add(new String[]{code, name, categoryLabel, String.valueOf(rowIndex + 1)});
             }
         } catch (IOException e) {
+            log.error("Failed to read school import file: fileName={}", file.getOriginalFilename(), e);
             throw new IllegalStateException("导入文件读取失败", e);
         }
 
@@ -429,6 +453,8 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
 
         if (!result.getErrors().isEmpty()) {
+            log.warn("School import validation failed: fileName={}, failCount={}",
+                    file.getOriginalFilename(), result.getFailCount());
             return result;
         }
 
@@ -443,6 +469,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                 int displayRow = Integer.parseInt(rowByCode.get(s.getSchoolCode()));
                 result.addError(displayRow, "学校编码 \"" + s.getSchoolCode() + "\" 已存在（" + s.getSchoolName() + "）");
             }
+            log.warn("School import rejected because codes already existed: fileName={}, failCount={}",
+                    file.getOriginalFilename(), result.getFailCount());
             return result;
         }
 
@@ -454,6 +482,8 @@ public class MasterDataServiceImpl implements MasterDataService {
             schoolDao.insert(school);
             result.addSuccess();
         }
+        log.info("School import finished: fileName={}, successCount={}, failCount={}",
+                file.getOriginalFilename(), result.getSuccessCount(), result.getFailCount());
         return result;
     }
 
@@ -584,12 +614,16 @@ public class MasterDataServiceImpl implements MasterDataService {
     @Transactional
     public void saveAnalyticsSchoolTagIds(List<Long> tagIds) {
         analyticsSchoolTagDao.deleteAll();
+        int savedCount = 0;
         if (tagIds != null) {
             for (Long tagId : tagIds) {
                 if (tagId != null && schoolTagDao.findById(tagId) != null) {
                     analyticsSchoolTagDao.insert(tagId);
+                    savedCount++;
                 }
             }
         }
+        log.info("Analytics school tags saved: requestedCount={}, savedCount={}",
+                tagIds == null ? 0 : tagIds.size(), savedCount);
     }
 }

@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class SystemController {
 
@@ -241,6 +243,7 @@ public class SystemController {
     @PostMapping("/system/majors/import")
     public String importMajors(MultipartFile file, RedirectAttributes redirectAttributes) {
         if (file == null || file.isEmpty()) {
+            log.warn("Major import skipped because no file was provided");
             redirectAttributes.addFlashAttribute("importMessage", "请先选择需要上传的 Excel 文件");
             return "redirect:/system/dictionaries?tab=major";
         }
@@ -264,6 +267,7 @@ public class SystemController {
     @PostMapping("/system/schools/import")
     public String importSchools(MultipartFile file, RedirectAttributes redirectAttributes) {
         if (file == null || file.isEmpty()) {
+            log.warn("School import skipped because no file was provided");
             redirectAttributes.addFlashAttribute("importMessage", "请先选择需要上传的 Excel 文件");
             return "redirect:/system/dictionaries?tab=school";
         }
@@ -368,6 +372,7 @@ public class SystemController {
     public String saveAnalyticsSchoolTags(@RequestParam(value = "tagIds", required = false) List<Long> tagIds,
             RedirectAttributes redirectAttributes) {
         masterDataService.saveAnalyticsSchoolTagIds(tagIds);
+        log.info("Analytics school tag configuration saved: selectedCount={}", tagIds == null ? 0 : tagIds.size());
         redirectAttributes.addFlashAttribute("successMessage", "海东籍顶尖高校分析配置保存成功");
         return redirectToWorkbench(TAB_ANALYTICS, SECTION_ANALYTICS_HAIDONG_TAG, null, null);
     }

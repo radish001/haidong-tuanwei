@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="haidong-tuanwei"/>
+    <springProperty scope="context" name="LOG_PATH" source="app.logging.path" defaultValue="logs"/>
+    <springProperty scope="context" name="LOG_FILE_NAME" source="app.logging.file-name" defaultValue="haidong-tuanwei"/>
+    <springProperty scope="context" name="LOG_MAX_FILE_SIZE" source="app.logging.max-file-size" defaultValue="100MB"/>
+    <springProperty scope="context" name="LOG_MAX_HISTORY" source="app.logging.max-history" defaultValue="12"/>
+    <springProperty scope="context" name="LOG_TOTAL_SIZE_CAP" source="app.logging.total-size-cap" defaultValue="2GB"/>
+    <springProperty scope="context" name="ROOT_LOG_LEVEL" source="app.logging.root-level" defaultValue="INFO"/>
+    <springProperty scope="context" name="SQL_LOG_LEVEL" source="app.logging.sql-level" defaultValue="INFO"/>
+    <springProperty scope="context" name="ASYNC_QUEUE_SIZE" source="app.logging.async-queue-size" defaultValue="8192"/>
+
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="ROLLING_FILE" class="com.haidong.tuanwei.common.logging.FailSafeRollingFileAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM}.%i.log</fileNamePattern>
+            <maxFileSize>${LOG_MAX_FILE_SIZE}</maxFileSize>
+            <maxHistory>${LOG_MAX_HISTORY}</maxHistory>
+            <totalSizeCap>${LOG_TOTAL_SIZE_CAP}</totalSizeCap>
+            <cleanHistoryOnStart>false</cleanHistoryOnStart>
+        </rollingPolicy>
+    </appender>
+
+    <!-- File logging stays asynchronous and never blocks request threads. -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>${ASYNC_QUEUE_SIZE}</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <neverBlock>true</neverBlock>
+        <appender-ref ref="ROLLING_FILE"/>
+    </appender>
+
+    <logger name="org.apache.ibatis" level="${SQL_LOG_LEVEL}"/>
+    <logger name="org.mybatis" level="${SQL_LOG_LEVEL}"/>
+
+    <root level="${ROOT_LOG_LEVEL}">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="ASYNC_FILE"/>
+    </root>
+</configuration>

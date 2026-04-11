@@ -10,9 +10,11 @@ import com.haidong.tuanwei.system.service.DictionaryService;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DictionaryServiceImpl implements DictionaryService {
 
@@ -73,6 +75,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         item.setDictValue(request.getDictValue());
         item.setSortNo(getByType(dictType).size() + 1);
         dictionaryDao.insert(item);
+        log.info("Dictionary item created: dictType={}, id={}, value={}", dictType, item.getId(), item.getDictValue());
     }
 
     @Override
@@ -82,6 +85,8 @@ public class DictionaryServiceImpl implements DictionaryService {
         existing.setDictLabel(request.getDictLabel());
         existing.setDictValue(request.getDictValue());
         dictionaryDao.update(existing);
+        log.info("Dictionary item updated: dictType={}, id={}, value={}",
+                existing.getDictType(), id, existing.getDictValue());
     }
 
     @Override
@@ -119,6 +124,8 @@ public class DictionaryServiceImpl implements DictionaryService {
             throw new IllegalStateException(blockMessage);
         }
         dictionaryDao.softDelete(id);
+        log.info("Dictionary item deleted: dictType={}, id={}, value={}",
+                existing.getDictType(), id, existing.getDictValue());
     }
 
     private DictItem requireExisting(Long id) {

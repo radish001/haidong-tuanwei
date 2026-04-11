@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
@@ -42,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class YouthInfoServiceImpl implements YouthInfoService {
 
@@ -84,6 +86,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setCreateBy(operatorId);
         youthInfo.setUpdateBy(operatorId);
         youthInfoDao.insert(youthInfo);
+        log.info("Youth record created: type={}, id={}, operatorId={}", youthType, youthInfo.getId(), operatorId);
     }
 
     @Override
@@ -92,11 +95,13 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setId(id);
         youthInfo.setUpdateBy(operatorId);
         youthInfoDao.update(youthInfo);
+        log.info("Youth record updated: id={}, operatorId={}", id, operatorId);
     }
 
     @Override
     public void delete(Long id, Long operatorId) {
         youthInfoDao.softDelete(id, operatorId);
+        log.info("Youth record deleted: id={}, operatorId={}", id, operatorId);
     }
 
     @Override
@@ -104,7 +109,10 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         if (ids == null || ids.isEmpty()) {
             return 0;
         }
-        return youthInfoDao.softDeleteBatch(youthType, ids, operatorId);
+        int deletedCount = youthInfoDao.softDeleteBatch(youthType, ids, operatorId);
+        log.info("Youth records batch deleted: type={}, requestedCount={}, deletedCount={}, operatorId={}",
+                youthType, ids.size(), deletedCount, operatorId);
+        return deletedCount;
     }
 
     @Override
@@ -142,6 +150,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             }
             return ExcelUtils.toBytes(workbook);
         } catch (IOException e) {
+            log.error("Failed to generate youth import template", e);
             throw new IllegalStateException("导入模板生成失败", e);
         }
     }
@@ -158,6 +167,8 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 validateTemplateHeader(sheet);
             } catch (IllegalArgumentException ex) {
                 result.addError(1, ex.getMessage());
+                log.warn("Youth import rejected because template header was invalid: type={}, operatorId={}, fileName={}",
+                        youthType, operatorId, file.getOriginalFilename());
                 return result;
             }
             for (int rowIndex = 1; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
@@ -188,8 +199,12 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                     result.addError(displayRow, ex.getMessage());
                 }
             }
+            log.info("Youth import finished: type={}, operatorId={}, fileName={}, successCount={}, failCount={}",
+                    youthType, operatorId, file.getOriginalFilename(), result.getSuccessCount(), result.getFailCount());
             return result;
         } catch (IOException e) {
+            log.error("Failed to read youth import file: type={}, operatorId={}, fileName={}",
+                    youthType, operatorId, file.getOriginalFilename(), e);
             throw new IllegalStateException("导入文件读取失败", e);
         }
     }
@@ -224,8 +239,10 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             for (int i = 0; i < EXPORT_HEADERS.length; i++) {
                 sheet.setColumnWidth(i, 18 * 256);
             }
+            log.info("Youth export finished: type={}, recordCount={}", youthType, records.size());
             return ExcelUtils.toBytes(workbook);
         } catch (IOException e) {
+            log.error("Failed to generate youth export file: type={}", youthType, e);
             throw new IllegalStateException("导出文件生成失败", e);
         }
     }

@@ -17,6 +17,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class YouthController {
 
@@ -70,6 +72,8 @@ public class YouthController {
             MultipartFile file,
             RedirectAttributes redirectAttributes) {
         if (file == null || file.isEmpty()) {
+            log.warn("Youth import skipped because no file was provided: type={}, operatorId={}",
+                    type, currentUser == null ? null : currentUser.getId());
             redirectAttributes.addFlashAttribute("importMessage", "请先选择需要上传的 Excel 文件");
             return "redirect:/youth/" + type;
         }
@@ -121,6 +125,8 @@ public class YouthController {
         try {
             youthInfoService.create(YouthTypeHelper.code(type), request, currentUser.getId());
         } catch (IllegalStateException ex) {
+            log.warn("Youth create failed: type={}, operatorId={}, reason={}",
+                    type, currentUser == null ? null : currentUser.getId(), ex.getMessage());
             model.addAttribute("pageTitle", "青年信息库");
             model.addAttribute("youthType", type);
             model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
@@ -182,6 +188,8 @@ public class YouthController {
         try {
             youthInfoService.update(id, request, currentUser.getId());
         } catch (IllegalStateException ex) {
+            log.warn("Youth update failed: type={}, id={}, operatorId={}, reason={}",
+                    type, id, currentUser == null ? null : currentUser.getId(), ex.getMessage());
             model.addAttribute("pageTitle", "青年信息库");
             model.addAttribute("youthType", type);
             model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));

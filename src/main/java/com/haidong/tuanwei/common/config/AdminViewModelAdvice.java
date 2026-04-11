@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @ControllerAdvice(annotations = Controller.class)
+@Slf4j
 @RequiredArgsConstructor
 public class AdminViewModelAdvice {
 
@@ -70,6 +72,7 @@ public class AdminViewModelAdvice {
         String redirectPath = requestUri != null && requestUri.endsWith("/import")
                 ? requestUri.substring(0, requestUri.length() - "/import".length())
                 : "/";
+        log.warn("Upload rejected because file exceeded limit: requestUri={}, maxFileSize={}", requestUri, uploadMaxFileSizeText);
         redirectAttributes.addFlashAttribute("importMessage",
                 "上传文件不能超过 " + uploadMaxFileSizeText + "，请压缩或拆分后重试");
         return new ModelAndView("redirect:" + redirectPath);
