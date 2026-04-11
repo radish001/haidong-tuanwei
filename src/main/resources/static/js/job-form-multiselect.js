@@ -43,6 +43,7 @@
             hideSelected: true,
             closeAfterSelect: false,
             maxItems: null,
+            maxOptions: null,
             placeholder,
             searchField: ["text"],
             render: {

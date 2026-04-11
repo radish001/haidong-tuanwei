@@ -162,7 +162,7 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(view().name("youth/form"))
                 .andExpect(model().attributeExists("youthForm", "genders", "ethnicities",
-                        "politicalStatuses", "educationLevels", "degrees", "regions", "schools", "majors"))
+                        "politicalStatuses", "educationLevels", "degrees", "schools", "majors"))
                 .andExpect(model().attribute("formTitle", "新增在校大学生"));
     }
 

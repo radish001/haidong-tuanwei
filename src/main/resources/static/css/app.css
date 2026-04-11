@@ -713,6 +713,16 @@ code {
         width: auto;
     }
 
+    .system-dictionaries-filter-form {
+        grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    }
+
+    .system-dictionaries-filter-form label > .form-control,
+    .system-dictionaries-filter-form label > .form-select,
+    .system-dictionaries-filter-form .ts-wrapper {
+        min-width: 12rem;
+    }
+
     .workbench-filter-form .col-xl-4 {
         width: auto;
         grid-column: span 2;
@@ -1360,6 +1370,12 @@ code {
 .ts-dropdown .option:hover {
     background: rgba(58, 216, 255, 0.1);
     color: #ffffff;
+}
+
+.ts-wrapper-auto-wide-dropdown .ts-dropdown {
+    width: max-content;
+    min-width: 100%;
+    max-width: min(90vw, 760px);
 }
 
 .region-treeselect-shell { width: 100%; }

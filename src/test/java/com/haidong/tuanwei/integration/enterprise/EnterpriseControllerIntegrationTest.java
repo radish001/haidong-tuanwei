@@ -283,7 +283,7 @@ class EnterpriseControllerIntegrationTest extends IntegrationTestBase {
         mockMvc.perform(get(BASE_URL + "/new").session(adminSession))
                 .andExpect(status().isOk())
                 .andExpect(view().name("enterprise/form"))
-                .andExpect(model().attributeExists("enterpriseForm", "industryOptions", "natureOptions", "scaleOptions", "regions"))
+                .andExpect(model().attributeExists("enterpriseForm", "industryOptions", "natureOptions", "scaleOptions"))
                 .andExpect(model().attribute("formTitle", "新增企业信息"))
                 .andExpect(model().attribute("formAction", BASE_URL));
     }

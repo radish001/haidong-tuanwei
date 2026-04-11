@@ -259,7 +259,7 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
         mockMvc.perform(get(BASE_URL + "/new").session(adminSession))
                 .andExpect(status().isOk())
                 .andExpect(view().name("job/form"))
-                .andExpect(model().attributeExists("jobForm", "enterprises", "regions", "educationOptions",
+                .andExpect(model().attributeExists("jobForm", "enterprises", "educationOptions",
                         "majorOptions", "schoolCategoryOptions", "schoolTagOptions", "experienceOptions", "salaryOptions"))
                 .andExpect(model().attribute("formTitle", "新增招聘岗位"))
                 .andExpect(model().attribute("formAction", BASE_URL));

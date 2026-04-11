@@ -97,7 +97,7 @@
                         </div>
 
                         <div class="workbench-toolbar" th:if="${viewKind != 'analytics-haidong-tag'}">
-                            <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form" method="get" id="dictionary-list-form" data-ajax-form>
+                            <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form system-dictionaries-filter-form" method="get" id="dictionary-list-form" data-ajax-form>
                                 <input type="hidden" name="tab" th:value="${query.tab}">
                                 <input type="hidden" name="section" th:value="${query.section}">
                                 <input type="hidden" name="regionLevel" th:value="${query.regionLevel}" th:if="${query.section == 'region' and query.regionLevel != null}">

@@ -54,6 +54,7 @@
         return {
             allowEmptyOption: true,
             maxItems: 1,
+            maxOptions: null,
             hideSelected: false,
             create: false,
             plugins: searchable ? ["dropdown_input"] : [],
@@ -63,6 +64,8 @@
         };
     };
 
+    const isSchoolSelect = (select) => /school/i.test(`${select.name || ""} ${select.id || ""}`);
+
     const initSelects = async (root = document) => {
         await ensureTomSelect();
         root.querySelectorAll(SELECTOR).forEach((select) => {
@@ -70,7 +73,10 @@
                 return;
             }
             // Tom Select keeps the original select in sync, so existing form logic remains unchanged.
-            new window.TomSelect(select, buildSelectConfig(select));
+            const tom = new window.TomSelect(select, buildSelectConfig(select));
+            if (isSchoolSelect(select)) {
+                tom.wrapper.classList.add("ts-wrapper-auto-wide-dropdown");
+            }
         });
     };
 

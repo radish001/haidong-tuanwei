@@ -549,6 +549,60 @@ public class SystemController {
         return regionService.getRegionTree();
     }
 
+    @ResponseBody
+    @GetMapping("/api/schools/search")
+    public Object searchSchools(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize) {
+        List<School> schools = masterDataService.searchSchools(keyword, page, pageSize);
+        long total = masterDataService.countSchools(keyword);
+        return Map.of(
+                "items", schools,
+                "total", total,
+                "page", page,
+                "pageSize", pageSize);
+    }
+
+    @ResponseBody
+    @GetMapping("/api/majors/search")
+    public Object searchMajors(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "pageSize", required = false, defaultValue = "20") int pageSize) {
+        List<MajorCatalog> majors = masterDataService.searchMajors(keyword, page, pageSize);
+        long total = masterDataService.countMajors(keyword);
+        return Map.of(
+                "items", majors,
+                "total", total,
+                "page", page,
+                "pageSize", pageSize);
+    }
+
+    @ResponseBody
+    @GetMapping("/api/schools/{schoolCode}")
+    public Object getSchoolByCode(@PathVariable String schoolCode) {
+        School school = masterDataService.getAllSchools().stream()
+                .filter(s -> s.getSchoolCode().equals(schoolCode))
+                .findFirst()
+                .orElse(null);
+        return school != null ? Map.of(
+                "schoolCode", school.getSchoolCode(),
+                "schoolName", school.getSchoolName(),
+                "categoryLabel", school.getCategoryLabel()) : null;
+    }
+
+    @ResponseBody
+    @GetMapping("/api/majors/{majorCode}")
+    public Object getMajorByCode(@PathVariable String majorCode) {
+        MajorCatalog major = masterDataService.getAllMajors().stream()
+                .filter(m -> m.getMajorCode().equals(majorCode))
+                .findFirst()
+                .orElse(null);
+        return major != null ? Map.of(
+                "majorCode", major.getMajorCode(),
+                "majorName", major.getMajorName(),
+                "categoryLabel", major.getCategoryLabel()) : null;
+    }
+
     private void populateWorkbench(Model model, DictionaryWorkbenchQuery query) {
         long totalCount;
         String section = query.getSection();

@@ -120,14 +120,12 @@
                 region_province_code = #{regionCode}
                 or region_city_code = #{regionCode}
                 or region_county_code = #{regionCode}
-                or region_code = #{regionCode}
             ))
             +
             (select count(*) from job_post where deleted = 0 and (
                 work_province_code = #{regionCode}
                 or work_city_code = #{regionCode}
                 or work_county_code = #{regionCode}
-                or work_region_code = #{regionCode}
             ))
     </select>
 

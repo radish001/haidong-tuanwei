@@ -8,7 +8,6 @@ import com.haidong.tuanwei.enterprise.dto.EnterpriseSearchRequest;
 import com.haidong.tuanwei.enterprise.entity.EnterpriseInfo;
 import com.haidong.tuanwei.enterprise.service.EnterpriseService;
 import com.haidong.tuanwei.system.service.DictionaryService;
-import com.haidong.tuanwei.system.service.RegionService;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +29,6 @@ public class EnterpriseController {
 
     private final EnterpriseService enterpriseService;
     private final DictionaryService dictionaryService;
-    private final RegionService regionService;
 
     @GetMapping("/enterprises")
     public String enterprises(@ModelAttribute("query") EnterpriseSearchRequest query,
@@ -175,7 +173,6 @@ public class EnterpriseController {
     }
 
     private void populateEnterpriseOptions(Model model) {
-        model.addAttribute("regions", regionService.getRegionTree());
         model.addAttribute("industryOptions", dictionaryService.getByType("enterprise_industry"));
         model.addAttribute("natureOptions", dictionaryService.getByType("enterprise_nature"));
         model.addAttribute("scaleOptions", dictionaryService.getByType("enterprise_scale"));

@@ -131,7 +131,7 @@
             value: initialValue || undefined,
             options,
             isSingleSelect: true,
-            searchable: false,
+            searchable: true,
             clearable: false,
             showTags: false,
             grouped: false,

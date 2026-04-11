@@ -33,6 +33,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,6 +64,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @Cacheable("majorSelectOptions")
     public List<MajorCatalog> getAllMajors() {
         return majorCatalogDao.findAll();
     }
@@ -72,6 +75,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @CacheEvict(value = "majorSelectOptions", allEntries = true)
     public void createMajor(MajorForm request) {
         String majorCode = request.getMajorCode().trim();
         String majorName = request.getMajorName().trim();
@@ -91,6 +95,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @CacheEvict(value = "majorSelectOptions", allEntries = true)
     public void updateMajor(Long id, MajorForm request) {
         MajorCatalog existing = requireMajor(id);
         String majorCode = request.getMajorCode().trim();
@@ -112,6 +117,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @CacheEvict(value = "majorSelectOptions", allEntries = true)
     public void deleteMajor(Long id) {
         MajorCatalog existing = requireMajor(id);
         if (majorCatalogDao.countYouthUsageByMajorCode(existing.getMajorCode()) > 0) {
@@ -205,6 +211,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @Cacheable("schoolSelectOptions")
     public List<School> getAllSchoolsForSelect() {
         return schoolDao.findAllForSelect();
     }
@@ -219,6 +226,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @CacheEvict(value = "schoolSelectOptions", allEntries = true)
     public void createSchool(SchoolForm request) {
         String schoolCode = request.getSchoolCode().trim();
         String schoolName = request.getSchoolName().trim();
@@ -240,6 +248,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @CacheEvict(value = "schoolSelectOptions", allEntries = true)
     public void updateSchool(Long id, SchoolForm request) {
         School existing = requireSchool(id);
         String schoolCode = request.getSchoolCode().trim();
@@ -263,6 +272,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    @CacheEvict(value = "schoolSelectOptions", allEntries = true)
     public void deleteSchool(Long id) {
         School existing = requireSchool(id);
         if (schoolDao.countYouthUsageBySchoolCode(existing.getSchoolCode()) > 0) {
@@ -298,6 +308,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "majorSelectOptions", allEntries = true)
     public DataImportResult importMajorsFromExcel(MultipartFile file) {
         DataImportResult result = new DataImportResult();
         List<String[]> rows = new ArrayList<>();
@@ -405,6 +416,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "schoolSelectOptions", allEntries = true)
     public DataImportResult importSchoolsFromExcel(MultipartFile file) {
         DataImportResult result = new DataImportResult();
         List<String[]> rows = new ArrayList<>();

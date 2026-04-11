@@ -5,7 +5,6 @@ import com.haidong.tuanwei.common.web.AjaxRequestSupport;
 import com.haidong.tuanwei.common.web.PaginationSupport;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
-import com.haidong.tuanwei.system.service.RegionService;
 import com.haidong.tuanwei.youth.dto.YouthFormRequest;
 import com.haidong.tuanwei.youth.dto.YouthImportResult;
 import com.haidong.tuanwei.youth.dto.YouthSearchRequest;
@@ -41,7 +40,6 @@ public class YouthController {
 
     private final DictionaryService dictionaryService;
     private final MasterDataService masterDataService;
-    private final RegionService regionService;
     private final YouthInfoService youthInfoService;
 
     @GetMapping("/youth/{type}")
@@ -234,7 +232,6 @@ public class YouthController {
         model.addAttribute("educationLevels", dictionaryService.getByType("education_level"));
         model.addAttribute("degrees", dictionaryService.getByType("degree"));
         model.addAttribute("majorCategories", dictionaryService.getByType("major_category"));
-        model.addAttribute("regions", regionService.getRegionTree());
         model.addAttribute("schools", masterDataService.getAllSchoolsForSelect());
         model.addAttribute("majors", masterDataService.getAllMajors());
     }

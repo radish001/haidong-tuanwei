@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,7 @@ public class RegionServiceImpl implements RegionService {
 
     private final RegionDao regionDao;
 
+    @Cacheable("regionTree")
     @Override
     public List<Region> getRegionTree() {
         List<Region> flatRegions = getFlatRegions();
@@ -55,6 +58,7 @@ public class RegionServiceImpl implements RegionService {
         return regionDao.count(regionLevel, parentId, keyword);
     }
 
+    @CacheEvict(value = "regionTree", allEntries = true)
     @Override
     public void create(RegionForm request) {
         validateHierarchy(request.getRegionLevel(), request.getParentId());
@@ -92,6 +96,7 @@ public class RegionServiceImpl implements RegionService {
         return regionDao.findById(id);
     }
 
+    @CacheEvict(value = "regionTree", allEntries = true)
     @Override
     public void update(Long id, RegionForm request) {
         Region existing = requireExisting(id);
@@ -108,6 +113,7 @@ public class RegionServiceImpl implements RegionService {
                 id, existing.getRegionLevel(), existing.getRegionCode(), existing.getParentId());
     }
 
+    @CacheEvict(value = "regionTree", allEntries = true)
     @Override
     public void delete(Long id) {
         Region existing = requireExisting(id);

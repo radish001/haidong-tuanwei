@@ -10,7 +10,6 @@ import com.haidong.tuanwei.job.entity.JobPost;
 import com.haidong.tuanwei.job.service.JobPostService;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
-import com.haidong.tuanwei.system.service.RegionService;
 import com.haidong.tuanwei.youth.dto.YouthSearchRequest;
 import com.haidong.tuanwei.youth.service.YouthInfoService;
 import com.haidong.tuanwei.youth.support.YouthTypeHelper;
@@ -40,7 +39,6 @@ public class JobController {
     private final EnterpriseService enterpriseService;
     private final DictionaryService dictionaryService;
     private final MasterDataService masterDataService;
-    private final RegionService regionService;
     private final YouthInfoService youthInfoService;
 
     @GetMapping("/jobs")
@@ -209,7 +207,6 @@ public class JobController {
 
     private void populateJobOptions(Model model) {
         model.addAttribute("enterprises", enterpriseService.getAllEnabled());
-        model.addAttribute("regions", regionService.getRegionTree());
         model.addAttribute("educationOptions", dictionaryService.getByType("education_level"));
         model.addAttribute("majorOptions", masterDataService.getAllMajors());
         model.addAttribute("schoolCategoryOptions", dictionaryService.getByType("school_category"));
