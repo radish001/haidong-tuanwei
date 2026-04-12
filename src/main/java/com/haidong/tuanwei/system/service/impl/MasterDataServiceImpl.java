@@ -70,6 +70,30 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
+    public List<MajorCatalog> getMajorsByCategoryId(Long categoryDictItemId) {
+        if (categoryDictItemId == null) {
+            return majorCatalogDao.findAll();
+        }
+        return majorCatalogDao.findByCategoryId(categoryDictItemId);
+    }
+
+    @Override
+    public List<MajorCatalog> getMajorsByCategoryValue(String categoryDictValue) {
+        if (categoryDictValue == null || categoryDictValue.isEmpty()) {
+            return majorCatalogDao.findAll();
+        }
+        List<DictItem> categories = dictionaryDao.findByType("major_category");
+        DictItem category = categories.stream()
+                .filter(c -> categoryDictValue.equals(c.getDictValue()))
+                .findFirst()
+                .orElse(null);
+        if (category == null) {
+            return List.of();
+        }
+        return majorCatalogDao.findByCategoryId(category.getId());
+    }
+
+    @Override
     public MajorCatalog getMajorById(Long id) {
         return majorCatalogDao.findById(id);
     }

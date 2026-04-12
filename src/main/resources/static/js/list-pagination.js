@@ -115,6 +115,9 @@
         if (window.RegionStepSelect && typeof window.RegionStepSelect.init === "function") {
             await window.RegionStepSelect.init(root);
         }
+        if (window.YouthListPage && typeof window.YouthListPage.initMajorCascade === "function") {
+            await window.YouthListPage.initMajorCascade(root);
+        }
     };
 
     const fetchList = async (root, url, pushHistory) => {

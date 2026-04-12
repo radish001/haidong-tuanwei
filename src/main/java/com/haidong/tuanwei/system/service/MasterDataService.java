@@ -18,6 +18,10 @@ public interface MasterDataService {
 
     List<MajorCatalog> getAllMajors();
 
+    List<MajorCatalog> getMajorsByCategoryId(Long categoryDictItemId);
+
+    List<MajorCatalog> getMajorsByCategoryValue(String categoryDictValue);
+
     MajorCatalog getMajorById(Long id);
 
     void createMajor(MajorForm request);

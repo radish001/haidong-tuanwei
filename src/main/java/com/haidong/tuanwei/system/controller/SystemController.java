@@ -601,7 +601,20 @@ public class SystemController {
         return major != null ? Map.of(
                 "majorCode", major.getMajorCode(),
                 "majorName", major.getMajorName(),
+                "categoryDictValue", major.getCategoryDictValue(),
                 "categoryLabel", major.getCategoryLabel()) : null;
+    }
+
+    @ResponseBody
+    @GetMapping("/api/majors/by-category")
+    public Object getMajorsByCategory(@RequestParam(name = "categoryDictItemId", required = false) Long categoryDictItemId) {
+        return masterDataService.getMajorsByCategoryId(categoryDictItemId);
+    }
+
+    @ResponseBody
+    @GetMapping("/api/majors/by-category-value")
+    public Object getMajorsByCategoryValue(@RequestParam(name = "categoryDictValue", required = false) String categoryDictValue) {
+        return masterDataService.getMajorsByCategoryValue(categoryDictValue);
     }
 
     private void populateWorkbench(Model model, DictionaryWorkbenchQuery query) {

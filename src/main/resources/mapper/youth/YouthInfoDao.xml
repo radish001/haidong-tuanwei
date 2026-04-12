@@ -123,7 +123,7 @@
             </foreach>
         </if>
         <if test="query != null and query.majorCategory != null and query.majorCategory != ''">
-            and mc.dict_value = #{query.majorCategory}
+            and y.major_category = #{query.majorCategory}
         </if>
         <if test="query != null and query.schoolCategoryIds != null and !query.schoolCategoryIds.isEmpty()">
             and s.category_dict_item_id in

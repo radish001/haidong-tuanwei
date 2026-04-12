@@ -30,6 +30,10 @@
             <div class="ajax-list-shell" data-ajax-list-root th:fragment="listContent">
             <div class="workbench-toolbar">
                 <form class="filter-form workbench-filter-form youth-filter-grid row g-3 bootstrap-filter-form" method="get" id="youth-list-form" data-ajax-form>
+                    <input th:each="schoolCategoryId : ${query.schoolCategoryIds}"
+                           type="hidden"
+                           name="schoolCategoryIds"
+                           th:value="${schoolCategoryId}">
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
                         <label for="name">姓名:
                             <input class="form-control" id="name" type="text" name="name" th:value="${query.name}" placeholder="输入姓名">
@@ -100,6 +104,18 @@
                             </select>
                         </label>
                     </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-3">
+                        <label for="majorCode">专业:
+                            <select class="form-select" id="majorCode" name="majorCode">
+                                <option value="">全部专业</option>
+                                <option th:each="item : ${majors}"
+                                        th:value="${item.majorCode}"
+                                        th:text="${item.majorName}"
+                                        th:attr="data-category-dict-value=${item.categoryDictValue}"
+                                        th:selected="${item.majorCode == query.majorCode}"></option>
+                            </select>
+                        </label>
+                    </div>
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="filter-block full-width">
                             <span>学校所在区域:</span>
@@ -117,6 +133,12 @@
                         </div>
                     </div>
                 </form>
+
+                <div class="alert alert-info py-2 px-3 mb-3"
+                     th:if="${schoolCategoryFilterLabels != null and !#lists.isEmpty(schoolCategoryFilterLabels)}"
+                     th:text="${'当前按院校层次筛选：' + #strings.listJoin(schoolCategoryFilterLabels, '、')}">
+                    当前按院校层次筛选
+                </div>
 
                 <div class="workbench-actions">
                     <a class="btn btn-primary" data-drawer-link th:href="@{/youth/college/new}">新增</a>
@@ -162,10 +184,13 @@
                         <th>性别</th>
                         <th>出生年月</th>
                         <th>民族</th>
-                        <th>政治面貌</th>
                         <th>籍贯</th>
+                        <th>招考年份</th>
                         <th>就读院校</th>
+                        <th>学历</th>
+                        <th>专业</th>
                         <th>专业类别</th>
+                        <th>学校所在区域</th>
                         <th>联系方式</th>
                         <th>操作</th>
                     </tr>
@@ -178,10 +203,13 @@
                         <td th:text="${item.gender}">男</td>
                         <td th:text="${item.birthDate}">2001-01-01</td>
                         <td th:text="${item.ethnicity}">汉族</td>
-                        <td th:text="${item.politicalStatus}">共青团员</td>
                         <td th:text="${item.nativePlaceName}">乐都区</td>
+                        <td th:text="${item.recruitmentYear}">2023</td>
                         <td th:text="${item.schoolName}">青海大学</td>
+                        <td th:text="${item.educationLevelName}">本科</td>
+                        <td th:text="${item.major}">计算机科学与技术</td>
                         <td th:text="${item.majorCategory}">工学</td>
+                        <td th:text="${item.schoolRegionName}">青海省-海东市</td>
                         <td th:text="${item.phone}">13900000001</td>
                         <td class="table-actions">
                             <a class="btn btn-sm btn-outline-info" data-drawer-link th:href="@{'/youth/college/' + ${item.id}}">详情</a>
@@ -194,7 +222,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(records)}">
-                        <td class="empty-cell" colspan="12">暂无在校大学生数据</td>
+                        <td class="empty-cell" colspan="15">暂无在校大学生数据</td>
                     </tr>
                     </tbody>
                 </table>
@@ -419,6 +447,100 @@
             }
             downloadFile(templateButton, url);
         });
+
+        // 专业类别-专业级联逻辑
+        const loadMajorsByCategory = async (categoryValue) => {
+            try {
+                const url = new URL('/api/majors/by-category-value', window.location.origin);
+                if (categoryValue) {
+                    url.searchParams.append('categoryDictValue', categoryValue);
+                }
+                const response = await fetch(url, {
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to load majors');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading majors:', error);
+                return [];
+            }
+        };
+
+        const initMajorCascade = async (container = document) => {
+            const scope = container && typeof container.querySelector === 'function' ? container : document;
+            const majorCategorySelect = scope.querySelector('#majorCategory');
+            const majorCodeSelect = scope.querySelector('#majorCode');
+
+            if (!majorCategorySelect || !majorCodeSelect) {
+                return;
+            }
+            if (majorCategorySelect.dataset.cascadeInitialized === 'true') {
+                return;
+            }
+
+            // 更新专业下拉框
+            const updateMajorOptions = (majors) => {
+                const currentValue = majorCodeSelect.value;
+                majorCodeSelect.innerHTML = '<option value="">全部专业</option>';
+                majors.forEach(major => {
+                    const option = document.createElement('option');
+                    option.value = major.majorCode;
+                    option.text = major.majorName;
+                    option.dataset.categoryDictValue = major.categoryDictValue || '';
+                    majorCodeSelect.appendChild(option);
+                });
+                // 尝试恢复之前选中的值
+                if (currentValue && Array.from(majorCodeSelect.options).some(opt => opt.value === currentValue)) {
+                    majorCodeSelect.value = currentValue;
+                }
+
+                // 列表页启用了 TomSelect，除了更新原生 select，还要同步刷新可视化下拉实例。
+                const majorTomSelect = majorCodeSelect.tomselect;
+                if (majorTomSelect) {
+                    majorTomSelect.clearOptions();
+                    majorTomSelect.addOption(majors.map((major) => ({
+                        value: major.majorCode,
+                        text: major.majorName
+                    })));
+                    majorTomSelect.refreshOptions(false);
+                    if (currentValue && majors.some((major) => major.majorCode === currentValue)) {
+                        majorTomSelect.setValue(currentValue, true);
+                    } else {
+                        majorTomSelect.clear(true);
+                    }
+                }
+            };
+
+            // 专业类别变化时加载对应专业
+            majorCategorySelect.addEventListener('change', async () => {
+                const categoryValue = majorCategorySelect.value;
+                const majors = await loadMajorsByCategory(categoryValue);
+                updateMajorOptions(majors);
+            });
+
+            // 页面加载时根据已选专业类别初始化专业列表
+            const initialCategoryValue = majorCategorySelect.value;
+            if (initialCategoryValue) {
+                const majors = await loadMajorsByCategory(initialCategoryValue);
+                updateMajorOptions(majors);
+            }
+
+            majorCategorySelect.dataset.cascadeInitialized = 'true';
+        };
+
+        window.YouthListPage = window.YouthListPage || {};
+        window.YouthListPage.initMajorCascade = initMajorCascade;
+
+        // 在 DOM 加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                void initMajorCascade();
+            });
+        } else {
+            void initMajorCascade();
+        }
 
         importForm?.addEventListener('submit', () => {
             setButtonLoading(importSubmit, true);

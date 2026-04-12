@@ -13,5 +13,7 @@ public class MajorCatalog {
 
     private Long categoryDictItemId;
 
+    private String categoryDictValue;
+
     private String categoryLabel;
 }

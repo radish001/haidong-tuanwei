@@ -272,7 +272,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         MajorCatalog majorCatalog = requireMajorByCode(request.getMajorCode());
         youthInfo.setMajorCode(majorCatalog.getMajorCode());
         youthInfo.setMajor(majorCatalog.getMajorName());
-        youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
+        youthInfo.setMajorCategory(majorCatalog.getCategoryDictValue());
         try {
             youthInfo.setRecruitmentYear(parseRecruitmentYear(request.getRecruitmentYear(), "招考年份格式不正确"));
         } catch (IllegalArgumentException ex) {
@@ -456,7 +456,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setSchoolCountyCode(schoolSelection.getCountyCode());
         youthInfo.setMajorCode(majorCatalog.getMajorCode());
         youthInfo.setMajor(majorCatalog.getMajorName());
-        youthInfo.setMajorCategory(majorCatalog.getCategoryLabel());
+        youthInfo.setMajorCategory(majorCatalog.getCategoryDictValue());
         youthInfo.setRecruitmentYear(parseRecruitmentYear(ExcelUtils.getCellText(row.getCell(5)), "招考年份格式不正确"));
         youthInfo.setPhone(phone);
         youthInfo.setEmploymentStatus("待确认");

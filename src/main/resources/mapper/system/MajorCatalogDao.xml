@@ -9,6 +9,7 @@
         <result property="majorCode" column="major_code"/>
         <result property="majorName" column="major_name"/>
         <result property="categoryDictItemId" column="category_dict_item_id"/>
+        <result property="categoryDictValue" column="category_dict_value"/>
         <result property="categoryLabel" column="category_label"/>
     </resultMap>
 
@@ -20,7 +21,8 @@
     </sql>
 
     <select id="search" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
         <include refid="majorJoin"/>
         <if test="keyword != null and keyword != ''">
             and (m.major_code like concat('%', #{keyword}, '%')
@@ -42,27 +44,31 @@
     </select>
 
     <select id="findAll" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
         <include refid="majorJoin"/>
         order by d.sort_no, m.major_name
     </select>
 
     <select id="findById" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
         <include refid="majorJoin"/>
           and m.id = #{id}
         limit 1
     </select>
 
     <select id="findByCode" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
         <include refid="majorJoin"/>
           and m.major_code = #{majorCode}
         limit 1
     </select>
 
     <select id="findByName" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
         <include refid="majorJoin"/>
           and m.major_name = #{majorName}
         limit 1
@@ -97,6 +103,14 @@
           and deleted = 0
     </select>
 
+    <select id="findByCategoryId" resultMap="MajorCatalogResultMap">
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
+        <include refid="majorJoin"/>
+          and m.category_dict_item_id = #{categoryDictItemId}
+        order by m.major_name
+    </select>
+
     <select id="countYouthUsageByMajorCode" resultType="long">
         select count(*)
         from youth_info
@@ -105,7 +119,8 @@
     </select>
 
     <select id="findExistingCodes" resultMap="MajorCatalogResultMap">
-        select m.id, m.major_code, m.major_name, m.category_dict_item_id, d.dict_label as category_label
+        select m.id, m.major_code, m.major_name, m.category_dict_item_id,
+               d.dict_value as category_dict_value, d.dict_label as category_label
         <include refid="majorJoin"/>
           and m.major_code in
         <foreach item="code" collection="codes" open="(" separator="," close=")">

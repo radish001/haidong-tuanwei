@@ -22,7 +22,7 @@
     };
 
     const initYouthForm = (container) => {
-        const majorSelect = container.querySelector('select[name="major"]');
+        const majorSelect = container.querySelector('select[name="majorCode"]');
         const majorCategoryInput = container.querySelector('input[name="majorCategory"]');
         if (!(majorSelect instanceof HTMLSelectElement) || !(majorCategoryInput instanceof HTMLInputElement)) {
             return;
@@ -32,7 +32,7 @@
         }
         const syncMajorCategory = () => {
             const selectedOption = majorSelect.selectedOptions[0];
-            majorCategoryInput.value = selectedOption ? (selectedOption.dataset.categoryLabel || "") : "";
+            majorCategoryInput.value = selectedOption ? (selectedOption.dataset.categoryValue || "") : "";
         };
         majorSelect.addEventListener("change", syncMajorCategory);
         syncMajorCategory();

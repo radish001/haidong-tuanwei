@@ -3,6 +3,7 @@ package com.haidong.tuanwei.youth.controller;
 import com.haidong.tuanwei.common.security.AdminUserDetails;
 import com.haidong.tuanwei.common.web.AjaxRequestSupport;
 import com.haidong.tuanwei.common.web.PaginationSupport;
+import com.haidong.tuanwei.system.entity.DictItem;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.youth.dto.YouthFormRequest;
@@ -56,6 +57,7 @@ public class YouthController {
         model.addAttribute("records", youthInfoService.search(YouthTypeHelper.code(type), query));
         PaginationSupport.apply(model, query.getSafePage(), query.getSafePageSize(), totalCount);
         populateYouthOptions(model);
+        populateAnalyticsFilterSummary(model, query);
         return AjaxRequestSupport.isAjax(requestedWith) ? "youth/list :: listContent" : "youth/list";
     }
 
@@ -234,6 +236,19 @@ public class YouthController {
         model.addAttribute("majorCategories", dictionaryService.getByType("major_category"));
         model.addAttribute("schools", masterDataService.getAllSchoolsForSelect());
         model.addAttribute("majors", masterDataService.getAllMajors());
+    }
+
+    private void populateAnalyticsFilterSummary(Model model, YouthSearchRequest query) {
+        List<Long> schoolCategoryIds = query.getSchoolCategoryIds();
+        if (schoolCategoryIds == null || schoolCategoryIds.isEmpty()) {
+            model.addAttribute("schoolCategoryFilterLabels", List.of());
+            return;
+        }
+        List<String> labels = dictionaryService.getByType("school_category").stream()
+                .filter(item -> schoolCategoryIds.contains(item.getId()))
+                .map(DictItem::getDictLabel)
+                .toList();
+        model.addAttribute("schoolCategoryFilterLabels", labels);
     }
 
     private YouthFormRequest toForm(YouthInfo youthInfo) {

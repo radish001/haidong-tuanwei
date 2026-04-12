@@ -37,13 +37,6 @@
                             <option th:each="item : ${ethnicities}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
-                    <label class="col-12 col-md-6">
-                        <span>政治面貌</span>
-                        <select class="form-select" th:field="*{politicalStatus}">
-                            <option value="">请选择</option>
-                            <option th:each="item : ${politicalStatuses}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
-                        </select>
-                    </label>
                     <div class="filter-block col-12 col-md-6" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
                         <span>籍贯</span>
                         <input type="hidden" th:field="*{nativeProvinceCode}" data-region-province>
@@ -55,13 +48,6 @@
                         <select class="form-select" th:field="*{educationLevel}">
                             <option value="">请选择</option>
                             <option th:each="item : ${educationLevels}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
-                        </select>
-                    </label>
-                    <label class="col-12 col-md-6">
-                        <span>学位</span>
-                        <select class="form-select" th:field="*{degreeCode}">
-                            <option value="">请选择</option>
-                            <option th:each="item : ${degrees}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
                     <label class="col-12 col-md-6">
@@ -86,7 +72,7 @@
                             <option th:each="item : ${majors}"
                                     th:value="${item.majorCode}"
                                     th:text="${item.majorName + ' / ' + item.categoryLabel}"
-                                    th:attr="data-category-label=${item.categoryLabel}"></option>
+                                    th:attr="data-category-value=${item.categoryDictValue}"></option>
                         </select>
                     </label>
                     <input type="hidden" th:field="*{majorCategory}">
@@ -94,22 +80,7 @@
                         <span>招考年份</span>
                         <input class="form-control" type="text" th:field="*{recruitmentYear}" inputmode="numeric" maxlength="4" placeholder="例如 2023">
                     </label>
-                    <label class="col-12 col-md-6"><span>毕业时间</span><input class="form-control" type="date" th:field="*{graduationDate}"></label>
                     <label class="col-12 col-md-6"><span>联系方式</span><input class="form-control" type="text" th:field="*{phone}"></label>
-                    <label class="col-12 col-md-6"><span>就业方向</span><input class="form-control" type="text" th:field="*{employmentDirection}"></label>
-                    <div class="filter-block col-12 col-md-6" data-region-step data-region-api-url="/api/regions" data-region-placeholder="请选择">
-                        <span>现居住地</span>
-                        <input type="hidden" th:field="*{residenceProvinceCode}" data-region-province>
-                        <input type="hidden" th:field="*{residenceCityCode}" data-region-city>
-                        <input type="hidden" th:field="*{residenceCountyCode}" data-region-county>
-                    </div>
-                    <label class="col-12 col-md-6"><span>就业状态</span><input class="form-control" type="text" th:field="*{employmentStatus}"></label>
-                    <label class="col-12 col-md-6"><span>就业单位</span><input class="form-control" type="text" th:field="*{employmentCompany}"></label>
-                    <label class="col-12 col-md-6"><span>当前从事工作</span><input class="form-control" type="text" th:field="*{currentJob}"></label>
-                    <input type="hidden" th:field="*{entrepreneurshipStatus}">
-                    <input type="hidden" th:field="*{entrepreneurshipProject}">
-                    <input type="hidden" th:field="*{entrepreneurshipDemand}">
-                    <label class="full-width col-12"><span>备注</span><textarea class="form-control" th:field="*{remarks}"></textarea></label>
 
                     <div class="form-actions full-width col-12">
                         <a class="btn btn-outline-secondary" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>取消</a>
@@ -128,10 +99,14 @@
         if (!majorSelect || !majorCategoryInput) {
             return;
         }
+
+        // 同步专业类别到输入框
         const syncMajorCategory = () => {
             const selectedOption = majorSelect.selectedOptions[0];
-            majorCategoryInput.value = selectedOption ? (selectedOption.dataset.categoryLabel || "") : "";
+            majorCategoryInput.value = selectedOption ? (selectedOption.dataset.categoryValue || "") : "";
         };
+
+        // 专业变化时同步专业类别
         majorSelect.addEventListener("change", syncMajorCategory);
         syncMajorCategory();
     })();
