@@ -207,6 +207,8 @@ create table if not exists youth_info (
     key idx_youth_deleted_type_degree_code (deleted, youth_type, degree_code),
     key idx_youth_deleted_type_school_code (deleted, youth_type, school_code),
     key idx_youth_deleted_type_major_code (deleted, youth_type, major_code),
+    key idx_youth_deleted_type_major_category (deleted, youth_type, major_category),
+    key idx_youth_deleted_type_recruitment_year (deleted, youth_type, recruitment_year),
     key idx_youth_deleted_type_birth_date (deleted, youth_type, birth_date),
     key idx_youth_deleted_type_native_province (deleted, youth_type, native_province_code),
     key idx_youth_deleted_type_native_city (deleted, youth_type, native_city_code),
