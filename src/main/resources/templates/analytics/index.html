@@ -101,6 +101,24 @@
         });
     }
 
+    function formatIntegerTick(value) {
+        return Math.round(Number(value) || 0).toLocaleString('en-US');
+    }
+
+    function integerValueAxis(extra = {}) {
+        return Object.assign({
+            type: 'value',
+            minInterval: 1,
+            axisLabel: {
+                color: '#8ea3cc',
+                formatter(value) {
+                    return formatIntegerTick(value);
+                }
+            },
+            splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
+        }, extra);
+    }
+
     function hasData(data) {
         return data.length > 0 && data.some(item => item.value > 0);
     }
@@ -132,11 +150,7 @@
                 data: data.map(item => item.name),
                 axisLabel: {color: '#8ea3cc'}
             },
-            yAxis: {
-                type: 'value',
-                axisLabel: {color: '#8ea3cc'},
-                splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
-            },
+            yAxis: integerValueAxis(),
             series: [{
                 type: 'line',
                 smooth: true,
@@ -164,11 +178,7 @@
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
             grid: {left: 70, right: 24, top: 60, bottom: 30},
-            xAxis: {
-                type: 'value',
-                axisLabel: {color: '#8ea3cc'},
-                splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
-            },
+            xAxis: integerValueAxis(),
             yAxis: {
                 type: 'category',
                 data: data.map(item => item.name),
@@ -203,7 +213,7 @@
         if (clickFilterParam) document.getElementById(elementId).style.cursor = 'pointer';
         chart.setOption(Object.assign(baseOption(title), {
             tooltip: {trigger: 'axis', axisPointer: {type: 'shadow'}},
-            grid: {left: 40, right: 24, top: 60, bottom: 70},
+            grid: {left: 80, right: 24, top: 60, bottom: 70},
             xAxis: {
                 type: 'category',
                 data: data.map(item => item.name),
@@ -213,11 +223,7 @@
                     rotate: 35
                 }
             },
-            yAxis: {
-                type: 'value',
-                axisLabel: {color: '#8ea3cc'},
-                splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
-            },
+            yAxis: integerValueAxis(),
             series: [{
                 type: 'bar',
                 data: data.map(item => ({value: item.value, code: item.code})),
@@ -330,15 +336,17 @@
                     inverse: true,
                     position: 'top',
                     axisLabel: {show: false},
+                    minInterval: 1,
                     splitLine: {lineStyle: {color: 'rgba(255,255,255,0.06)'}}
                 },
                 {
                     type: 'value',
                     position: 'bottom',
+                    minInterval: 1,
                     axisLabel: {
                         color: '#8ea3cc',
                         formatter(value) {
-                            return Math.abs(value);
+                            return formatIntegerTick(Math.abs(value));
                         }
                     },
                     splitLine: {show: false}
