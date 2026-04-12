@@ -88,8 +88,8 @@ public class EnterpriseController {
 
     @PostMapping("/enterprises")
     public String createEnterprise(@Valid @ModelAttribute("enterpriseForm") EnterpriseFormRequest request,
-            @RequestParam(value = "businessLicenseFile", required = false) MultipartFile businessLicenseFile,
             BindingResult bindingResult,
+            @RequestParam(value = "businessLicenseFile", required = false) MultipartFile businessLicenseFile,
             @AuthenticationPrincipal AdminUserDetails currentUser,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model,
@@ -132,8 +132,8 @@ public class EnterpriseController {
     @PostMapping("/enterprises/{id}")
     public String updateEnterprise(@PathVariable Long id,
             @Valid @ModelAttribute("enterpriseForm") EnterpriseFormRequest request,
-            @RequestParam(value = "businessLicenseFile", required = false) MultipartFile businessLicenseFile,
             BindingResult bindingResult,
+            @RequestParam(value = "businessLicenseFile", required = false) MultipartFile businessLicenseFile,
             @AuthenticationPrincipal AdminUserDetails currentUser,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model,

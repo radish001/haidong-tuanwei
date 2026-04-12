@@ -53,8 +53,8 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             "学校", "学校所在区域", "专业", "联系方式"
     };
     private static final String[] EXPORT_HEADERS = {
-            "姓名", "性别", "出生年月", "民族", "政治面貌", "籍贯", "学历", "学位",
-            "学校", "学校所在区域", "专业", "招考年份", "毕业时间", "就业方向", "联系方式"
+            "姓名", "性别", "出生年月", "民族", "籍贯", "招考年份",
+            "学校", "学历", "专业", "专业类别", "学校所在区域", "联系方式"
     };
 
     private final YouthInfoDao youthInfoDao;
@@ -224,17 +224,22 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 row.createCell(1).setCellValue(safe(item.getGender()));
                 row.createCell(2).setCellValue(ExcelUtils.formatDate(item.getBirthDate()));
                 row.createCell(3).setCellValue(safe(item.getEthnicity()));
-                row.createCell(4).setCellValue(safe(item.getPoliticalStatus()));
-                row.createCell(5).setCellValue(toExcelRegionPath(item.getNativePlaceName()));
-                row.createCell(6).setCellValue(safe(item.getEducationLevelName()));
-                row.createCell(7).setCellValue(safe(item.getDegreeName()));
-                row.createCell(8).setCellValue(safe(item.getSchoolName()));
-                row.createCell(9).setCellValue(toExcelRegionPath(item.getSchoolRegionName()));
-                row.createCell(10).setCellValue(safe(item.getMajor()));
-                row.createCell(11).setCellValue(item.getRecruitmentYear() == null ? "" : String.valueOf(item.getRecruitmentYear()));
-                row.createCell(12).setCellValue(ExcelUtils.formatDate(item.getGraduationDate()));
-                row.createCell(13).setCellValue(safe(item.getEmploymentDirection()));
-                row.createCell(14).setCellValue(safe(item.getPhone()));
+                row.createCell(4).setCellValue(exportRegionPath(
+                        item.getNativePlaceName(),
+                        item.getNativeProvinceCode(),
+                        item.getNativeCityCode(),
+                        item.getNativeCountyCode()));
+                row.createCell(5).setCellValue(item.getRecruitmentYear() == null ? "" : String.valueOf(item.getRecruitmentYear()));
+                row.createCell(6).setCellValue(safe(item.getSchoolName()));
+                row.createCell(7).setCellValue(safe(item.getEducationLevelName()));
+                row.createCell(8).setCellValue(safe(item.getMajor()));
+                row.createCell(9).setCellValue(safe(item.getMajorCategory()));
+                row.createCell(10).setCellValue(exportRegionPath(
+                        item.getSchoolRegionName(),
+                        item.getSchoolProvinceCode(),
+                        item.getSchoolCityCode(),
+                        item.getSchoolCountyCode()));
+                row.createCell(11).setCellValue(safe(item.getPhone()));
             }
             for (int i = 0; i < EXPORT_HEADERS.length; i++) {
                 sheet.setColumnWidth(i, 18 * 256);
@@ -645,11 +650,11 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         return true;
     }
 
-    private String toExcelRegionPath(String dashDelimited) {
-        if (dashDelimited == null || dashDelimited.isBlank()) {
-            return "";
+    private String exportRegionPath(String displayName, String provinceCode, String cityCode, String countyCode) {
+        if (displayName != null && !displayName.isBlank()) {
+            return displayName;
         }
-        return dashDelimited.replace("-", " / ");
+        return regionSelectionSupport.buildExcelPath(provinceCode, cityCode, countyCode).replace(REGION_PATH_DELIMITER, "-");
     }
 
     private String safe(String value) {
