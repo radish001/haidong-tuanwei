@@ -3,7 +3,12 @@ package com.haidong.tuanwei.youth.controller;
 import com.haidong.tuanwei.common.security.AdminUserDetails;
 import com.haidong.tuanwei.common.web.AjaxRequestSupport;
 import com.haidong.tuanwei.common.web.PaginationSupport;
+import com.haidong.tuanwei.job.dto.JobSearchRequest;
+import com.haidong.tuanwei.job.entity.JobPost;
+import com.haidong.tuanwei.job.service.JobPostService;
 import com.haidong.tuanwei.system.entity.DictItem;
+import com.haidong.tuanwei.system.entity.School;
+import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.youth.dto.YouthFormRequest;
@@ -16,6 +21,8 @@ import jakarta.validation.Valid;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -42,6 +49,8 @@ public class YouthController {
     private final DictionaryService dictionaryService;
     private final MasterDataService masterDataService;
     private final YouthInfoService youthInfoService;
+    private final JobPostService jobPostService;
+    private final SchoolDao schoolDao;
 
     @GetMapping("/youth/{type}")
     public String youthPage(@PathVariable String type,
@@ -54,6 +63,7 @@ public class YouthController {
         model.addAttribute("pageTitle", "青年信息库");
         model.addAttribute("youthType", type);
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
+        model.addAttribute("analyticsTab", false);
         model.addAttribute("records", youthInfoService.search(YouthTypeHelper.code(type), query));
         PaginationSupport.apply(model, query.getSafePage(), query.getSafePageSize(), totalCount);
         populateYouthOptions(model);
@@ -150,6 +160,37 @@ public class YouthController {
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
         model.addAttribute("record", youthInfoService.getById(id));
         return AjaxRequestSupport.isAjax(requestedWith) ? "youth/detail :: drawerContent" : "youth/detail";
+    }
+
+    @GetMapping("/youth/{type}/{id}/matches")
+    public String matchJobs(@PathVariable String type,
+            @PathVariable Long id,
+            @ModelAttribute("query") JobSearchRequest query,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
+            Model model) {
+        YouthInfo youthInfo = requireYouth(type, id);
+        School school = resolveSchool(youthInfo);
+        applyJobMatchConditions(query, youthInfo, school);
+
+        long totalCount = jobPostService.count(query);
+        normalizeJobPage(query, totalCount);
+        List<JobPost> records = jobPostService.search(query);
+
+        model.addAttribute("pageTitle", "学生匹配招聘");
+        model.addAttribute("youthType", type);
+        model.addAttribute("youthInfo", youthInfo);
+        model.addAttribute("records", records);
+        model.addAttribute("sourceDetailUrl", "/youth/" + type + "/" + id);
+        model.addAttribute("sourceDetailTitle", youthInfo.getName() + " 详情");
+        model.addAttribute("matchEducationLabel", safeValue(youthInfo.getEducationLevelName()));
+        model.addAttribute("matchMajorLabel", safeValue(youthInfo.getMajor()));
+        model.addAttribute("matchSchoolCategoryLabel", school == null ? "" : safeValue(school.getCategoryLabel()));
+        model.addAttribute("matchSchoolTagLabel", school == null ? "" : safeValue(school.getTagSummary()));
+        PaginationSupport.apply(model, query.getSafePage(), query.getSafePageSize(), totalCount);
+        applyCompactMatchPagination(model, query.getSafePage(), query.getSafePageSize(), totalCount);
+        return AjaxRequestSupport.isAjax(requestedWith)
+                ? "youth/job-match-results :: drawerContent"
+                : "youth/job-match-results";
     }
 
     @GetMapping("/youth/{type}/{id}/edit")
@@ -251,6 +292,45 @@ public class YouthController {
         model.addAttribute("schoolCategoryFilterLabels", labels);
     }
 
+    private YouthInfo requireYouth(String type, Long id) {
+        YouthInfo youthInfo = youthInfoService.getById(id);
+        if (youthInfo == null || !Objects.equals(youthInfo.getYouthType(), YouthTypeHelper.code(type))) {
+            throw new IllegalStateException("青年信息不存在");
+        }
+        return youthInfo;
+    }
+
+    private School resolveSchool(YouthInfo youthInfo) {
+        if (youthInfo.getSchoolCode() == null || youthInfo.getSchoolCode().isBlank()) {
+            return null;
+        }
+        return schoolDao.findByCode(youthInfo.getSchoolCode());
+    }
+
+    private void applyJobMatchConditions(JobSearchRequest query, YouthInfo youthInfo, School school) {
+        query.setEducationRequirement(null);
+        query.setEducationRequirements(toSingletonList(youthInfo.getEducationCode()));
+        query.setMajorCodes(toSingletonList(youthInfo.getMajorCode()));
+        query.setSchoolCategoryIds(school == null || school.getCategoryDictItemId() == null
+                ? List.of()
+                : List.of(school.getCategoryDictItemId()));
+        query.setSchoolTagIds(resolveSchoolTagIds(school));
+    }
+
+    private List<String> toSingletonList(String value) {
+        if (value == null || value.isBlank()) {
+            return List.of();
+        }
+        return List.of(value);
+    }
+
+    private List<Long> resolveSchoolTagIds(School school) {
+        if (school == null || school.getId() == null) {
+            return List.of();
+        }
+        return schoolDao.findTagIdsBySchoolId(school.getId());
+    }
+
     private YouthFormRequest toForm(YouthInfo youthInfo) {
         YouthFormRequest form = new YouthFormRequest();
         form.setId(youthInfo.getId());
@@ -301,5 +381,36 @@ public class YouthController {
         if (query.getSafePage() > totalPages) {
             query.setPage(totalPages);
         }
+    }
+
+    private void normalizeJobPage(JobSearchRequest query, long totalCount) {
+        int totalPages = (int) Math.max(1, (totalCount + query.getSafePageSize() - 1) / query.getSafePageSize());
+        if (query.getSafePage() > totalPages) {
+            query.setPage(totalPages);
+        }
+    }
+
+    private void applyCompactMatchPagination(Model model, int currentPage, int pageSize, long totalCount) {
+        int safePageSize = Math.max(pageSize, 1);
+        int totalPages = (int) Math.max(1, (totalCount + safePageSize - 1) / safePageSize);
+        int safeCurrentPage = Math.min(Math.max(currentPage, 1), totalPages);
+        int startPage = Math.max(1, safeCurrentPage - 1);
+        int endPage = Math.min(totalPages, startPage + 2);
+        startPage = Math.max(1, endPage - 2);
+
+        List<Integer> pageNumbers = new ArrayList<>();
+        for (int page = startPage; page <= endPage; page++) {
+            pageNumbers.add(page);
+        }
+
+        model.addAttribute("pageNumbers", pageNumbers);
+        model.addAttribute("showFirstPage", false);
+        model.addAttribute("showLeadingEllipsis", startPage > 1);
+        model.addAttribute("showLastPage", false);
+        model.addAttribute("showTrailingEllipsis", endPage < totalPages);
+    }
+
+    private String safeValue(String value) {
+        return value == null ? "" : value;
     }
 }

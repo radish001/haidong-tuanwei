@@ -19,7 +19,15 @@
             <div class="workbench-tabs">
                 <ul class="nav nav-tabs border-0 gap-2">
                     <li class="nav-item">
-                        <a class="nav-link active" th:href="@{/youth/college}">在校大学生</a>
+                        <a class="nav-link"
+                           th:classappend="${!analyticsTab} ? ' active' : ''"
+                           th:href="@{/youth/{type}(type=${youthType})}"
+                        >在校大学生</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${analyticsTab} ? ' active' : ''"
+                           th:href="@{/youth/{type}/analytics(type=${youthType})}">数据分析</a>
                     </li>
                 </ul>
             </div>

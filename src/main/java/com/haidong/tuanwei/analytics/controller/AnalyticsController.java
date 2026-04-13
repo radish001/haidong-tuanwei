@@ -21,15 +21,22 @@ public class AnalyticsController {
     private final ObjectMapper objectMapper;
 
     @GetMapping("/analytics/{type}")
+    public String redirectAnalyticsPage(@PathVariable String type) {
+        return "redirect:/youth/" + type + "/analytics";
+    }
+
+    @GetMapping("/youth/{type}/analytics")
     public String analyticsPage(@PathVariable String type, Model model) {
-        model.addAttribute("pageTitle", "数据分析");
+        model.addAttribute("pageTitle", "青年信息库");
         model.addAttribute("youthType", type);
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
         model.addAttribute("isCollegeAnalytics", COLLEGE_TYPE.equals(type));
+        model.addAttribute("analyticsTab", true);
         YouthAnalyticsView analytics = youthAnalyticsService.getAnalytics(YouthTypeHelper.code(type));
         model.addAttribute("ageDistributionJson", toJson(analytics.getAgeDistribution()));
         model.addAttribute("schoolCategoryDistributionJson", toJson(analytics.getSchoolCategoryDistribution()));
         model.addAttribute("majorCategoryDistributionJson", toJson(analytics.getMajorCategoryDistribution()));
+        model.addAttribute("jobMajorDistributionJson", toJson(analytics.getJobMajorDistribution()));
         model.addAttribute("genderDistributionJson", toJson(analytics.getGenderDistribution()));
         model.addAttribute("educationDistributionJson", toJson(analytics.getEducationDistribution()));
         model.addAttribute("ethnicityDistributionJson", toJson(analytics.getEthnicityDistribution()));

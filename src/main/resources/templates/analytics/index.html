@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据分析</title>
+    <title>青年信息库</title>
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
     <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
@@ -18,8 +18,13 @@
                 <ul class="nav nav-tabs border-0 gap-2">
                     <li class="nav-item">
                         <a class="nav-link"
-                           th:classappend="${youthType == 'college'} ? ' active' : ''"
-                           th:href="@{/analytics/college}">在校大学生</a>
+                           th:classappend="${!analyticsTab} ? ' active' : ''"
+                           th:href="@{/youth/{type}(type=${youthType})}">在校大学生</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           th:classappend="${analyticsTab} ? ' active' : ''"
+                           th:href="@{/youth/{type}/analytics(type=${youthType})}">数据分析</a>
                     </li>
                 </ul>
             </div>
@@ -44,6 +49,14 @@
                     </div>
                     <div id="haidongTagCharts" class="tag-chart-grid"></div>
                 </section>
+                <section class="analytics-topic-panel">
+                    <div class="analytics-topic-header">
+                        <div>
+                            <h3>招聘信息专业分析</h3>
+                        </div>
+                    </div>
+                    <div class="card border-0"><div id="jobMajorChart" class="chart-box"></div></div>
+                </section>
             </div>
             <div th:unless="${isCollegeAnalytics}" class="analytics-grid row g-4">
                 <div class="col-12 col-md-6 col-lg-4"><div class="card h-100 border-0"><div id="ageChart" class="chart-box tall"></div></div></div>
@@ -61,6 +74,7 @@
     const ageData = /*[[${ageDistributionJson}]]*/ '[]';
     const schoolCategoryData = /*[[${schoolCategoryDistributionJson}]]*/ '[]';
     const majorCategoryData = /*[[${majorCategoryDistributionJson}]]*/ '[]';
+    const jobMajorData = /*[[${jobMajorDistributionJson}]]*/ '[]';
     const genderData = /*[[${genderDistributionJson}]]*/ '[]';
     const educationData = /*[[${educationDistributionJson}]]*/ '[]';
     const ethnicityData = /*[[${ethnicityDistributionJson}]]*/ '[]';
@@ -258,15 +272,16 @@
     }
 
     function renderPieChart(elementId, title, rawData, donut, options = {}) {
-        const data = topNWithOther(parseData(rawData), 10);
+        const data = topNWithOther(parseData(rawData), options.topN ?? 10);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
         const seriesCenter = options.seriesCenter ?? ['50%', '50%'];
         const seriesRadius = options.seriesRadius ?? (donut ? ['36%', '58%'] : '58%');
         const titleTop = options.titleTop ?? 10;
         const clickFilterParam = options.clickFilterParam;
+        const clickUrlBuilder = options.clickUrlBuilder;
         const colors = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
-        if (clickFilterParam) document.getElementById(elementId).style.cursor = 'pointer';
+        if (clickFilterParam || clickUrlBuilder) document.getElementById(elementId).style.cursor = 'pointer';
         chart.setOption(Object.assign(baseOption(title), {
             title: {
                 text: title,
@@ -302,10 +317,20 @@
                 }))
             }]
         }));
-        if (clickFilterParam) {
+        if (clickFilterParam || clickUrlBuilder) {
             chart.on('click', function(params) {
                 var code = params.data && params.data.code;
-                if (code) window.location.href = '/youth/college?' + clickFilterParam + '=' + encodeURIComponent(code);
+                if (!code) {
+                    return;
+                }
+                if (clickUrlBuilder) {
+                    const url = clickUrlBuilder(code, params);
+                    if (url) {
+                        window.location.href = url;
+                    }
+                    return;
+                }
+                window.location.href = '/youth/college?' + clickFilterParam + '=' + encodeURIComponent(code);
             });
         }
         attachResize(chart);
@@ -502,6 +527,12 @@
         renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel');
         renderMirrorBar('genderChart', '性别分布', genderData, 'gender');
         renderTagCharts('haidongTagCharts', haidongTagData);
+        renderPieChart('jobMajorChart', '招聘信息专业分析', jobMajorData, true, {
+            topN: 15,
+            clickUrlBuilder(code) {
+                return '/jobs?majorCodes=' + encodeURIComponent(code);
+            }
+        });
     } else {
     renderAreaChart('ageChart', '年龄结构', ageData);
     renderHorizontalBar('educationChart', '学历', educationData);

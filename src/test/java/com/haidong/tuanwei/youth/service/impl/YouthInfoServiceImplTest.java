@@ -214,6 +214,7 @@ class YouthInfoServiceImplTest {
         youthInfo.setSchoolCityCode("630200");
         youthInfo.setSchoolCountyCode("630202");
         youthInfo.setMajor("计算机科学与技术");
+        youthInfo.setMajorCategory("工学");
         youthInfo.setRecruitmentYear(2023);
         youthInfo.setPoliticalStatus("共青团员");
         youthInfo.setDegreeName("学士");
@@ -227,15 +228,20 @@ class YouthInfoServiceImplTest {
         try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(exportBytes))) {
             Sheet sheet = workbook.getSheetAt(0);
             assertThat(sheet.getRow(0).getCell(0).getStringCellValue()).isEqualTo("姓名");
-            assertThat(sheet.getRow(0).getCell(4).getStringCellValue()).isEqualTo("政治面貌");
-            assertThat(sheet.getRow(0).getCell(7).getStringCellValue()).isEqualTo("学位");
-            assertThat(sheet.getRow(0).getCell(11).getStringCellValue()).isEqualTo("招考年份");
-            assertThat(sheet.getRow(0).getCell(14).getStringCellValue()).isEqualTo("联系方式");
-            assertThat(sheet.getRow(1).getCell(5).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
-            assertThat(sheet.getRow(1).getCell(9).getStringCellValue()).isEqualTo("青海省 / 海东市 / 乐都区");
-            assertThat(sheet.getRow(1).getCell(4).getStringCellValue()).isEqualTo("共青团员");
-            assertThat(sheet.getRow(1).getCell(7).getStringCellValue()).isEqualTo("学士");
-            assertThat(sheet.getRow(1).getCell(11).getStringCellValue()).isEqualTo("2023");
+            assertThat(sheet.getRow(0).getCell(4).getStringCellValue()).isEqualTo("籍贯");
+            assertThat(sheet.getRow(0).getCell(5).getStringCellValue()).isEqualTo("招考年份");
+            assertThat(sheet.getRow(0).getCell(7).getStringCellValue()).isEqualTo("学历");
+            assertThat(sheet.getRow(0).getCell(9).getStringCellValue()).isEqualTo("专业类别");
+            assertThat(sheet.getRow(0).getCell(10).getStringCellValue()).isEqualTo("学校所在区域");
+            assertThat(sheet.getRow(0).getCell(11).getStringCellValue()).isEqualTo("联系方式");
+            assertThat(sheet.getRow(1).getCell(4).getStringCellValue()).isEqualTo("青海省-海东市-乐都区");
+            assertThat(sheet.getRow(1).getCell(5).getStringCellValue()).isEqualTo("2023");
+            assertThat(sheet.getRow(1).getCell(6).getStringCellValue()).isEqualTo("青海大学");
+            assertThat(sheet.getRow(1).getCell(7).getStringCellValue()).isEqualTo("本科");
+            assertThat(sheet.getRow(1).getCell(8).getStringCellValue()).isEqualTo("计算机科学与技术");
+            assertThat(sheet.getRow(1).getCell(9).getStringCellValue()).isEqualTo("工学");
+            assertThat(sheet.getRow(1).getCell(10).getStringCellValue()).isEqualTo("青海省-海东市-乐都区");
+            assertThat(sheet.getRow(1).getCell(11).getStringCellValue()).isEqualTo("13900000004");
         }
     }
 
@@ -297,7 +303,7 @@ class YouthInfoServiceImplTest {
             row.createCell(0).setCellValue(name);
             row.createCell(1).setCellValue("男");
             row.createCell(2).setCellValue("汉族");
-            row.createCell(3).setCellValue("2001-09-01");
+            row.createCell(3).setCellValue("20010901");
             row.createCell(4).setCellValue(nativePlace);
             row.createCell(5).setCellValue(recruitmentYear);
             row.createCell(6).setCellValue("本科");

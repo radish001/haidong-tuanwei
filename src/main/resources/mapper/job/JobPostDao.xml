@@ -40,6 +40,50 @@
                   and jer.education_code = #{query.educationRequirement}
             )
         </if>
+        <if test="query != null and query.educationRequirements != null and !query.educationRequirements.isEmpty()">
+            and exists (
+                select 1
+                from job_post_education_rel jer
+                where jer.job_post_id = j.id
+                  and jer.education_code in
+                  <foreach collection="query.educationRequirements" item="educationCode" open="(" separator="," close=")">
+                      #{educationCode}
+                  </foreach>
+            )
+        </if>
+        <if test="query != null and query.majorCodes != null and !query.majorCodes.isEmpty()">
+            and exists (
+                select 1
+                from job_post_major_rel jmr
+                where jmr.job_post_id = j.id
+                  and jmr.major_code in
+                  <foreach collection="query.majorCodes" item="majorCode" open="(" separator="," close=")">
+                      #{majorCode}
+                  </foreach>
+            )
+        </if>
+        <if test="query != null and query.schoolCategoryIds != null and !query.schoolCategoryIds.isEmpty()">
+            and exists (
+                select 1
+                from job_post_school_category_rel jscr
+                where jscr.job_post_id = j.id
+                  and jscr.category_dict_item_id in
+                  <foreach collection="query.schoolCategoryIds" item="schoolCategoryId" open="(" separator="," close=")">
+                      #{schoolCategoryId}
+                  </foreach>
+            )
+        </if>
+        <if test="query != null and query.schoolTagIds != null and !query.schoolTagIds.isEmpty()">
+            and exists (
+                select 1
+                from job_post_school_tag_rel jstr
+                where jstr.job_post_id = j.id
+                  and jstr.tag_id in
+                  <foreach collection="query.schoolTagIds" item="schoolTagId" open="(" separator="," close=")">
+                      #{schoolTagId}
+                  </foreach>
+            )
+        </if>
         <if test="query != null and query.experienceRequirement != null and query.experienceRequirement != ''">
             and j.experience_requirement = #{query.experienceRequirement}
         </if>

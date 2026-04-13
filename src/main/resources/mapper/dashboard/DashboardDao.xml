@@ -13,7 +13,10 @@
 
     <select id="getStats" resultMap="DashboardStatsResultMap">
         select
-            (select count(*) from youth_info where deleted = 0) as youth_count,
+            (select count(*)
+             from youth_info
+             where deleted = 0
+               and youth_type = 'COLLEGE') as youth_count,
             (select count(*) from enterprise_info where deleted = 0) as enterprise_count,
             (select count(*) from job_post where deleted = 0) as job_count,
             (select count(*) from policy_article where deleted = 0) as policy_count

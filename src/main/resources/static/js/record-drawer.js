@@ -6,6 +6,7 @@
     const DRAWER_LINK_SELECTOR = "a[data-drawer-link]";
     const DRAWER_CLOSE_SELECTOR = "[data-drawer-close]";
     const PAGE_SIZE_SELECTOR = "select[data-page-size-select]";
+    const DRAWER_RETURN_STATE_SELECTOR = "[data-drawer-return-url]";
     const POLICY_EDITOR_SELECTOR = "#policy-editor";
     const POLICY_FORM_SELECTOR = "#policy-form";
     const POLICY_INPUT_SELECTOR = "#contentHtml";
@@ -152,6 +153,25 @@
         return url.toString();
     };
 
+    const syncDrawerReturnState = (drawerPanel, drawerContent) => {
+        if (!(drawerPanel instanceof HTMLElement) || !(drawerContent instanceof HTMLElement)) {
+            return;
+        }
+        delete drawerPanel.dataset.returnUrl;
+        delete drawerPanel.dataset.returnTitle;
+        const returnState = drawerContent.querySelector(DRAWER_RETURN_STATE_SELECTOR);
+        if (!(returnState instanceof HTMLElement)) {
+            return;
+        }
+        const { drawerReturnUrl, drawerReturnTitle } = returnState.dataset;
+        if (drawerReturnUrl) {
+            drawerPanel.dataset.returnUrl = drawerReturnUrl;
+        }
+        if (drawerReturnTitle) {
+            drawerPanel.dataset.returnTitle = drawerReturnTitle;
+        }
+    };
+
     const openDrawer = async (page, url, trigger) => {
         const drawerPanel = page.querySelector(DRAWER_PANEL_SELECTOR);
         const drawerContent = page.querySelector(DRAWER_CONTENT_SELECTOR);
@@ -162,6 +182,10 @@
         }
 
         page.classList.add("drawer-open");
+        if (drawerPanel instanceof HTMLElement) {
+            delete drawerPanel.dataset.returnUrl;
+            delete drawerPanel.dataset.returnTitle;
+        }
         if (drawerTitle instanceof HTMLElement) {
             drawerTitle.textContent = trigger?.dataset.drawerTitle || trigger?.textContent?.trim() || "详细信息";
         }
@@ -184,6 +208,7 @@
 
             drawerContent.innerHTML = await response.text();
             await initDynamicDrawerContent(drawerContent);
+            syncDrawerReturnState(drawerPanel, drawerContent);
         } catch (error) {
             console.error(error);
             window.location.href = url;
@@ -236,6 +261,26 @@
         if (drawerContent instanceof HTMLElement) {
             drawerContent.innerHTML = "";
         }
+    });
+
+    document.addEventListener("hide.bs.offcanvas", (event) => {
+        const drawerPanel = event.target;
+        if (!(drawerPanel instanceof HTMLElement) || !drawerPanel.matches(DRAWER_PANEL_SELECTOR)) {
+            return;
+        }
+        const returnUrl = drawerPanel.dataset.returnUrl;
+        if (!returnUrl) {
+            return;
+        }
+        const page = drawerPanel.closest(DRAWER_PAGE_SELECTOR);
+        if (!page) {
+            return;
+        }
+        event.preventDefault();
+        void openDrawer(page, returnUrl, {
+            dataset: { drawerTitle: drawerPanel.dataset.returnTitle || "详细信息" },
+            textContent: drawerPanel.dataset.returnTitle || "详细信息"
+        });
     });
 
     document.addEventListener("submit", async (event) => {

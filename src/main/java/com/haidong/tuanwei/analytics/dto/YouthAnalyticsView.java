@@ -12,6 +12,7 @@ public class YouthAnalyticsView {
     private List<ChartItem> ageDistribution;
     private List<ChartItem> schoolCategoryDistribution;
     private List<ChartItem> majorCategoryDistribution;
+    private List<ChartItem> jobMajorDistribution;
     private List<ChartItem> genderDistribution;
     private List<ChartItem> educationDistribution;
     private List<ChartItem> ethnicityDistribution;

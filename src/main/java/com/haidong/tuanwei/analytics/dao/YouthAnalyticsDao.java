@@ -21,6 +21,8 @@ public interface YouthAnalyticsDao {
 
     List<ChartItem> countByMajorCategory(@Param("youthType") String youthType);
 
+    List<ChartItem> countJobDemandByMajor();
+
     List<TagSchoolStat> countHaidongNativeSchoolsByTag(@Param("youthType") String youthType,
             @Param("haidongCityCode") String haidongCityCode,
             @Param("tagIds") List<Long> tagIds);

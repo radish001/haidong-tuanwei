@@ -47,6 +47,17 @@
                         </label>
                     </div>
                     <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
+                        <label for="majorCodes">专业要求:
+                            <select class="form-select" id="majorCodes" name="majorCodes">
+                                <option value="">全部专业</option>
+                                <option th:each="item : ${majorOptions}"
+                                        th:value="${item.majorCode}"
+                                        th:text="${item.majorName}"
+                                        th:selected="${query.majorCodes != null and query.majorCodes.contains(item.majorCode)}"></option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-auto">
                         <label for="educationRequirement">学历要求:
                             <select class="form-select" id="educationRequirement" name="educationRequirement">
                                 <option value="">全部学历</option>

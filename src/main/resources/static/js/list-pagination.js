@@ -115,6 +115,9 @@
         if (window.RegionStepSelect && typeof window.RegionStepSelect.init === "function") {
             await window.RegionStepSelect.init(root);
         }
+        if (window.JobFormMultiSelect && typeof window.JobFormMultiSelect.init === "function") {
+            await window.JobFormMultiSelect.init(root);
+        }
         if (window.YouthListPage && typeof window.YouthListPage.initMajorCascade === "function") {
             await window.YouthListPage.initMajorCascade(root);
         }

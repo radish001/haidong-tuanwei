@@ -140,6 +140,19 @@
         order by d.sort_no, d.id
     </select>
 
+    <select id="countJobDemandByMajor" resultMap="ChartItemResultMap">
+        select m.major_name as name,
+               count(distinct j.id) as item_value,
+               m.major_code as code
+        from sys_major_catalog m
+        join job_post_major_rel rel on rel.major_code = m.major_code
+        join job_post j on j.id = rel.job_post_id
+        where m.deleted = 0
+          and j.deleted = 0
+        group by m.major_code, m.major_name
+        order by item_value desc, m.major_code
+    </select>
+
     <select id="countHaidongNativeSchoolsByTag" resultMap="TagSchoolStatResultMap">
         select t.tag_name,
                s.school_name,

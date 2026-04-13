@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -46,7 +47,15 @@ public final class ExcelUtils {
         if (value == null || value.isBlank()) {
             return null;
         }
-        return LocalDate.parse(value.trim());
+        String normalized = value.trim();
+        try {
+            return LocalDate.parse(normalized);
+        } catch (DateTimeParseException ignored) {
+            if (normalized.matches("\\d{8}")) {
+                return LocalDate.parse(normalized, DateTimeFormatter.BASIC_ISO_DATE);
+            }
+            throw ignored;
+        }
     }
 
     public static String formatDate(LocalDate value) {

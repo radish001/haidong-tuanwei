@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.haidong.tuanwei.integration.IntegrationTestBase;
+import com.haidong.tuanwei.job.dto.JobSearchRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -307,6 +308,73 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
                         .header("X-Requested-With", "XMLHttpRequest"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("job/list :: listContent"));
+    }
+
+    @Test
+    void jobsPageShouldSupportFilteringByMatchingSelections() throws Exception {
+        String matchingJobName = "四维筛选匹配岗位-" + System.currentTimeMillis();
+        String nonMatchingJobName = "四维筛选不匹配岗位-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", matchingJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "100")
+                        .param("schoolTagIds", "1"))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", nonMatchingJobName)
+                        .param("educationRequirements", "SS")
+                        .param("majorCodes", "120201")
+                        .param("schoolCategoryIds", "101")
+                        .param("schoolTagIds", "2"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult filteredResult = mockMvc.perform(get(BASE_URL)
+                        .session(adminSession)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "100")
+                        .param("schoolTagIds", "1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("job/list"))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> records =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) filteredResult
+                        .getModelAndView().getModel().get("records");
+
+        assertThat(records)
+                .extracting(com.haidong.tuanwei.job.entity.JobPost::getJobName)
+                .contains(matchingJobName)
+                .doesNotContain(nonMatchingJobName);
+    }
+
+    @Test
+    void jobsPageShouldShowSelectedMajorFilterState() throws Exception {
+        MvcResult result = mockMvc.perform(get(BASE_URL)
+                        .session(adminSession)
+                        .param("majorCodes", "080901"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("job/list"))
+                .andReturn();
+
+        String html = result.getResponse().getContentAsString();
+        JobSearchRequest query = (JobSearchRequest) result.getModelAndView().getModel().get("query");
+
+        assertThat(query.getMajorCodes()).contains("080901");
+        assertThat(html).contains("name=\"majorCodes\"");
+        assertThat(html).contains("value=\"080901\"");
+        assertThat(html).contains("selected=\"selected\"");
+        assertThat(html).contains("全部专业");
+        assertThat(html).doesNotContain("multiple");
+        assertThat(html).doesNotContain("data-multiselect");
     }
 
 }

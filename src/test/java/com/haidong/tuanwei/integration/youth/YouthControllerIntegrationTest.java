@@ -12,11 +12,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.haidong.tuanwei.integration.IntegrationTestBase;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.web.servlet.MvcResult;
 
 /**
  * 青年信息模块集成测试
@@ -176,6 +178,180 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(view().name("youth/list :: listContent"));
     }
 
+    @Test
+    void youthMatchJobsShouldFilterByMajorEducationSchoolCategoryAndTag() throws Exception {
+        String uniquePhone = "135" + System.currentTimeMillis();
+        String matchingJobName = "匹配岗位-" + System.currentTimeMillis();
+        String nonMatchingJobName = "不匹配岗位-" + System.currentTimeMillis();
+
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "匹配学生")
+                        .param("gender", "M")
+                        .param("birthDate", "2001-09-01")
+                        .param("ethnicity", "HAN")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("recruitmentYear", "2023")
+                        .param("phone", uniquePhone))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult youthListResult = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.youth.entity.YouthInfo> youthRecords =
+                (List<com.haidong.tuanwei.youth.entity.YouthInfo>) youthListResult.getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.youth.entity.YouthInfo createdYouth = youthRecords.stream()
+                .filter(item -> uniquePhone.equals(item.getPhone()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("未找到新创建的青年记录"));
+
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", matchingJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "100")
+                        .param("schoolTagIds", "1"))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", nonMatchingJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "120201")
+                        .param("schoolCategoryIds", "101")
+                        .param("schoolTagIds", "2"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult matchResult = mockMvc.perform(get("/youth/college/" + createdYouth.getId() + "/matches").session(adminSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("youth/job-match-results"))
+                .andExpect(model().attributeExists("youthInfo", "records", "sourceDetailUrl", "matchMajorLabel",
+                        "matchEducationLabel", "matchSchoolCategoryLabel", "matchSchoolTagLabel"))
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.job.entity.JobPost> matchedRecords =
+                (List<com.haidong.tuanwei.job.entity.JobPost>) matchResult.getModelAndView().getModel().get("records");
+
+        assertThat(matchedRecords)
+                .extracting(com.haidong.tuanwei.job.entity.JobPost::getJobName)
+                .contains(matchingJobName)
+                .doesNotContain(nonMatchingJobName);
+    }
+
+    @Test
+    void ajaxMatchResultsShouldCarryDrawerReturnContext() throws Exception {
+        com.haidong.tuanwei.youth.entity.YouthInfo youthInfo = createCollegeYouthForTest("返回上下文学生", "136" + System.currentTimeMillis());
+
+        MvcResult result = mockMvc.perform(get("/youth/college/" + youthInfo.getId() + "/matches")
+                        .session(adminSession)
+                        .header("X-Requested-With", "XMLHttpRequest"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("youth/job-match-results :: drawerContent"))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        assertThat(content).contains("data-drawer-return-url=\"/youth/college/" + youthInfo.getId() + "\"");
+        assertThat(content).contains("返回详情");
+    }
+
+    @Test
+    void youthDetailFragmentShouldExposeMatchJobsEntry() throws Exception {
+        com.haidong.tuanwei.youth.entity.YouthInfo youthInfo = createCollegeYouthForTest("详情入口学生", "137" + System.currentTimeMillis());
+
+        MvcResult result = mockMvc.perform(get("/youth/college/" + youthInfo.getId())
+                        .session(adminSession)
+                        .header("X-Requested-With", "XMLHttpRequest"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("youth/detail :: drawerContent"))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        assertThat(content).contains("匹配招聘信息");
+        assertThat(content).contains("/youth/college/" + youthInfo.getId() + "/matches");
+    }
+
+    @Test
+    void youthMatchJobsShouldIgnoreSchoolTagDimensionWhenStudentSchoolHasNoTags() throws Exception {
+        String uniquePhone = "138" + System.currentTimeMillis();
+        String matchingJobName = "标签忽略匹配岗位-" + System.currentTimeMillis();
+        String nonMatchingJobName = "标签忽略不匹配岗位-" + System.currentTimeMillis();
+        com.haidong.tuanwei.youth.entity.YouthInfo youthInfo = createCollegeYouthForTest(
+                "无标签学生", uniquePhone, "10746", "120201", "BK");
+
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", matchingJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "120201")
+                        .param("schoolCategoryIds", "101")
+                        .param("schoolTagIds", "1"))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", nonMatchingJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "101")
+                        .param("schoolTagIds", "1"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult matchResult = mockMvc.perform(get("/youth/college/" + youthInfo.getId() + "/matches").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.job.entity.JobPost> matchedRecords =
+                (List<com.haidong.tuanwei.job.entity.JobPost>) matchResult.getModelAndView().getModel().get("records");
+
+        assertThat(matchedRecords)
+                .extracting(com.haidong.tuanwei.job.entity.JobPost::getJobName)
+                .contains(matchingJobName)
+                .doesNotContain(nonMatchingJobName);
+    }
+
+    private com.haidong.tuanwei.youth.entity.YouthInfo createCollegeYouthForTest(String name, String phone) throws Exception {
+        return createCollegeYouthForTest(name, phone, "10743", "080901", "BK");
+    }
+
+    private com.haidong.tuanwei.youth.entity.YouthInfo createCollegeYouthForTest(
+            String name, String phone, String schoolCode, String majorCode, String educationLevel) throws Exception {
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", name)
+                        .param("gender", "M")
+                        .param("birthDate", "2001-09-01")
+                        .param("ethnicity", "HAN")
+                        .param("educationLevel", educationLevel)
+                        .param("schoolCode", schoolCode)
+                        .param("majorCode", majorCode)
+                        .param("recruitmentYear", "2023")
+                        .param("phone", phone))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult youthListResult = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.youth.entity.YouthInfo> youthRecords =
+                (List<com.haidong.tuanwei.youth.entity.YouthInfo>) youthListResult.getModelAndView().getModel().get("records");
+        return youthRecords.stream()
+                .filter(item -> phone.equals(item.getPhone()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("未找到新创建的青年记录"));
+    }
+
     private byte[] createYouthImportExcel(String name, String phone) throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -190,7 +366,7 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
             row.createCell(0).setCellValue(name);
             row.createCell(1).setCellValue("男");
             row.createCell(2).setCellValue("汉族");
-            row.createCell(3).setCellValue("2001-09-01");
+            row.createCell(3).setCellValue("20010901");
             row.createCell(4).setCellValue("青海省 / 海东市 / 乐都区");
             row.createCell(5).setCellValue("2023");
             row.createCell(6).setCellValue("本科");

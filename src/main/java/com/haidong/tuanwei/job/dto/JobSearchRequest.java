@@ -1,5 +1,7 @@
 package com.haidong.tuanwei.job.dto;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -8,6 +10,10 @@ public class JobSearchRequest {
     private String jobName;
     private Long enterpriseId;
     private String educationRequirement;
+    private List<String> educationRequirements = new ArrayList<>();
+    private List<String> majorCodes = new ArrayList<>();
+    private List<Long> schoolCategoryIds = new ArrayList<>();
+    private List<Long> schoolTagIds = new ArrayList<>();
     private String experienceRequirement;
     private String salaryRange;
     private String workProvinceCode;

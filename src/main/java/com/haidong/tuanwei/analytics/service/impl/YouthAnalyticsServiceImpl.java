@@ -52,6 +52,7 @@ public class YouthAnalyticsServiceImpl implements YouthAnalyticsService {
         return YouthAnalyticsView.builder()
                 .schoolCategoryDistribution(youthAnalyticsDao.countBySchoolCategory(youthType))
                 .majorCategoryDistribution(youthAnalyticsDao.countByMajorCategory(youthType))
+                .jobMajorDistribution(youthAnalyticsDao.countJobDemandByMajor())
                 .genderDistribution(youthAnalyticsDao.countByGender(youthType))
                 .educationDistribution(youthAnalyticsDao.countByEducationLevel(youthType))
                 .ethnicityDistribution(youthAnalyticsDao.countByEthnicity(youthType))

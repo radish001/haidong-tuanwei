@@ -69,7 +69,7 @@ class HaidongTuanweiApplicationTests {
 				.andExpect(status().isOk());
 		mockMvc.perform(get("/policies").session((org.springframework.mock.web.MockHttpSession) session))
 				.andExpect(status().isOk());
-		mockMvc.perform(get("/analytics/college").session((org.springframework.mock.web.MockHttpSession) session))
+		mockMvc.perform(get("/youth/college/analytics").session((org.springframework.mock.web.MockHttpSession) session))
 				.andExpect(status().isOk());
 	}
 
@@ -102,7 +102,7 @@ class HaidongTuanweiApplicationTests {
 			row.createCell(0).setCellValue(name);
 			row.createCell(1).setCellValue("男");
 			row.createCell(2).setCellValue("汉族");
-			row.createCell(3).setCellValue("2001-09-01");
+			row.createCell(3).setCellValue("20010901");
 			row.createCell(4).setCellValue(nativePlace);
 			row.createCell(5).setCellValue("2023");
 			row.createCell(6).setCellValue("本科");

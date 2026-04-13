@@ -30,6 +30,7 @@ public class AdminViewModelAdvice {
             "/youth/graduate",
             "/youth/rural",
             "/youth/entrepreneur");
+    private static final Set<String> HIDDEN_TOP_LEVEL_MENU_NAMES = Set.of("数据分析");
 
     private final MenuService menuService;
 
@@ -52,13 +53,22 @@ public class AdminViewModelAdvice {
             return List.of();
         }
         List<Menu> menus = menuService.getMenusByUserId(user.getId());
+        menus.removeIf(menu -> HIDDEN_TOP_LEVEL_MENU_NAMES.contains(menu.getMenuName()));
         menus.forEach(menu -> menu.getChildren().removeIf(child -> HIDDEN_SIDE_MENU_PATHS.contains(child.getMenuPath())));
         return normalizeMenus(menus);
     }
 
     @ModelAttribute("currentPath")
     public String currentPath(HttpServletRequest request) {
-        return request == null ? "" : request.getRequestURI();
+        if (request == null) {
+            return "";
+        }
+        String requestUri = request.getRequestURI();
+        String[] segments = requestUri.split("/");
+        if (segments.length == 4 && "youth".equals(segments[1]) && "analytics".equals(segments[3])) {
+            return "/youth/" + segments[2];
+        }
+        return requestUri;
     }
 
     @ModelAttribute("uploadMaxFileSizeText")
