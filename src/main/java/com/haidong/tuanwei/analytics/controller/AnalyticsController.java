@@ -27,7 +27,7 @@ public class AnalyticsController {
 
     @GetMapping("/youth/{type}/analytics")
     public String analyticsPage(@PathVariable String type, Model model) {
-        model.addAttribute("pageTitle", "青年信息库");
+        model.addAttribute("pageTitle", "数据分析");
         model.addAttribute("youthType", type);
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
         model.addAttribute("isCollegeAnalytics", COLLEGE_TYPE.equals(type));

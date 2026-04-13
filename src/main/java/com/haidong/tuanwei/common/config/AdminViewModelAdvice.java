@@ -30,7 +30,7 @@ public class AdminViewModelAdvice {
             "/youth/graduate",
             "/youth/rural",
             "/youth/entrepreneur");
-    private static final Set<String> HIDDEN_TOP_LEVEL_MENU_NAMES = Set.of("数据分析");
+    private static final Set<String> HIDDEN_TOP_LEVEL_MENU_NAMES = Set.of();
 
     private final MenuService menuService;
 
@@ -63,12 +63,7 @@ public class AdminViewModelAdvice {
         if (request == null) {
             return "";
         }
-        String requestUri = request.getRequestURI();
-        String[] segments = requestUri.split("/");
-        if (segments.length == 4 && "youth".equals(segments[1]) && "analytics".equals(segments[3])) {
-            return "/youth/" + segments[2];
-        }
-        return requestUri;
+        return request.getRequestURI();
     }
 
     @ModelAttribute("uploadMaxFileSizeText")

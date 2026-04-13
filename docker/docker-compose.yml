@@ -9,7 +9,7 @@ services:
       MYSQL_USER: ${MYSQL_USERNAME:-haidong}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-haidong123}
     ports:
-      - "${MYSQL_EXPOSE_PORT:-3306}:3306"
+      - "${MYSQL_EXPOSE_PORT:-13306}:3306"
     volumes:
       - ./data/mysql:/var/lib/mysql
     healthcheck:

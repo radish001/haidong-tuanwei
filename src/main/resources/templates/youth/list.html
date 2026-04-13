@@ -16,22 +16,6 @@
         <div data-drawer-page>
         <section class="card border-0 shadow-sm workbench-card">
             <div class="card-body">
-            <div class="workbench-tabs">
-                <ul class="nav nav-tabs border-0 gap-2">
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:classappend="${!analyticsTab} ? ' active' : ''"
-                           th:href="@{/youth/{type}(type=${youthType})}"
-                        >在校大学生</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           th:classappend="${analyticsTab} ? ' active' : ''"
-                           th:href="@{/youth/{type}/analytics(type=${youthType})}">数据分析</a>
-                    </li>
-                </ul>
-            </div>
-
             <div class="alert success-alert" th:if="${successMessage}" th:text="${successMessage}"></div>
             <div class="alert success-alert" th:if="${importMessage}" th:text="${importMessage}"></div>
 
