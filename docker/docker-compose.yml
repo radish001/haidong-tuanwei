@@ -6,8 +6,6 @@ services:
       TZ: ${TZ:-Asia/Shanghai}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-haidong_tuanwei}
-      MYSQL_USER: ${MYSQL_USERNAME:-haidong}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-haidong123}
     ports:
       - "${MYSQL_EXPOSE_PORT:-13306}:3306"
     volumes:
@@ -21,8 +19,8 @@ services:
 
   app:
     build:
-      context: ..
-      dockerfile: docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     image: haidong-tuanwei-app:latest
     restart: unless-stopped
     depends_on:
@@ -33,8 +31,8 @@ services:
       MYSQL_HOST: mysql
       MYSQL_PORT: 3306
       MYSQL_DATABASE: ${MYSQL_DATABASE:-haidong_tuanwei}
-      MYSQL_USERNAME: ${MYSQL_USERNAME:-haidong}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-haidong123}
+      MYSQL_USERNAME: ${MYSQL_USERNAME:-root}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-root123456}
       LOG_PATH: /app/logs
       APP_UPLOAD_ENTERPRISE_LICENSE_DIR: /app/uploads/enterprise-license
     ports:

@@ -6,7 +6,7 @@ ENV TZ=Asia/Shanghai
 
 RUN mkdir -p /app/logs /app/uploads/enterprise-license
 
-ARG APP_JAR=docker/haidong-tuanwei-0.0.1-SNAPSHOT.jar
+ARG APP_JAR=haidong-tuanwei-0.0.1-SNAPSHOT.jar
 
 COPY ${APP_JAR} /app/app.jar
 
