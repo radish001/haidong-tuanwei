@@ -32,6 +32,33 @@ chmod +x build-and-deploy.sh
 - Compose 只负责启动应用和 MySQL 容器
 - 数据库表结构和业务初始化数据需要在容器启动后手工导入
 
+推荐初始化顺序：
+
+1. `schema.sql`
+2. `data_core.sql`
+3. `data_dict.sql`
+4. `data_regions.sql`
+5. `data_majors.sql`
+6. `data_schools.sql`
+
+说明：
+
+- `data_core.sql` 会初始化用户、角色、菜单和基础字典
+- `data_dict.sql` 依赖 `data_core.sql`，因为 `sys_dict_item` 会在 `data_core.sql` 中被清空
+- `data_majors.sql` 依赖 `data_core.sql` 中的专业类别字典
+- `data_schools.sql` 依赖前面已经初始化好的学校类别字典
+
+手工执行示例：
+
+```bash
+mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/schema.sql
+mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_core.sql
+mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_dict.sql
+mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_regions.sql
+mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_majors.sql
+mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_schools.sql
+```
+
 常用命令：
 
 ```bash
