@@ -1,0 +1,8 @@
+.git
+.cursor
+.idea
+target
+logs
+uploads
+docker/.env
+docker/data

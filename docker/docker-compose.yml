@@ -1,0 +1,44 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-haidong_tuanwei}
+      MYSQL_USER: ${MYSQL_USERNAME:-haidong}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-haidong123}
+    ports:
+      - "${MYSQL_EXPOSE_PORT:-3306}:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: haidong-tuanwei-app:latest
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      TZ: ${TZ:-Asia/Shanghai}
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-haidong_tuanwei}
+      MYSQL_USERNAME: ${MYSQL_USERNAME:-haidong}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-haidong123}
+      LOG_PATH: /app/logs
+      APP_UPLOAD_ENTERPRISE_LICENSE_DIR: /app/uploads/enterprise-license
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - ./data/logs:/app/logs
+      - ./data/uploads:/app/uploads
