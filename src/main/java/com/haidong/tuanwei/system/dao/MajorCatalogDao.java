@@ -24,7 +24,7 @@ public interface MajorCatalogDao {
 
     int update(MajorCatalog majorCatalog);
 
-    int softDelete(@Param("id") Long id);
+    int delete(@Param("id") Long id);
 
     long countByCategoryId(@Param("categoryDictItemId") Long categoryDictItemId);
 

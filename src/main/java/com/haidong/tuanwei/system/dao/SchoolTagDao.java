@@ -22,7 +22,7 @@ public interface SchoolTagDao {
 
     int update(SchoolTag schoolTag);
 
-    int softDelete(@Param("id") Long id);
+    int delete(@Param("id") Long id);
 
     long countSchoolUsage(@Param("tagId") Long tagId);
 }

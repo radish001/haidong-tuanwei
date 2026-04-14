@@ -15,10 +15,10 @@
 
     <sql id="schoolBaseQuery">
         from sys_school s
-        join sys_dict_item d on d.id = s.category_dict_item_id and d.deleted = 0
-        left join sys_school_tag_rel rel on rel.school_id = s.id and rel.deleted = 0
-        left join sys_school_tag t on t.id = rel.tag_id and t.deleted = 0
-        where s.deleted = 0
+        join sys_dict_item d on d.id = s.category_dict_item_id
+        left join sys_school_tag_rel rel on rel.school_id = s.id
+        left join sys_school_tag t on t.id = rel.tag_id
+        where 1 = 1
     </sql>
 
     <select id="search" resultMap="SchoolResultMap">
@@ -38,8 +38,8 @@
     <select id="count" resultType="long">
         select count(*)
         from sys_school s
-        join sys_dict_item d on d.id = s.category_dict_item_id and d.deleted = 0
-        where s.deleted = 0
+        join sys_dict_item d on d.id = s.category_dict_item_id
+        where 1 = 1
         <if test="keyword != null and keyword != ''">
             and (s.school_code like concat('%', #{keyword}, '%')
             or s.school_name like concat('%', #{keyword}, '%')
@@ -58,8 +58,7 @@
     <select id="findAllForSelect" resultMap="SchoolResultMap">
         select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label
         from sys_school s
-        join sys_dict_item d on d.id = s.category_dict_item_id and d.deleted = 0
-        where s.deleted = 0
+        join sys_dict_item d on d.id = s.category_dict_item_id
         order by s.school_name
     </select>
 
@@ -94,14 +93,13 @@
         select tag_id
         from sys_school_tag_rel
         where school_id = #{schoolId}
-          and deleted = 0
         order by id
     </select>
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.School" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_school (school_code, school_name, category_dict_item_id, deleted)
-        values (#{schoolCode}, #{schoolName}, #{categoryDictItemId}, 0)
+        insert into sys_school (school_code, school_name, category_dict_item_id)
+        values (#{schoolCode}, #{schoolName}, #{categoryDictItemId})
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.School">
@@ -110,33 +108,27 @@
             school_name = #{schoolName},
             category_dict_item_id = #{categoryDictItemId}
         where id = #{id}
-          and deleted = 0
     </update>
 
-    <update id="softDelete">
-        update sys_school
-        set deleted = 1
+    <delete id="delete">
+        delete from sys_school
         where id = #{id}
-          and deleted = 0
-    </update>
+    </delete>
 
-    <update id="deleteTagRelations">
-        update sys_school_tag_rel
-        set deleted = 1
+    <delete id="deleteTagRelations">
+        delete from sys_school_tag_rel
         where school_id = #{schoolId}
-          and deleted = 0
-    </update>
+    </delete>
 
     <insert id="insertTagRelation">
-        insert into sys_school_tag_rel (school_id, tag_id, deleted)
-        values (#{schoolId}, #{tagId}, 0)
+        insert into sys_school_tag_rel (school_id, tag_id)
+        values (#{schoolId}, #{tagId})
     </insert>
 
     <select id="countByCategoryId" resultType="long">
         select count(*)
         from sys_school
         where category_dict_item_id = #{categoryDictItemId}
-          and deleted = 0
     </select>
 
     <select id="countYouthUsageBySchoolCode" resultType="long">
@@ -149,8 +141,8 @@
     <select id="findExistingCodes" resultMap="SchoolResultMap">
         select s.id, s.school_code, s.school_name, s.category_dict_item_id, d.dict_label as category_label, null as tag_summary
         from sys_school s
-        join sys_dict_item d on d.id = s.category_dict_item_id and d.deleted = 0
-        where s.deleted = 0
+        join sys_dict_item d on d.id = s.category_dict_item_id
+        where 1 = 1
           and s.school_code in
         <foreach item="code" collection="codes" open="(" separator="," close=")">
             #{code}

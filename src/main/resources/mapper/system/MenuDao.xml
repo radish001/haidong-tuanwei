@@ -17,11 +17,10 @@
     <select id="findMenusByUserId" resultMap="MenuResultMap">
         select distinct m.id, m.parent_id, m.menu_name, m.menu_path, m.icon, m.sort_no, m.visible
         from sys_menu m
-                 inner join sys_role_menu rm on rm.menu_id = m.id and rm.deleted = 0
-                 inner join sys_user_role ur on ur.role_id = rm.role_id and ur.deleted = 0
-                 inner join sys_role r on r.id = rm.role_id and r.deleted = 0 and r.enabled = 1
+                 inner join sys_role_menu rm on rm.menu_id = m.id
+                 inner join sys_user_role ur on ur.role_id = rm.role_id
+                 inner join sys_role r on r.id = rm.role_id and r.enabled = 1
         where ur.user_id = #{userId}
-          and m.deleted = 0
           and m.visible = 1
         order by m.parent_id, m.sort_no, m.id
     </select>

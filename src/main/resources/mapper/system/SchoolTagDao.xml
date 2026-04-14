@@ -12,7 +12,7 @@
     <select id="search" resultMap="SchoolTagResultMap">
         select id, tag_name
         from sys_school_tag
-        where deleted = 0
+        where 1 = 1
         <if test="keyword != null and keyword != ''">
             and tag_name like concat('%', #{keyword}, '%')
         </if>
@@ -23,7 +23,7 @@
     <select id="count" resultType="long">
         select count(*)
         from sys_school_tag
-        where deleted = 0
+        where 1 = 1
         <if test="keyword != null and keyword != ''">
             and tag_name like concat('%', #{keyword}, '%')
         </if>
@@ -32,7 +32,6 @@
     <select id="findAll" resultMap="SchoolTagResultMap">
         select id, tag_name
         from sys_school_tag
-        where deleted = 0
         order by tag_name
     </select>
 
@@ -40,7 +39,6 @@
         select id, tag_name
         from sys_school_tag
         where id = #{id}
-          and deleted = 0
         limit 1
     </select>
 
@@ -48,34 +46,29 @@
         select id, tag_name
         from sys_school_tag
         where tag_name = #{tagName}
-          and deleted = 0
         limit 1
     </select>
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.SchoolTag" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_school_tag (tag_name, deleted)
-        values (#{tagName}, 0)
+        insert into sys_school_tag (tag_name)
+        values (#{tagName})
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.SchoolTag">
         update sys_school_tag
         set tag_name = #{tagName}
         where id = #{id}
-          and deleted = 0
     </update>
 
-    <update id="softDelete">
-        update sys_school_tag
-        set deleted = 1
+    <delete id="delete">
+        delete from sys_school_tag
         where id = #{id}
-          and deleted = 0
-    </update>
+    </delete>
 
     <select id="countSchoolUsage" resultType="long">
         select count(*)
         from sys_school_tag_rel
         where tag_id = #{tagId}
-          and deleted = 0
     </select>
 </mapper>

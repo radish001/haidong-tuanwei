@@ -7,26 +7,20 @@
     <select id="findAllTagIds" resultType="long">
         select tag_id
         from sys_analytics_school_tag
-        where deleted = 0
         order by tag_id
     </select>
 
-    <update id="deleteAll">
-        update sys_analytics_school_tag
-        set deleted = 1
-        where deleted = 0
-    </update>
+    <delete id="deleteAll">
+        delete from sys_analytics_school_tag
+    </delete>
 
-    <update id="deleteByTagId">
-        update sys_analytics_school_tag
-        set deleted = 1
+    <delete id="deleteByTagId">
+        delete from sys_analytics_school_tag
         where tag_id = #{tagId}
-          and deleted = 0
-    </update>
+    </delete>
 
     <insert id="insert">
-        insert into sys_analytics_school_tag (tag_id, deleted)
-        values (#{tagId}, 0)
-        on duplicate key update deleted = 0
+        insert into sys_analytics_school_tag (tag_id)
+        values (#{tagId})
     </insert>
 </mapper>

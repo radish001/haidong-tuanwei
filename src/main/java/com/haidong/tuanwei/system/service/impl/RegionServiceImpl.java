@@ -123,7 +123,7 @@ public class RegionServiceImpl implements RegionService {
         if (regionDao.countUsage(existing.getRegionCode()) > 0) {
             throw new IllegalStateException("该区域已被业务数据使用，无法删除");
         }
-        regionDao.softDelete(id);
+        regionDao.delete(id);
         log.info("Region deleted: id={}, level={}, code={}", id, existing.getRegionLevel(), existing.getRegionCode());
     }
 

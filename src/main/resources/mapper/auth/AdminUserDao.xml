@@ -17,16 +17,14 @@
         select id, username, password, nickname, phone, enabled
         from sys_user
         where username = #{username}
-          and deleted = 0
         limit 1
     </select>
 
     <select id="findRoleCodesByUserId" resultType="string">
         select r.role_code
         from sys_role r
-                 inner join sys_user_role ur on ur.role_id = r.id and ur.deleted = 0
+                 inner join sys_user_role ur on ur.role_id = r.id
         where ur.user_id = #{userId}
-          and r.deleted = 0
           and r.enabled = 1
         order by r.id
     </select>

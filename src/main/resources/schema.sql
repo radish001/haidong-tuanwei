@@ -1,3 +1,9 @@
+create database if not exists haidong_tuanwei
+    default character set utf8mb4
+    collate utf8mb4_0900_ai_ci;
+
+use haidong_tuanwei;
+
 create table if not exists sys_user (
     id bigint primary key auto_increment,
     username varchar(50) not null,
@@ -9,7 +15,6 @@ create table if not exists sys_user (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_user_username (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -22,7 +27,6 @@ create table if not exists sys_role (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_role_code (role_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -37,8 +41,7 @@ create table if not exists sys_menu (
     create_time datetime not null default current_timestamp,
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
-    update_by bigint,
-    deleted tinyint not null default 0
+    update_by bigint
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_user_role (
@@ -49,7 +52,6 @@ create table if not exists sys_user_role (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_user_role (user_id, role_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -61,7 +63,6 @@ create table if not exists sys_role_menu (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_role_menu (role_id, menu_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -76,9 +77,8 @@ create table if not exists sys_dict_item (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_dict_type_value (dict_type, dict_value),
-    key idx_sys_dict_type_enabled_deleted_sort (dict_type, enabled, deleted, sort_no, id)
+    key idx_sys_dict_type_enabled_sort (dict_type, enabled, sort_no, id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_region (
@@ -92,10 +92,9 @@ create table if not exists sys_region (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_region_code (region_code),
-    key idx_sys_region_deleted_level_sort (deleted, region_level, sort_no, id),
-    key idx_sys_region_parent_deleted_sort (parent_id, deleted, sort_no, id)
+    key idx_sys_region_level_sort (region_level, sort_no, id),
+    key idx_sys_region_parent_sort (parent_id, sort_no, id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_major_catalog (
@@ -107,9 +106,8 @@ create table if not exists sys_major_catalog (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_major_catalog_code (major_code),
-    key idx_sys_major_category_deleted_code (category_dict_item_id, deleted, major_code)
+    key idx_sys_major_category_code (category_dict_item_id, major_code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_school_tag (
@@ -119,7 +117,6 @@ create table if not exists sys_school_tag (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_school_tag_name (tag_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -132,9 +129,8 @@ create table if not exists sys_school (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_school_code (school_code),
-    key idx_sys_school_category_deleted (category_dict_item_id, deleted)
+    key idx_sys_school_category (category_dict_item_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_school_tag_rel (
@@ -145,9 +141,8 @@ create table if not exists sys_school_tag_rel (
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_school_tag_rel (school_id, tag_id),
-    key idx_sys_school_tag_rel_tag_deleted_school (tag_id, deleted, school_id)
+    key idx_sys_school_tag_rel_tag_school (tag_id, school_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 create table if not exists sys_analytics_school_tag (
@@ -155,7 +150,6 @@ create table if not exists sys_analytics_school_tag (
     tag_id bigint not null,
     create_time datetime not null default current_timestamp,
     create_by bigint,
-    deleted tinyint not null default 0,
     unique key uk_sys_analytics_school_tag (tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 

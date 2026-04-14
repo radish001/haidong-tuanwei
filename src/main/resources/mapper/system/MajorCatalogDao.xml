@@ -16,8 +16,7 @@
     <sql id="majorJoin">
         from sys_major_catalog m
         join sys_dict_item d on d.id = m.category_dict_item_id
-        where m.deleted = 0
-          and d.deleted = 0
+        where 1 = 1
     </sql>
 
     <select id="search" resultMap="MajorCatalogResultMap">
@@ -76,8 +75,8 @@
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.MajorCatalog" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_major_catalog (major_code, major_name, category_dict_item_id, deleted)
-        values (#{majorCode}, #{majorName}, #{categoryDictItemId}, 0)
+        insert into sys_major_catalog (major_code, major_name, category_dict_item_id)
+        values (#{majorCode}, #{majorName}, #{categoryDictItemId})
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.MajorCatalog">
@@ -86,21 +85,17 @@
             major_name = #{majorName},
             category_dict_item_id = #{categoryDictItemId}
         where id = #{id}
-          and deleted = 0
     </update>
 
-    <update id="softDelete">
-        update sys_major_catalog
-        set deleted = 1
+    <delete id="delete">
+        delete from sys_major_catalog
         where id = #{id}
-          and deleted = 0
-    </update>
+    </delete>
 
     <select id="countByCategoryId" resultType="long">
         select count(*)
         from sys_major_catalog
         where category_dict_item_id = #{categoryDictItemId}
-          and deleted = 0
     </select>
 
     <select id="findByCategoryId" resultMap="MajorCatalogResultMap">

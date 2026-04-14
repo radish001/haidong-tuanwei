@@ -25,7 +25,7 @@ class AnalyticsControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(model().attributeExists("genderDistributionJson", "educationDistributionJson",
                         "ethnicityDistributionJson", "schoolCategoryDistributionJson", "majorCategoryDistributionJson",
                         "jobMajorDistributionJson"))
-                .andExpect(model().attribute("pageTitle", "青年信息库"))
+                .andExpect(model().attribute("pageTitle", "数据分析"))
                 .andExpect(model().attribute("youthType", "college"))
                 .andExpect(model().attribute("youthTypeLabel", "在校大学生"))
                 .andExpect(model().attribute("isCollegeAnalytics", true))
@@ -39,7 +39,7 @@ class AnalyticsControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(view().name("analytics/index"))
                 .andExpect(model().attributeExists("ageDistributionJson", "genderDistributionJson",
                         "educationDistributionJson", "ethnicityDistributionJson"))
-                .andExpect(model().attribute("pageTitle", "青年信息库"))
+                .andExpect(model().attribute("pageTitle", "数据分析"))
                 .andExpect(model().attribute("youthType", "graduate"))
                 .andExpect(model().attribute("youthTypeLabel", "毕业未就业"))
                 .andExpect(model().attribute("isCollegeAnalytics", false));
@@ -51,7 +51,7 @@ class AnalyticsControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(view().name("analytics/index"))
                 .andExpect(model().attributeExists("ageDistributionJson"))
-                .andExpect(model().attribute("pageTitle", "青年信息库"))
+                .andExpect(model().attribute("pageTitle", "数据分析"))
                 .andExpect(model().attribute("youthType", "rural"))
                 .andExpect(model().attribute("youthTypeLabel", "农村社区待业"));
     }
@@ -62,7 +62,7 @@ class AnalyticsControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(view().name("analytics/index"))
                 .andExpect(model().attributeExists("ageDistributionJson", "entrepreneurshipDemandDistributionJson"))
-                .andExpect(model().attribute("pageTitle", "青年信息库"))
+                .andExpect(model().attribute("pageTitle", "数据分析"))
                 .andExpect(model().attribute("youthType", "entrepreneur"))
                 .andExpect(model().attribute("youthTypeLabel", "创业青年"));
     }

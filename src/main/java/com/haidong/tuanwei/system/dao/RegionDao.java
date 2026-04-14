@@ -24,7 +24,7 @@ public interface RegionDao {
 
     int update(Region region);
 
-    int softDelete(@Param("id") Long id);
+    int delete(@Param("id") Long id);
 
     Region findByCode(String regionCode);
 

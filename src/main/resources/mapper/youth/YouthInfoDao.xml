@@ -135,9 +135,8 @@
             and exists (
                 select 1
                 from sys_school ss
-                join sys_school_tag_rel str on str.school_id = ss.id and str.deleted = 0
+                join sys_school_tag_rel str on str.school_id = ss.id
                 where ss.school_code = y.school_code
-                  and ss.deleted = 0
                   and str.tag_id in
                   <foreach collection="query.schoolTagIds" item="schoolTagId" open="(" separator="," close=")">
                       #{schoolTagId}
@@ -176,29 +175,29 @@
                y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
         from youth_info y
         left join sys_dict_item gd on gd.dict_type = 'gender' and gd.dict_value = y.gender
-            and gd.enabled = 1 and gd.deleted = 0
+            and gd.enabled = 1
         left join sys_dict_item eth on eth.dict_type = 'ethnicity' and eth.dict_value = y.ethnicity
-            and eth.enabled = 1 and eth.deleted = 0
+            and eth.enabled = 1
         left join sys_dict_item ps on ps.dict_type = 'political_status' and ps.dict_value = y.political_status
-            and ps.enabled = 1 and ps.deleted = 0
+            and ps.enabled = 1
         left join sys_dict_item ed on ed.dict_type = 'education_level' and ed.dict_value = y.education_level
-            and ed.enabled = 1 and ed.deleted = 0
+            and ed.enabled = 1
         left join sys_dict_item dd on dd.dict_type = 'degree' and dd.dict_value = y.degree_code
-            and dd.enabled = 1 and dd.deleted = 0
-        left join sys_school s on s.school_code = y.school_code and s.deleted = 0
-        left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
-        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
+            and dd.enabled = 1
+        left join sys_school s on s.school_code = y.school_code
+        left join sys_major_catalog m on m.major_code = y.major_code
+        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1
         left join sys_dict_item mcd on mcd.dict_type = 'major_category' and mcd.dict_value = y.major_category
-            and mcd.enabled = 1 and mcd.deleted = 0
-        left join sys_region np on np.region_code = y.native_province_code and np.deleted = 0
-        left join sys_region nc on nc.region_code = y.native_city_code and nc.deleted = 0
-        left join sys_region nct on nct.region_code = y.native_county_code and nct.deleted = 0
-        left join sys_region sp on sp.region_code = y.school_province_code and sp.deleted = 0
-        left join sys_region sc on sc.region_code = y.school_city_code and sc.deleted = 0
-        left join sys_region sct on sct.region_code = y.school_county_code and sct.deleted = 0
-        left join sys_region rp on rp.region_code = y.residence_province_code and rp.deleted = 0
-        left join sys_region rc on rc.region_code = y.residence_city_code and rc.deleted = 0
-        left join sys_region rct on rct.region_code = y.residence_county_code and rct.deleted = 0
+            and mcd.enabled = 1
+        left join sys_region np on np.region_code = y.native_province_code
+        left join sys_region nc on nc.region_code = y.native_city_code
+        left join sys_region nct on nct.region_code = y.native_county_code
+        left join sys_region sp on sp.region_code = y.school_province_code
+        left join sys_region sc on sc.region_code = y.school_city_code
+        left join sys_region sct on sct.region_code = y.school_county_code
+        left join sys_region rp on rp.region_code = y.residence_province_code
+        left join sys_region rc on rc.region_code = y.residence_city_code
+        left join sys_region rct on rct.region_code = y.residence_county_code
         <include refid="searchWhere"/>
         order by y.id desc
         <if test="query != null and (query.paged == null or query.paged)">
@@ -209,9 +208,9 @@
     <select id="count" resultType="long">
         select count(*)
         from youth_info y
-        left join sys_school s on s.school_code = y.school_code and s.deleted = 0
-        left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
-        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
+        left join sys_school s on s.school_code = y.school_code
+        left join sys_major_catalog m on m.major_code = y.major_code
+        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1
         <include refid="searchWhere"/>
     </select>
 
@@ -245,29 +244,29 @@
                y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
         from youth_info y
         left join sys_dict_item gd on gd.dict_type = 'gender' and gd.dict_value = y.gender
-            and gd.enabled = 1 and gd.deleted = 0
+            and gd.enabled = 1
         left join sys_dict_item eth on eth.dict_type = 'ethnicity' and eth.dict_value = y.ethnicity
-            and eth.enabled = 1 and eth.deleted = 0
+            and eth.enabled = 1
         left join sys_dict_item ps on ps.dict_type = 'political_status' and ps.dict_value = y.political_status
-            and ps.enabled = 1 and ps.deleted = 0
+            and ps.enabled = 1
         left join sys_dict_item ed on ed.dict_type = 'education_level' and ed.dict_value = y.education_level
-            and ed.enabled = 1 and ed.deleted = 0
+            and ed.enabled = 1
         left join sys_dict_item dd on dd.dict_type = 'degree' and dd.dict_value = y.degree_code
-            and dd.enabled = 1 and dd.deleted = 0
-        left join sys_school s on s.school_code = y.school_code and s.deleted = 0
-        left join sys_major_catalog m on m.major_code = y.major_code and m.deleted = 0
-        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1 and mc.deleted = 0
+            and dd.enabled = 1
+        left join sys_school s on s.school_code = y.school_code
+        left join sys_major_catalog m on m.major_code = y.major_code
+        left join sys_dict_item mc on mc.id = m.category_dict_item_id and mc.enabled = 1
         left join sys_dict_item mcd on mcd.dict_type = 'major_category' and mcd.dict_value = y.major_category
-            and mcd.enabled = 1 and mcd.deleted = 0
-        left join sys_region np on np.region_code = y.native_province_code and np.deleted = 0
-        left join sys_region nc on nc.region_code = y.native_city_code and nc.deleted = 0
-        left join sys_region nct on nct.region_code = y.native_county_code and nct.deleted = 0
-        left join sys_region sp on sp.region_code = y.school_province_code and sp.deleted = 0
-        left join sys_region sc on sc.region_code = y.school_city_code and sc.deleted = 0
-        left join sys_region sct on sct.region_code = y.school_county_code and sct.deleted = 0
-        left join sys_region rp on rp.region_code = y.residence_province_code and rp.deleted = 0
-        left join sys_region rc on rc.region_code = y.residence_city_code and rc.deleted = 0
-        left join sys_region rct on rct.region_code = y.residence_county_code and rct.deleted = 0
+            and mcd.enabled = 1
+        left join sys_region np on np.region_code = y.native_province_code
+        left join sys_region nc on nc.region_code = y.native_city_code
+        left join sys_region nct on nct.region_code = y.native_county_code
+        left join sys_region sp on sp.region_code = y.school_province_code
+        left join sys_region sc on sc.region_code = y.school_city_code
+        left join sys_region sct on sct.region_code = y.school_county_code
+        left join sys_region rp on rp.region_code = y.residence_province_code
+        left join sys_region rc on rc.region_code = y.residence_city_code
+        left join sys_region rct on rct.region_code = y.residence_county_code
         where y.id = #{id}
           and y.deleted = 0
         limit 1

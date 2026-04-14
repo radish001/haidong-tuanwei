@@ -21,6 +21,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -78,17 +79,25 @@ public class JobPostServiceImpl implements JobPostService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id, Long operatorId) {
         jobPostDao.softDelete(id, operatorId);
+        clearRelations(id);
         log.info("Job post deleted: id={}, operatorId={}", id, operatorId);
     }
 
     @Override
+    @Transactional
     public int deleteBatch(List<Long> ids, Long operatorId) {
         if (ids == null || ids.isEmpty()) {
             return 0;
         }
         int deletedCount = jobPostDao.softDeleteBatch(ids, operatorId);
+        for (Long id : ids) {
+            if (id != null) {
+                clearRelations(id);
+            }
+        }
         log.info("Job posts batch deleted: requestedCount={}, deletedCount={}, operatorId={}",
                 ids.size(), deletedCount, operatorId);
         return deletedCount;
@@ -142,6 +151,13 @@ public class JobPostServiceImpl implements JobPostService {
         for (Long tagId : normalizeSchoolTagIds(request.getSchoolTagIds())) {
             jobPostDao.insertSchoolTagRelation(jobPostId, tagId, operatorId);
         }
+    }
+
+    private void clearRelations(Long jobPostId) {
+        jobPostDao.deleteEducationRelations(jobPostId);
+        jobPostDao.deleteMajorRelations(jobPostId);
+        jobPostDao.deleteSchoolCategoryRelations(jobPostId);
+        jobPostDao.deleteSchoolTagRelations(jobPostId);
     }
 
     private void populateSelections(JobPost jobPost) {

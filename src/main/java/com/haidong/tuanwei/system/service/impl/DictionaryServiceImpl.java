@@ -123,7 +123,7 @@ public class DictionaryServiceImpl implements DictionaryService {
         if (blockMessage != null) {
             throw new IllegalStateException(blockMessage);
         }
-        dictionaryDao.softDelete(id);
+        dictionaryDao.delete(id);
         log.info("Dictionary item deleted: dictType={}, id={}, value={}",
                 existing.getDictType(), id, existing.getDictValue());
     }

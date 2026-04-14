@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -150,7 +151,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (jobPostDao.countMajorUsage(existing.getMajorCode()) > 0) {
             throw new IllegalStateException("该专业名称已被招聘岗位使用，无法删除");
         }
-        majorCatalogDao.softDelete(id);
+        majorCatalogDao.delete(id);
         log.info("Major deleted: id={}, code={}", id, existing.getMajorCode());
     }
 
@@ -209,7 +210,7 @@ public class MasterDataServiceImpl implements MasterDataService {
             throw new IllegalStateException("该学校标签已被招聘岗位使用，无法删除");
         }
         analyticsSchoolTagDao.deleteByTagId(id);
-        schoolTagDao.softDelete(id);
+        schoolTagDao.delete(id);
         log.info("School tag deleted: id={}, name={}", id, existing.getTagName());
     }
 
@@ -302,7 +303,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (schoolDao.countYouthUsageBySchoolCode(existing.getSchoolCode()) > 0) {
             throw new IllegalStateException("该学校存在关联青年信息，无法删除");
         }
-        schoolDao.softDelete(id);
+        schoolDao.delete(id);
         schoolDao.deleteTagRelations(id);
         log.info("School deleted: id={}, code={}", id, existing.getSchoolCode());
     }
@@ -594,7 +595,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         if (tagIds == null) {
             return;
         }
-        for (Long tagId : tagIds) {
+        for (Long tagId : new LinkedHashSet<>(tagIds)) {
             if (tagId == null) {
                 continue;
             }
@@ -652,7 +653,7 @@ public class MasterDataServiceImpl implements MasterDataService {
         analyticsSchoolTagDao.deleteAll();
         int savedCount = 0;
         if (tagIds != null) {
-            for (Long tagId : tagIds) {
+            for (Long tagId : new LinkedHashSet<>(tagIds)) {
                 if (tagId != null && schoolTagDao.findById(tagId) != null) {
                     analyticsSchoolTagDao.insert(tagId);
                     savedCount++;

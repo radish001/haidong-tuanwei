@@ -35,7 +35,7 @@
                p.region_name as regionName,
                count(*) as total
         from youth_info y
-                 left join sys_region p on p.region_code = y.school_province_code and p.deleted = 0
+                 left join sys_region p on p.region_code = y.school_province_code
         where y.deleted = 0
           and y.youth_type = 'COLLEGE'
           and y.school_province_code is not null
@@ -49,8 +49,8 @@
                c.region_name as regionName,
                count(*) as total
         from youth_info y
-                 left join sys_region c on c.region_code = y.native_county_code and c.deleted = 0
-                 left join sys_region city on city.id = c.parent_id and city.deleted = 0
+                 left join sys_region c on c.region_code = y.native_county_code
+                 left join sys_region city on city.id = c.parent_id
         where y.deleted = 0
           and y.youth_type = 'COLLEGE'
           and y.native_county_code is not null

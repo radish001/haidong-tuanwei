@@ -58,12 +58,12 @@
                e.unified_social_credit_code, e.business_license_path,
                e.address, e.contact_person, e.contact_phone, e.description, e.status
         from enterprise_info e
-        left join sys_dict_item di on di.dict_type = 'enterprise_industry' and di.dict_value = e.industry and di.enabled = 1 and di.deleted = 0
-        left join sys_dict_item dn on dn.dict_type = 'enterprise_nature' and dn.dict_value = e.enterprise_nature and dn.enabled = 1 and dn.deleted = 0
-        left join sys_dict_item ds on ds.dict_type = 'enterprise_scale' and ds.dict_value = e.enterprise_scale and ds.enabled = 1 and ds.deleted = 0
-        left join sys_region rp on rp.region_code = e.region_province_code and rp.deleted = 0
-        left join sys_region rc on rc.region_code = e.region_city_code and rc.deleted = 0
-        left join sys_region rct on rct.region_code = e.region_county_code and rct.deleted = 0
+        left join sys_dict_item di on di.dict_type = 'enterprise_industry' and di.dict_value = e.industry and di.enabled = 1
+        left join sys_dict_item dn on dn.dict_type = 'enterprise_nature' and dn.dict_value = e.enterprise_nature and dn.enabled = 1
+        left join sys_dict_item ds on ds.dict_type = 'enterprise_scale' and ds.dict_value = e.enterprise_scale and ds.enabled = 1
+        left join sys_region rp on rp.region_code = e.region_province_code
+        left join sys_region rc on rc.region_code = e.region_city_code
+        left join sys_region rct on rct.region_code = e.region_county_code
         <include refid="searchWhere"/>
         order by e.id desc
         <if test="query != null and (query.paged == null or query.paged)">
@@ -86,12 +86,12 @@
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as region_name,
                e.address, e.contact_person, e.contact_phone, e.description, e.status
         from enterprise_info e
-        left join sys_dict_item di on di.dict_type = 'enterprise_industry' and di.dict_value = e.industry and di.enabled = 1 and di.deleted = 0
-        left join sys_dict_item dn on dn.dict_type = 'enterprise_nature' and dn.dict_value = e.enterprise_nature and dn.enabled = 1 and dn.deleted = 0
-        left join sys_dict_item ds on ds.dict_type = 'enterprise_scale' and ds.dict_value = e.enterprise_scale and ds.enabled = 1 and ds.deleted = 0
-        left join sys_region rp on rp.region_code = e.region_province_code and rp.deleted = 0
-        left join sys_region rc on rc.region_code = e.region_city_code and rc.deleted = 0
-        left join sys_region rct on rct.region_code = e.region_county_code and rct.deleted = 0
+        left join sys_dict_item di on di.dict_type = 'enterprise_industry' and di.dict_value = e.industry and di.enabled = 1
+        left join sys_dict_item dn on dn.dict_type = 'enterprise_nature' and dn.dict_value = e.enterprise_nature and dn.enabled = 1
+        left join sys_dict_item ds on ds.dict_type = 'enterprise_scale' and ds.dict_value = e.enterprise_scale and ds.enabled = 1
+        left join sys_region rp on rp.region_code = e.region_province_code
+        left join sys_region rc on rc.region_code = e.region_city_code
+        left join sys_region rct on rct.region_code = e.region_county_code
         where e.deleted = 0
           and e.status = 1
         order by e.enterprise_name
@@ -107,12 +107,12 @@
                e.unified_social_credit_code, e.business_license_path,
                e.address, e.contact_person, e.contact_phone, e.description, e.status
         from enterprise_info e
-        left join sys_dict_item di on di.dict_type = 'enterprise_industry' and di.dict_value = e.industry and di.enabled = 1 and di.deleted = 0
-        left join sys_dict_item dn on dn.dict_type = 'enterprise_nature' and dn.dict_value = e.enterprise_nature and dn.enabled = 1 and dn.deleted = 0
-        left join sys_dict_item ds on ds.dict_type = 'enterprise_scale' and ds.dict_value = e.enterprise_scale and ds.enabled = 1 and ds.deleted = 0
-        left join sys_region rp on rp.region_code = e.region_province_code and rp.deleted = 0
-        left join sys_region rc on rc.region_code = e.region_city_code and rc.deleted = 0
-        left join sys_region rct on rct.region_code = e.region_county_code and rct.deleted = 0
+        left join sys_dict_item di on di.dict_type = 'enterprise_industry' and di.dict_value = e.industry and di.enabled = 1
+        left join sys_dict_item dn on dn.dict_type = 'enterprise_nature' and dn.dict_value = e.enterprise_nature and dn.enabled = 1
+        left join sys_dict_item ds on ds.dict_type = 'enterprise_scale' and ds.dict_value = e.enterprise_scale and ds.enabled = 1
+        left join sys_region rp on rp.region_code = e.region_province_code
+        left join sys_region rc on rc.region_code = e.region_city_code
+        left join sys_region rct on rct.region_code = e.region_county_code
         where e.id = #{id}
           and e.deleted = 0
         limit 1

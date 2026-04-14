@@ -17,15 +17,14 @@
     <select id="findAll" resultMap="RegionResultMap">
         select id, parent_id, region_code, region_name, region_level, sort_no
         from sys_region
-        where deleted = 0
         order by region_level, sort_no, id
     </select>
 
     <select id="search" resultMap="RegionResultMap">
         select r.id, r.parent_id, p.region_name as parent_name, r.region_code, r.region_name, r.region_level, r.sort_no
         from sys_region r
-        left join sys_region p on r.parent_id = p.id and p.deleted = 0
-        where r.deleted = 0
+        left join sys_region p on r.parent_id = p.id
+        where 1 = 1
         <if test="regionLevel != null">
             and r.region_level = #{regionLevel}
         </if>
@@ -43,7 +42,7 @@
     <select id="count" resultType="long">
         select count(*)
         from sys_region
-        where deleted = 0
+        where 1 = 1
         <if test="regionLevel != null">
             and region_level = #{regionLevel}
         </if>
@@ -60,14 +59,13 @@
         select id, parent_id, region_code, region_name, region_level, sort_no
         from sys_region
         where id = #{id}
-          and deleted = 0
         limit 1
     </select>
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.Region" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_region (parent_id, region_code, region_name, region_level, sort_no, deleted)
-        values (#{parentId}, #{regionCode}, #{regionName}, #{regionLevel}, #{sortNo}, 0)
+        insert into sys_region (parent_id, region_code, region_name, region_level, sort_no)
+        values (#{parentId}, #{regionCode}, #{regionName}, #{regionLevel}, #{sortNo})
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.Region">
@@ -77,21 +75,17 @@
             region_name = #{regionName},
             region_level = #{regionLevel}
         where id = #{id}
-          and deleted = 0
     </update>
 
-    <update id="softDelete">
-        update sys_region
-        set deleted = 1
+    <delete id="delete">
+        delete from sys_region
         where id = #{id}
-          and deleted = 0
-    </update>
+    </delete>
 
     <select id="findByCode" resultMap="RegionResultMap">
         select id, parent_id, region_code, region_name, region_level, sort_no
         from sys_region
         where region_code = #{regionCode}
-          and deleted = 0
         limit 1
     </select>
 
@@ -99,7 +93,6 @@
         select count(*)
         from sys_region
         where parent_id = #{parentId}
-          and deleted = 0
     </select>
 
     <select id="countUsage" resultType="long">
@@ -133,7 +126,6 @@
         select id, parent_id, region_code, region_name, region_level, sort_no
         from sys_region
         where region_level = #{regionLevel}
-          and deleted = 0
         order by sort_no, id
     </select>
 </mapper>

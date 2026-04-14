@@ -24,9 +24,7 @@
                 select county.region_code
                 from sys_region county
                 join sys_region city on county.parent_id = city.id
-                where county.deleted = 0
-                  and city.deleted = 0
-                  and city.region_code = #{haidongCityCode}
+                where city.region_code = #{haidongCityCode}
             )
         )
     </sql>
@@ -69,7 +67,6 @@
         left join sys_dict_item d on d.dict_type = 'education_level'
             and d.dict_value = yi.education_level
             and d.enabled = 1
-            and d.deleted = 0
         where yi.deleted = 0
           and yi.youth_type = #{youthType}
           and yi.education_level is not null
@@ -85,7 +82,6 @@
         left join sys_dict_item d on d.dict_type = 'gender'
             and d.dict_value = yi.gender
             and d.enabled = 1
-            and d.deleted = 0
         where yi.deleted = 0
           and yi.youth_type = #{youthType}
           and yi.gender is not null
@@ -101,7 +97,6 @@
         left join sys_dict_item d on d.dict_type = 'ethnicity'
             and d.dict_value = yi.ethnicity
             and d.enabled = 1
-            and d.deleted = 0
         where yi.deleted = 0
           and yi.youth_type = #{youthType}
           and yi.ethnicity is not null
@@ -114,12 +109,11 @@
         select d.dict_label as name, count(yi.id) as item_value,
                cast(d.id as char) as code
         from sys_dict_item d
-        left join sys_school s on s.category_dict_item_id = d.id and s.deleted = 0
+        left join sys_school s on s.category_dict_item_id = d.id
         left join youth_info yi on yi.school_code = s.school_code
             and yi.deleted = 0
             and yi.youth_type = #{youthType}
-        where d.deleted = 0
-          and d.enabled = 1
+        where d.enabled = 1
           and d.dict_type = 'school_category'
         group by d.id, d.dict_label, d.sort_no
         order by d.sort_no, d.id
@@ -129,12 +123,11 @@
         select d.dict_label as name, count(yi.id) as item_value,
                d.dict_value as code
         from sys_dict_item d
-        left join sys_major_catalog m on m.category_dict_item_id = d.id and m.deleted = 0
+        left join sys_major_catalog m on m.category_dict_item_id = d.id
         left join youth_info yi on yi.major_code = m.major_code
             and yi.deleted = 0
             and yi.youth_type = #{youthType}
-        where d.deleted = 0
-          and d.enabled = 1
+        where d.enabled = 1
           and d.dict_type = 'major_category'
         group by d.id, d.dict_label, d.sort_no
         order by d.sort_no, d.id
@@ -147,8 +140,7 @@
         from sys_major_catalog m
         join job_post_major_rel rel on rel.major_code = m.major_code
         join job_post j on j.id = rel.job_post_id
-        where m.deleted = 0
-          and j.deleted = 0
+        where j.deleted = 0
         group by m.major_code, m.major_name
         order by item_value desc, m.major_code
     </select>
@@ -159,14 +151,13 @@
                s.school_code,
                count(yi.id) as item_value
         from sys_school_tag t
-        join sys_school_tag_rel rel on rel.tag_id = t.id and rel.deleted = 0
-        join sys_school s on s.id = rel.school_id and s.deleted = 0
+        join sys_school_tag_rel rel on rel.tag_id = t.id
+        join sys_school s on s.id = rel.school_id
         join youth_info yi on yi.school_code = s.school_code
             and yi.deleted = 0
             and yi.youth_type = #{youthType}
             and <include refid="haidongNativeCondition"/>
-        where t.deleted = 0
-          and t.id in
+        where t.id in
             <foreach item="tagId" collection="tagIds" open="(" separator="," close=")">
                 #{tagId}
             </foreach>

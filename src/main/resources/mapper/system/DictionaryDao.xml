@@ -17,7 +17,6 @@
         from sys_dict_item
         where dict_type = #{dictType}
           and enabled = 1
-          and deleted = 0
         order by sort_no, id
     </select>
 
@@ -26,7 +25,6 @@
         from sys_dict_item
         where dict_type = #{dictType}
           and enabled = 1
-          and deleted = 0
         <if test="keyword != null and keyword != ''">
             and (dict_label like concat('%', #{keyword}, '%')
             or dict_value like concat('%', #{keyword}, '%'))
@@ -40,7 +38,6 @@
         from sys_dict_item
         where dict_type = #{dictType}
           and enabled = 1
-          and deleted = 0
         <if test="keyword != null and keyword != ''">
             and (dict_label like concat('%', #{keyword}, '%')
             or dict_value like concat('%', #{keyword}, '%'))
@@ -50,7 +47,6 @@
     <select id="findAll" resultMap="DictItemResultMap">
         select id, dict_type, dict_label, dict_value, sort_no
         from sys_dict_item
-        where deleted = 0
         order by dict_type, sort_no, id
     </select>
 
@@ -58,14 +54,13 @@
         select id, dict_type, dict_label, dict_value, sort_no
         from sys_dict_item
         where id = #{id}
-          and deleted = 0
         limit 1
     </select>
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.DictItem" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, deleted)
-        values (#{dictType}, #{dictLabel}, #{dictValue}, #{sortNo}, 1, 0)
+        insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled)
+        values (#{dictType}, #{dictLabel}, #{dictValue}, #{sortNo}, 1)
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.DictItem">
@@ -73,15 +68,12 @@
         set dict_label = #{dictLabel},
             dict_value = #{dictValue}
         where id = #{id}
-          and deleted = 0
     </update>
 
-    <update id="softDelete">
-        update sys_dict_item
-        set deleted = 1
+    <delete id="delete">
+        delete from sys_dict_item
         where id = #{id}
-          and deleted = 0
-    </update>
+    </delete>
 
     <select id="countEthnicityUsage" resultType="long">
         select count(*)

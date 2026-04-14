@@ -9,7 +9,6 @@ create table if not exists sys_user (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (username)
 );
 
@@ -22,7 +21,6 @@ create table if not exists sys_role (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (role_code)
 );
 
@@ -37,8 +35,7 @@ create table if not exists sys_menu (
     create_time timestamp not null default current_timestamp,
     create_by bigint,
     update_time timestamp not null default current_timestamp,
-    update_by bigint,
-    deleted tinyint not null default 0
+    update_by bigint
 );
 
 create table if not exists sys_user_role (
@@ -49,7 +46,6 @@ create table if not exists sys_user_role (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (user_id, role_id)
 );
 
@@ -61,7 +57,6 @@ create table if not exists sys_role_menu (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (role_id, menu_id)
 );
 
@@ -76,7 +71,6 @@ create table if not exists sys_dict_item (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (dict_type, dict_value)
 );
 
@@ -91,7 +85,6 @@ create table if not exists sys_region (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (region_code)
 );
 
@@ -104,7 +97,6 @@ create table if not exists sys_major_catalog (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (major_code),
     unique (major_name)
 );
@@ -116,7 +108,6 @@ create table if not exists sys_school_tag (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (tag_name)
 );
 
@@ -129,7 +120,6 @@ create table if not exists sys_school (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (school_code),
     unique (school_name)
 );
@@ -142,7 +132,6 @@ create table if not exists sys_school_tag_rel (
     create_by bigint,
     update_time timestamp not null default current_timestamp,
     update_by bigint,
-    deleted tinyint not null default 0,
     unique (school_id, tag_id)
 );
 
@@ -151,7 +140,6 @@ create table if not exists sys_analytics_school_tag (
     tag_id bigint not null,
     create_time timestamp not null default current_timestamp,
     create_by bigint,
-    deleted tinyint not null default 0,
     unique (tag_id)
 );
 

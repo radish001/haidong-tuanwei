@@ -256,6 +256,51 @@ class SystemControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void recreateDeletedSchoolTagWithSameNameShouldSucceed() throws Exception {
+        String tagName = "RECREATE_TAG-" + System.currentTimeMillis();
+        mockMvc.perform(post("/system/school-tags")
+                        .session(adminSession)
+                        .param("tagName", tagName))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult result = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "school-category")
+                        .param("section", "school-tag"))
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.system.entity.SchoolTag> records =
+                (java.util.List<com.haidong.tuanwei.system.entity.SchoolTag>) result
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.system.entity.SchoolTag tag = records.stream()
+                .filter(r -> r.getTagName().equals(tagName))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post("/system/school-tags/" + tag.getId() + "/delete").session(adminSession))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "学校标签删除成功"));
+
+        mockMvc.perform(post("/system/school-tags")
+                        .session(adminSession)
+                        .param("tagName", tagName))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "学校标签新增成功"));
+
+        MvcResult recreatedResult = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "school-category")
+                        .param("section", "school-tag"))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.system.entity.SchoolTag> recreatedRecords =
+                (java.util.List<com.haidong.tuanwei.system.entity.SchoolTag>) recreatedResult
+                        .getModelAndView().getModel().get("records");
+        assertThat(recreatedRecords)
+                .extracting(com.haidong.tuanwei.system.entity.SchoolTag::getTagName)
+                .contains(tagName);
+    }
+
+    @Test
     void createSchoolShouldPersist() throws Exception {
         String code = "SCH" + System.currentTimeMillis();
 
@@ -319,6 +364,70 @@ class SystemControllerIntegrationTest extends IntegrationTestBase {
                         .param("schoolName", "更新后学校名称")
                         .param("categoryDictItemId", "100")
                         .param("tagIds", "3"))  // 双一流标签
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "学校更新成功"));
+    }
+
+    @Test
+    void reAddDeletedSchoolTagRelationShouldSucceed() throws Exception {
+        String tagName = "REL_TAG-" + System.currentTimeMillis();
+        mockMvc.perform(post("/system/school-tags")
+                        .session(adminSession)
+                        .param("tagName", tagName))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult tagResult = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "school-category")
+                        .param("section", "school-tag"))
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.system.entity.SchoolTag> tags =
+                (java.util.List<com.haidong.tuanwei.system.entity.SchoolTag>) tagResult
+                        .getModelAndView().getModel().get("records");
+        Long tagId = tags.stream()
+                .filter(item -> item.getTagName().equals(tagName))
+                .findFirst()
+                .orElseThrow()
+                .getId();
+
+        String schoolCode = "REL_SCH" + System.currentTimeMillis();
+        mockMvc.perform(post("/system/schools")
+                        .session(adminSession)
+                        .param("schoolCode", schoolCode)
+                        .param("schoolName", "关系测试学校-" + schoolCode)
+                        .param("categoryDictItemId", "100")
+                        .param("tagIds", String.valueOf(tagId)))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult schoolResult = mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "school")
+                        .param("section", "school"))
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.system.entity.School> schools =
+                (java.util.List<com.haidong.tuanwei.system.entity.School>) schoolResult
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.system.entity.School school = schools.stream()
+                .filter(item -> schoolCode.equals(item.getSchoolCode()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post("/system/schools/" + school.getId())
+                        .session(adminSession)
+                        .param("id", String.valueOf(school.getId()))
+                        .param("schoolCode", schoolCode)
+                        .param("schoolName", "关系测试学校-" + schoolCode)
+                        .param("categoryDictItemId", "100"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "学校更新成功"));
+
+        mockMvc.perform(post("/system/schools/" + school.getId())
+                        .session(adminSession)
+                        .param("id", String.valueOf(school.getId()))
+                        .param("schoolCode", schoolCode)
+                        .param("schoolName", "关系测试学校-" + schoolCode)
+                        .param("categoryDictItemId", "100")
+                        .param("tagIds", String.valueOf(tagId)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("successMessage", "学校更新成功"));
     }

@@ -28,7 +28,7 @@ public interface SchoolDao {
 
     int update(School school);
 
-    int softDelete(@Param("id") Long id);
+    int delete(@Param("id") Long id);
 
     int deleteTagRelations(@Param("schoolId") Long schoolId);
 

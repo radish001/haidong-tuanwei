@@ -23,7 +23,7 @@ public interface DictionaryDao {
 
     int update(DictItem dictItem);
 
-    int softDelete(@Param("id") Long id);
+    int delete(@Param("id") Long id);
 
     long countEthnicityUsage(@Param("dictValue") String dictValue);
 
