@@ -21,6 +21,8 @@ chmod +x build-and-deploy.sh
 
 默认示例使用 MySQL `root` 账号启动应用，如需修改请同时调整 `.env` 中的 `MYSQL_USERNAME`、`MYSQL_PASSWORD` 和 `MYSQL_ROOT_PASSWORD`。
 
+如需修改容器内 MySQL 监听端口，请设置 `.env` 中的 `MYSQL_PORT`；如需修改宿主机暴露端口，请设置 `MYSQL_EXPOSE_PORT`。
+
 启动后访问：
 
 - 登录页：`http://localhost:${APP_PORT:-8080}/login`
@@ -51,12 +53,12 @@ chmod +x build-and-deploy.sh
 手工执行示例：
 
 ```bash
-mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/schema.sql
-mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_core.sql
-mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_dict.sql
-mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_regions.sql
-mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_majors.sql
-mysql -h127.0.0.1 -P13306 -uroot -proot123456 haidong_tuanwei < sql/data_schools.sql
+mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/schema.sql
+mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_core.sql
+mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_dict.sql
+mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_regions.sql
+mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_majors.sql
+mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_schools.sql
 ```
 
 常用命令：
