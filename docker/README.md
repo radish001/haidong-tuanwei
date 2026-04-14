@@ -53,12 +53,12 @@ chmod +x build-and-deploy.sh
 手工执行示例：
 
 ```bash
-mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/schema.sql
-mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_core.sql
-mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_dict.sql
-mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_regions.sql
-mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_majors.sql
-mysql -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_schools.sql
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/schema.sql
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_core.sql
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_dict.sql
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_regions.sql
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_majors.sql
+mysql --default-character-set=utf8mb4 -h127.0.0.1 -P${MYSQL_EXPOSE_PORT:-13306} -uroot -proot123456 haidong_tuanwei < sql/data_schools.sql
 ```
 
 常用命令：
