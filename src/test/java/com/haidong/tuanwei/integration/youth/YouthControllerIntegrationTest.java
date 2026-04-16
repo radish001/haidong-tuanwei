@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.haidong.tuanwei.integration.IntegrationTestBase;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
@@ -155,6 +156,17 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(result -> {
                     String contentDisposition = result.getResponse().getHeader("Content-Disposition");
                     assertThat(contentDisposition).contains("attachment");
+                    try (XSSFWorkbook workbook = new XSSFWorkbook(
+                            new ByteArrayInputStream(result.getResponse().getContentAsByteArray()))) {
+                        Sheet sheet = workbook.getSheetAt(0);
+                        Row headerRow = sheet.getRow(0);
+                        List<String> headers = java.util.stream.IntStream.range(0, 11)
+                                .mapToObj(index -> headerRow.getCell(index).getStringCellValue())
+                                .toList();
+                        assertThat(headers).containsExactly(
+                                "姓名", "性别", "民族", "出生年月", "籍贯", "招考年份",
+                                "学历", "学校", "学校所在区域", "专业", "联系方式");
+                    }
                 });
     }
 
@@ -179,7 +191,7 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
-    void youthMatchJobsShouldFilterByMajorEducationSchoolCategoryAndTag() throws Exception {
+    void youthMatchJobsShouldFilterByMajorEducationAndSchoolCategoryOnly() throws Exception {
         String uniquePhone = "135" + System.currentTimeMillis();
         String matchingJobName = "匹配岗位-" + System.currentTimeMillis();
         String nonMatchingJobName = "不匹配岗位-" + System.currentTimeMillis();
@@ -233,7 +245,7 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(view().name("youth/job-match-results"))
                 .andExpect(model().attributeExists("youthInfo", "records", "sourceDetailUrl", "matchMajorLabel",
-                        "matchEducationLabel", "matchSchoolCategoryLabel", "matchSchoolTagLabel"))
+                        "matchEducationLabel", "matchSchoolCategoryLabel"))
                 .andReturn();
 
         @SuppressWarnings("unchecked")
@@ -244,6 +256,10 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .extracting(com.haidong.tuanwei.job.entity.JobPost::getJobName)
                 .contains(matchingJobName)
                 .doesNotContain(nonMatchingJobName);
+
+        String html = matchResult.getResponse().getContentAsString();
+        assertThat(html).doesNotContain("学校标签");
+        assertThat(html).doesNotContain("院校标签要求");
     }
 
     @Test
@@ -276,6 +292,23 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
         String content = result.getResponse().getContentAsString();
         assertThat(content).contains("匹配招聘信息");
         assertThat(content).contains("/youth/college/" + youthInfo.getId() + "/matches");
+    }
+
+    @Test
+    void graduateDetailFragmentShouldNotExposeMatchJobsEntry() throws Exception {
+        com.haidong.tuanwei.youth.entity.YouthInfo youthInfo = createYouthForTest(
+                "graduate", "毕业青年", "137" + System.currentTimeMillis(), "10743", "080901", "BK");
+
+        MvcResult result = mockMvc.perform(get("/youth/graduate/" + youthInfo.getId())
+                        .session(adminSession)
+                        .header("X-Requested-With", "XMLHttpRequest"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("youth/detail :: drawerContent"))
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        assertThat(content).doesNotContain("匹配招聘信息");
+        assertThat(content).doesNotContain("/youth/graduate/" + youthInfo.getId() + "/matches");
     }
 
     @Test
@@ -321,12 +354,17 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
     }
 
     private com.haidong.tuanwei.youth.entity.YouthInfo createCollegeYouthForTest(String name, String phone) throws Exception {
-        return createCollegeYouthForTest(name, phone, "10743", "080901", "BK");
+        return createYouthForTest("college", name, phone, "10743", "080901", "BK");
     }
 
     private com.haidong.tuanwei.youth.entity.YouthInfo createCollegeYouthForTest(
             String name, String phone, String schoolCode, String majorCode, String educationLevel) throws Exception {
-        mockMvc.perform(post("/youth/college")
+        return createYouthForTest("college", name, phone, schoolCode, majorCode, educationLevel);
+    }
+
+    private com.haidong.tuanwei.youth.entity.YouthInfo createYouthForTest(
+            String type, String name, String phone, String schoolCode, String majorCode, String educationLevel) throws Exception {
+        mockMvc.perform(post("/youth/" + type)
                         .session(adminSession)
                         .param("name", name)
                         .param("gender", "M")
@@ -339,7 +377,7 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                         .param("phone", phone))
                 .andExpect(status().is3xxRedirection());
 
-        MvcResult youthListResult = mockMvc.perform(get("/youth/college").session(adminSession))
+        MvcResult youthListResult = mockMvc.perform(get("/youth/" + type).session(adminSession))
                 .andExpect(status().isOk())
                 .andReturn();
 

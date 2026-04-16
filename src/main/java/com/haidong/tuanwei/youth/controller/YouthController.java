@@ -155,10 +155,11 @@ public class YouthController {
             @PathVariable Long id,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model) {
+        YouthInfo youthInfo = requireYouth(type, id);
         model.addAttribute("pageTitle", "青年信息详情");
         model.addAttribute("youthType", type);
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
-        model.addAttribute("record", youthInfoService.getById(id));
+        model.addAttribute("record", youthInfo);
         return AjaxRequestSupport.isAjax(requestedWith) ? "youth/detail :: drawerContent" : "youth/detail";
     }
 
@@ -168,6 +169,9 @@ public class YouthController {
             @ModelAttribute("query") JobSearchRequest query,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model) {
+        if (!Objects.equals(type, "college")) {
+            throw new IllegalStateException("仅在校大学生支持匹配招聘信息");
+        }
         YouthInfo youthInfo = requireYouth(type, id);
         School school = resolveSchool(youthInfo);
         applyJobMatchConditions(query, youthInfo, school);
@@ -185,7 +189,6 @@ public class YouthController {
         model.addAttribute("matchEducationLabel", safeValue(youthInfo.getEducationLevelName()));
         model.addAttribute("matchMajorLabel", safeValue(youthInfo.getMajor()));
         model.addAttribute("matchSchoolCategoryLabel", school == null ? "" : safeValue(school.getCategoryLabel()));
-        model.addAttribute("matchSchoolTagLabel", school == null ? "" : safeValue(school.getTagSummary()));
         PaginationSupport.apply(model, query.getSafePage(), query.getSafePageSize(), totalCount);
         applyCompactMatchPagination(model, query.getSafePage(), query.getSafePageSize(), totalCount);
         return AjaxRequestSupport.isAjax(requestedWith)
@@ -198,12 +201,13 @@ public class YouthController {
             @PathVariable Long id,
             @RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model) {
+        YouthInfo youthInfo = requireYouth(type, id);
         model.addAttribute("pageTitle", "青年信息库");
         model.addAttribute("youthType", type);
         model.addAttribute("youthTypeLabel", YouthTypeHelper.label(type));
         model.addAttribute("formAction", "/youth/" + type + "/" + id);
         model.addAttribute("formTitle", "编辑" + YouthTypeHelper.label(type));
-        model.addAttribute("youthForm", toForm(youthInfoService.getById(id)));
+        model.addAttribute("youthForm", toForm(youthInfo));
         populateYouthOptions(model);
         return AjaxRequestSupport.isAjax(requestedWith) ? "youth/form :: drawerContent" : "youth/form";
     }
@@ -314,7 +318,7 @@ public class YouthController {
         query.setSchoolCategoryIds(school == null || school.getCategoryDictItemId() == null
                 ? List.of()
                 : List.of(school.getCategoryDictItemId()));
-        query.setSchoolTagIds(resolveSchoolTagIds(school));
+        query.setSchoolTagIds(List.of());
     }
 
     private List<String> toSingletonList(String value) {
@@ -322,13 +326,6 @@ public class YouthController {
             return List.of();
         }
         return List.of(value);
-    }
-
-    private List<Long> resolveSchoolTagIds(School school) {
-        if (school == null || school.getId() == null) {
-            return List.of();
-        }
-        return schoolDao.findTagIdsBySchoolId(school.getId());
     }
 
     private YouthFormRequest toForm(YouthInfo youthInfo) {

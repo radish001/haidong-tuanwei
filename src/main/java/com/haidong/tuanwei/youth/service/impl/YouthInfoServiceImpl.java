@@ -53,8 +53,8 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             "学校", "学校所在区域", "专业", "联系方式"
     };
     private static final String[] EXPORT_HEADERS = {
-            "姓名", "性别", "出生年月", "民族", "籍贯", "招考年份",
-            "学校", "学历", "专业", "专业类别", "学校所在区域", "联系方式"
+            "姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
+            "学校", "学校所在区域", "专业", "联系方式"
     };
 
     private final YouthInfoDao youthInfoDao;
@@ -222,24 +222,23 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(0).setCellValue(safe(item.getName()));
                 row.createCell(1).setCellValue(safe(item.getGender()));
-                row.createCell(2).setCellValue(ExcelUtils.formatDate(item.getBirthDate()));
-                row.createCell(3).setCellValue(safe(item.getEthnicity()));
+                row.createCell(2).setCellValue(safe(item.getEthnicity()));
+                row.createCell(3).setCellValue(ExcelUtils.formatDate(item.getBirthDate()));
                 row.createCell(4).setCellValue(exportRegionPath(
                         item.getNativePlaceName(),
                         item.getNativeProvinceCode(),
                         item.getNativeCityCode(),
                         item.getNativeCountyCode()));
                 row.createCell(5).setCellValue(item.getRecruitmentYear() == null ? "" : String.valueOf(item.getRecruitmentYear()));
-                row.createCell(6).setCellValue(safe(item.getSchoolName()));
-                row.createCell(7).setCellValue(safe(item.getEducationLevelName()));
-                row.createCell(8).setCellValue(safe(item.getMajor()));
-                row.createCell(9).setCellValue(safe(item.getMajorCategory()));
-                row.createCell(10).setCellValue(exportRegionPath(
+                row.createCell(6).setCellValue(safe(item.getEducationLevelName()));
+                row.createCell(7).setCellValue(safe(item.getSchoolName()));
+                row.createCell(8).setCellValue(exportRegionPath(
                         item.getSchoolRegionName(),
                         item.getSchoolProvinceCode(),
                         item.getSchoolCityCode(),
                         item.getSchoolCountyCode()));
-                row.createCell(11).setCellValue(safe(item.getPhone()));
+                row.createCell(9).setCellValue(safe(item.getMajor()));
+                row.createCell(10).setCellValue(safe(item.getPhone()));
             }
             for (int i = 0; i < EXPORT_HEADERS.length; i++) {
                 sheet.setColumnWidth(i, 18 * 256);

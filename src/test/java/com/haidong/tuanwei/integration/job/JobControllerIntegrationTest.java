@@ -248,11 +248,95 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
                 .orElseThrow();
 
         // 测试匹配页面
-        mockMvc.perform(get(BASE_URL + "/" + job.getId() + "/matches").session(adminSession))
+        MvcResult matchResult = mockMvc.perform(get(BASE_URL + "/" + job.getId() + "/matches").session(adminSession))
                 .andExpect(status().isOk())
                 .andExpect(view().name("job/match-results"))
-                .andExpect(model().attributeExists("jobPost", "records"))
-                .andExpect(model().attribute("pageTitle", "岗位匹配学生"));
+                .andExpect(model().attributeExists("jobPost", "records", "salaryRangeLabel"))
+                .andExpect(model().attribute("pageTitle", "岗位匹配学生"))
+                .andReturn();
+
+        String html = matchResult.getResponse().getContentAsString();
+        assertThat(html).contains("薪资待遇");
+        assertThat(html).doesNotContain("学校标签");
+    }
+
+    @Test
+    void jobMatchPageShouldIgnoreSchoolTagDimension() throws Exception {
+        String matchingJobName = "岗位匹配忽略标签岗位-" + System.currentTimeMillis();
+        String blockedJobName = "岗位匹配专业不符岗位-" + System.currentTimeMillis();
+        String uniquePhone = "139" + System.currentTimeMillis();
+
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "岗位匹配学生")
+                        .param("gender", "M")
+                        .param("birthDate", "2001-09-01")
+                        .param("ethnicity", "HAN")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10746")
+                        .param("majorCode", "120201")
+                        .param("recruitmentYear", "2023")
+                        .param("phone", uniquePhone))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult youthListResult = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.youth.entity.YouthInfo> youthRecords =
+                (java.util.List<com.haidong.tuanwei.youth.entity.YouthInfo>) youthListResult
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.youth.entity.YouthInfo youth = youthRecords.stream()
+                .filter(item -> uniquePhone.equals(item.getPhone()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", matchingJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "120201")
+                        .param("schoolCategoryIds", "101")
+                        .param("schoolTagIds", "1")
+                        .param("salaryRange", "SALARY_8_12"))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", blockedJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "101")
+                        .param("schoolTagIds", "1"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult listResult = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> jobs =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) listResult
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.job.entity.JobPost createdJob = jobs.stream()
+                .filter(j -> j.getJobName().equals(matchingJobName))
+                .findFirst()
+                .orElseThrow();
+
+        MvcResult matchResult = mockMvc.perform(get(BASE_URL + "/" + createdJob.getId() + "/matches").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.youth.entity.YouthInfo> matchedRecords =
+                (java.util.List<com.haidong.tuanwei.youth.entity.YouthInfo>) matchResult
+                        .getModelAndView().getModel().get("records");
+
+        assertThat(matchedRecords)
+                .extracting(com.haidong.tuanwei.youth.entity.YouthInfo::getId)
+                .contains(youth.getId());
     }
 
     @Test

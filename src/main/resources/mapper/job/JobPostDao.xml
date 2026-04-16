@@ -73,17 +73,6 @@
                   </foreach>
             )
         </if>
-        <if test="query != null and query.schoolTagIds != null and !query.schoolTagIds.isEmpty()">
-            and exists (
-                select 1
-                from job_post_school_tag_rel jstr
-                where jstr.job_post_id = j.id
-                  and jstr.tag_id in
-                  <foreach collection="query.schoolTagIds" item="schoolTagId" open="(" separator="," close=")">
-                      #{schoolTagId}
-                  </foreach>
-            )
-        </if>
         <if test="query != null and query.experienceRequirement != null and query.experienceRequirement != ''">
             and j.experience_requirement = #{query.experienceRequirement}
         </if>

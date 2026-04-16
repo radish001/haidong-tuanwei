@@ -37,6 +37,7 @@
                     <div class="form-actions mt-3">
                         <a class="btn btn-outline-secondary" th:href="@{'/youth/' + ${youthType}}" data-drawer-close>返回列表</a>
                     <a class="btn btn-outline-info"
+                       th:if="${youthType == 'college'}"
                        data-drawer-link
                        th:href="@{'/youth/' + ${youthType} + '/' + ${record.id} + '/matches'}"
                        th:attr="data-drawer-title=${record.name + ' 匹配招聘信息'}">匹配招聘信息</a>

@@ -1,5 +1,6 @@
 package com.haidong.tuanwei.integration.dashboard;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
@@ -20,8 +21,22 @@ class DashboardControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(view().name("dashboard/index"))
                 .andExpect(model().attributeExists("stats", "collegeSchoolProvinceDistributionJson",
-                        "collegeHaidongNativeCountyDistributionJson", "recentPolicies", "recentJobs"))
+                        "collegeHaidongNativeCountyDistributionJson"))
                 .andExpect(model().attribute("pageTitle", "首页"));
+    }
+
+    @Test
+    void dashboardShouldNotRenderPolicyOrJobSummarySections() throws Exception {
+        String html = mockMvc.perform(get("/dashboard").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertThat(html).doesNotContain("<h2>政策信息</h2>");
+        assertThat(html).doesNotContain("暂无政策摘要");
+        assertThat(html).doesNotContain("<h2>招聘信息</h2>");
+        assertThat(html).doesNotContain("暂无招聘摘要");
     }
 
     @Test

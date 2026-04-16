@@ -131,18 +131,6 @@
                 #{schoolCategoryId}
             </foreach>
         </if>
-        <if test="query != null and query.schoolTagIds != null and !query.schoolTagIds.isEmpty()">
-            and exists (
-                select 1
-                from sys_school ss
-                join sys_school_tag_rel str on str.school_id = ss.id
-                where ss.school_code = y.school_code
-                  and str.tag_id in
-                  <foreach collection="query.schoolTagIds" item="schoolTagId" open="(" separator="," close=")">
-                      #{schoolTagId}
-                  </foreach>
-            )
-        </if>
         <if test="query != null and query.phone != null and query.phone != ''">
             and y.phone like concat('%', #{query.phone}, '%')
         </if>

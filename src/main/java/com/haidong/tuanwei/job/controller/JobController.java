@@ -191,6 +191,8 @@ public class JobController {
 
         model.addAttribute("pageTitle", "岗位匹配学生");
         model.addAttribute("jobPost", jobPost);
+        model.addAttribute("salaryRangeLabel",
+                resolveDictLabel("salary_range", jobPost.getSalaryRange()));
         model.addAttribute("records", youthInfoService.search(YouthTypeHelper.code("college"), query));
         PaginationSupport.apply(model, query.getSafePage(), query.getSafePageSize(), totalCount);
         applyCompactMatchPagination(model, query.getSafePage(), query.getSafePageSize(), totalCount);
@@ -247,7 +249,7 @@ public class JobController {
         query.setMajorCodes(jobPost.getMajorCodes());
         query.setEducationCodes(jobPost.getEducationRequirements());
         query.setSchoolCategoryIds(jobPost.getSchoolCategoryIds());
-        query.setSchoolTagIds(jobPost.getSchoolTagIds());
+        query.setSchoolTagIds(List.of());
     }
 
     private void applyCompactMatchPagination(Model model, int currentPage, int pageSize, long totalCount) {

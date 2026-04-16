@@ -23,8 +23,6 @@ public class DashboardController {
                 toJson(dashboardService.getCollegeDistributionBySchoolProvince()));
         model.addAttribute("collegeHaidongNativeCountyDistributionJson",
                 toJson(dashboardService.getCollegeDistributionByNativeCountyInHaidong()));
-        model.addAttribute("recentPolicies", dashboardService.getRecentPolicies(5));
-        model.addAttribute("recentJobs", dashboardService.getRecentJobs(5));
         return "dashboard/index";
     }
 
