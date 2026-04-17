@@ -21,7 +21,7 @@
                            th:id="${'scope-' + scope.value}"
                            name="educationScopes"
                            th:value="${scope.value}"
-                           th:checked="${dictForm.educationScopes != null and dictForm.educationScopes.contains(scope.value)}">
+                           th:checked="${dictForm.educationScopes != null and (dictForm.educationScopes == scope.value or dictForm.educationScopes.startsWith(scope.value + ',') or dictForm.educationScopes.endsWith(',' + scope.value) or dictForm.educationScopes.contains(',' + scope.value + ','))}">
                     <label class="form-check-label" th:for="${'scope-' + scope.value}" th:text="${scope.label}">学历层次</label>
                 </div>
             </div>
