@@ -27,5 +27,7 @@ public interface YouthInfoService {
 
     YouthImportResult importFromExcel(String youthType, MultipartFile file, Long operatorId);
 
+    byte[] generateFailedImportExcel(YouthImportResult result);
+
     byte[] exportExcel(String youthType, YouthSearchRequest query);
 }

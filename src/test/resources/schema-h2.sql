@@ -67,6 +67,7 @@ create table if not exists sys_dict_item (
     dict_value varchar(100) not null,
     sort_no int not null default 0,
     enabled tinyint not null default 1,
+    education_scopes varchar(100),
     create_time timestamp not null default current_timestamp,
     create_by bigint,
     update_time timestamp not null default current_timestamp,

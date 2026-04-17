@@ -150,6 +150,12 @@
             <div class="import-result" th:if="${importResult != null}">
                 <h3>导入结果</h3>
                 <p th:text="${'成功 ' + importResult.successCount + ' 条，失败 ' + importResult.failCount + ' 条'}"></p>
+                <div class="mb-3" th:if="${!#lists.isEmpty(importResult.failedRows)}">
+                    <a class="btn btn-outline-secondary"
+                       th:href="@{/youth/{type}/import-failures(type=${youthType})}">
+                        下载失败数据
+                    </a>
+                </div>
                 <table class="simple-table table table-hover align-middle mb-0" th:if="${!#lists.isEmpty(importResult.errors)}">
                     <thead>
                     <tr>

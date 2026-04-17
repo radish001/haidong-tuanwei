@@ -84,6 +84,10 @@ insert into sys_dict_item (id, dict_type, dict_label, dict_value, sort_no, enabl
 (131, 'entrepreneurship_demand', '场地支持', 'VENUE', 2, 1),
 (132, 'entrepreneurship_demand', '导师指导', 'MENTOR', 3, 1);
 
+update sys_dict_item
+set education_scopes = 'UNDERGRADUATE'
+where dict_type = 'major_category';
+
 -- 区域表
 truncate table sys_region;
 insert into sys_region (id, parent_id, region_code, region_name, region_level, sort_no) values

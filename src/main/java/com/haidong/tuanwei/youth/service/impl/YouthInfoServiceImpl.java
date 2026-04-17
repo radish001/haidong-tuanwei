@@ -6,6 +6,7 @@ import com.haidong.tuanwei.system.dao.RegionDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.youth.dao.YouthInfoDao;
 import com.haidong.tuanwei.youth.dto.YouthFormRequest;
+import com.haidong.tuanwei.youth.dto.YouthImportFailedRow;
 import com.haidong.tuanwei.youth.dto.YouthImportResult;
 import com.haidong.tuanwei.youth.dto.YouthSearchRequest;
 import com.haidong.tuanwei.system.entity.DictItem;
@@ -16,6 +17,7 @@ import com.haidong.tuanwei.system.support.RegionSelectionSupport;
 import com.haidong.tuanwei.youth.entity.YouthInfo;
 import com.haidong.tuanwei.youth.service.YouthInfoService;
 import com.haidong.tuanwei.common.util.ExcelUtils;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,9 +31,14 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -48,6 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class YouthInfoServiceImpl implements YouthInfoService {
 
     private static final String REGION_PATH_DELIMITER = " / ";
+    private static final String FAILURE_REASON_HEADER = "失败原因";
     private static final String[] IMPORT_TEMPLATE_HEADERS = {
             "姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
             "学校", "学校所在区域", "专业", "联系方式"
@@ -177,6 +185,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
                     continue;
                 }
                 int displayRow = rowIndex + 1;
+                List<String> rawValues = extractImportRowValues(row);
                 try {
                     YouthInfo youthInfo = mapRowToYouth(row, regionPathMap);
                     youthInfo.setYouthType(youthType);
@@ -185,18 +194,18 @@ public class YouthInfoServiceImpl implements YouthInfoService {
 
                     String duplicateKey = youthType + "|" + youthInfo.getName() + "|" + youthInfo.getPhone();
                     if (!fileDuplicates.add(duplicateKey)) {
-                        result.addError(displayRow, "文件中存在重复数据");
+                        result.addError(displayRow, "文件中存在重复数据", rawValues);
                         continue;
                     }
                     if (youthInfoDao.countDuplicate(youthType, youthInfo.getName(), youthInfo.getPhone()) > 0) {
-                        result.addError(displayRow, "系统中已存在同名同联系方式数据");
+                        result.addError(displayRow, "系统中已存在同名同联系方式数据", rawValues);
                         continue;
                     }
 
                     youthInfoDao.insert(youthInfo);
                     result.addSuccess();
                 } catch (IllegalArgumentException ex) {
-                    result.addError(displayRow, ex.getMessage());
+                    result.addError(displayRow, ex.getMessage(), rawValues);
                 }
             }
             log.info("Youth import finished: type={}, operatorId={}, fileName={}, successCount={}, failCount={}",
@@ -206,6 +215,41 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             log.error("Failed to read youth import file: type={}, operatorId={}, fileName={}",
                     youthType, operatorId, file.getOriginalFilename(), e);
             throw new IllegalStateException("导入文件读取失败", e);
+        }
+    }
+
+    @Override
+    public byte[] generateFailedImportExcel(YouthImportResult result) {
+        try (Workbook workbook = new XSSFWorkbook(new ByteArrayInputStream(generateImportTemplate()))) {
+            Sheet mainSheet = workbook.getSheet("青年信息导入模板");
+            CellStyle failureReasonStyle = createFailureReasonStyle(workbook);
+            Cell failureReasonHeaderCell = mainSheet.getRow(0).createCell(IMPORT_TEMPLATE_HEADERS.length);
+            failureReasonHeaderCell.setCellValue(FAILURE_REASON_HEADER);
+            failureReasonHeaderCell.setCellStyle(failureReasonStyle);
+
+            int rowIndex = 1;
+            for (YouthImportFailedRow failedRow : result.getFailedRows()) {
+                Row row = mainSheet.createRow(rowIndex++);
+                List<String> values = failedRow.getValues();
+                for (int i = 0; i < IMPORT_TEMPLATE_HEADERS.length; i++) {
+                    row.createCell(i).setCellValue(i < values.size() ? values.get(i) : "");
+                }
+                Cell failureReasonCell = row.createCell(IMPORT_TEMPLATE_HEADERS.length);
+                failureReasonCell.setCellValue(failedRow.getMessage());
+                failureReasonCell.setCellStyle(failureReasonStyle);
+            }
+
+            for (int i = 0; i < IMPORT_TEMPLATE_HEADERS.length; i++) {
+                mainSheet.autoSizeColumn(i);
+                mainSheet.setColumnWidth(i, Math.max(mainSheet.getColumnWidth(i), 16 * 256));
+            }
+            mainSheet.autoSizeColumn(IMPORT_TEMPLATE_HEADERS.length);
+            mainSheet.setColumnWidth(IMPORT_TEMPLATE_HEADERS.length,
+                    Math.max(mainSheet.getColumnWidth(IMPORT_TEMPLATE_HEADERS.length), 24 * 256));
+            return ExcelUtils.toBytes(workbook);
+        } catch (IOException e) {
+            log.error("Failed to generate youth failed import file", e);
+            throw new IllegalStateException("失败数据文件生成失败", e);
         }
     }
 
@@ -560,6 +604,51 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         return value.trim();
     }
 
+    private List<String> extractImportRowValues(Row row) {
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < IMPORT_TEMPLATE_HEADERS.length; i++) {
+            values.add(rawCellText(row.getCell(i)));
+        }
+        return values;
+    }
+
+    private CellStyle createFailureReasonStyle(Workbook workbook) {
+        Font font = workbook.createFont();
+        font.setColor(IndexedColors.RED.getIndex());
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        return style;
+    }
+
+    private String rawCellText(Cell cell) {
+        if (cell == null) {
+            return "";
+        }
+        CellType cellType = cell.getCellType();
+        if (cellType == CellType.NUMERIC) {
+            if (DateUtil.isCellDateFormatted(cell)) {
+                return cell.getLocalDateTimeCellValue().toLocalDate().toString();
+            }
+            double value = cell.getNumericCellValue();
+            long longValue = (long) value;
+            return value == longValue ? String.valueOf(longValue) : String.valueOf(value);
+        }
+        if (cellType == CellType.BOOLEAN) {
+            return String.valueOf(cell.getBooleanCellValue());
+        }
+        if (cellType == CellType.FORMULA) {
+            try {
+                return cell.getStringCellValue();
+            } catch (Exception ignored) {
+                return String.valueOf(cell.getNumericCellValue());
+            }
+        }
+        if (cellType == CellType.STRING) {
+            return cell.getStringCellValue();
+        }
+        return cell.toString();
+    }
+
     private void validateTemplateHeader(Sheet sheet) {
         Row headerRow = sheet.getRow(0);
         if (headerRow == null) {
@@ -574,7 +663,14 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         short lastCellNum = headerRow.getLastCellNum();
         if (lastCellNum > IMPORT_TEMPLATE_HEADERS.length) {
             for (int i = IMPORT_TEMPLATE_HEADERS.length; i < lastCellNum; i++) {
-                if (!ExcelUtils.getCellText(headerRow.getCell(i)).isBlank()) {
+                String headerText = ExcelUtils.getCellText(headerRow.getCell(i)).trim();
+                if (headerText.isBlank()) {
+                    continue;
+                }
+                if (i == IMPORT_TEMPLATE_HEADERS.length && FAILURE_REASON_HEADER.equals(headerText)) {
+                    continue;
+                }
+                if (!headerText.isBlank()) {
                     throw new IllegalArgumentException("导入模板列顺序或表头不正确，请使用最新模板");
                 }
             }

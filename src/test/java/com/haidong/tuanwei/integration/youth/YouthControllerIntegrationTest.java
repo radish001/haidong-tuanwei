@@ -11,13 +11,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import com.haidong.tuanwei.integration.IntegrationTestBase;
+import com.haidong.tuanwei.youth.dto.YouthImportResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -147,6 +152,60 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/youth/college"))
                 .andExpect(flash().attributeExists("importMessage", "importResult"));
+    }
+
+    @Test
+    void importResultShouldRenderFailedExcelDownloadLinkWhenFailedRowsExist() throws Exception {
+        YouthImportResult importResult = new YouthImportResult();
+        importResult.addError(2, "招考年份格式不正确", List.of(
+                "异常年份青年", "男", "汉族", "20010901", "青海省 / 海东市 / 乐都区", "20A3",
+                "本科", "青海大学", "青海省 / 海东市", "计算机科学与技术", "13900000011"));
+
+        MvcResult pageResult = mockMvc.perform(get("/youth/college")
+                        .session(adminSession)
+                        .flashAttr("importResult", importResult))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertThat(pageResult.getResponse().getContentAsString()).contains("/youth/college/import-failures");
+    }
+
+    @Test
+    void downloadFailedImportExcelShouldKeepOriginalInvalidRowValuesExactly() throws Exception {
+        List<String> originalValues = List.of(
+                "异常年份下载青年", "男", "汉族", "20010901", "青海省 / 海东市 / 乐都区", "20A3",
+                "本科", "青海大学", "青海省 / 海东市", "计算机科学与技术", "13900000012");
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "invalid-youth-import.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                createYouthImportExcel(originalValues, null));
+
+        MvcResult importResult = mockMvc.perform(multipart("/youth/college/import")
+                        .file(file)
+                        .session(adminSession))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/youth/college"))
+                .andReturn();
+
+        YouthImportResult flashImportResult = (YouthImportResult) importResult.getFlashMap().get("importResult");
+        assertThat(flashImportResult).isNotNull();
+        assertThat(flashImportResult.getFailedRows()).hasSize(1);
+        assertThat(flashImportResult.getFailedRows().get(0).getValues()).containsExactlyElementsOf(originalValues);
+
+        MockHttpSession session = (MockHttpSession) importResult.getRequest().getSession(false);
+        MvcResult downloadResult = mockMvc.perform(get("/youth/college/import-failures").session(session))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        try (Workbook workbook = WorkbookFactory.create(
+                new ByteArrayInputStream(downloadResult.getResponse().getContentAsByteArray()))) {
+            Sheet sheet = workbook.getSheet("青年信息导入模板");
+            assertThat(sheet).isNotNull();
+            assertThat(sheet.getRow(0).getCell(11).getStringCellValue()).isEqualTo("失败原因");
+            assertThat(readRowValues(sheet.getRow(1), 11)).containsExactlyElementsOf(originalValues);
+            assertThat(sheet.getRow(1).getCell(11).getStringCellValue()).isEqualTo("招考年份格式不正确");
+        }
     }
 
     @Test
@@ -391,30 +450,42 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
     }
 
     private byte[] createYouthImportExcel(String name, String phone) throws Exception {
+        return createYouthImportExcel(List.of(
+                name, "男", "汉族", "20010901", "青海省 / 海东市 / 乐都区", "2023",
+                "本科", "青海大学", "青海省 / 海东市 / 乐都区", "计算机科学与技术", phone), null);
+    }
+
+    private byte[] createYouthImportExcel(List<String> values, String failureReason) throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("青年信息导入模板");
             Row headerRow = sheet.createRow(0);
-            String[] headers = {"姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
-                    "学校", "学校所在区域", "专业", "联系方式"};
-            for (int i = 0; i < headers.length; i++) {
-                headerRow.createCell(i).setCellValue(headers[i]);
+            List<String> headers = new ArrayList<>(List.of("姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
+                    "学校", "学校所在区域", "专业", "联系方式"));
+            if (failureReason != null) {
+                headers.add("失败原因");
+            }
+            for (int i = 0; i < headers.size(); i++) {
+                headerRow.createCell(i).setCellValue(headers.get(i));
             }
             Row row = sheet.createRow(1);
-            row.createCell(0).setCellValue(name);
-            row.createCell(1).setCellValue("男");
-            row.createCell(2).setCellValue("汉族");
-            row.createCell(3).setCellValue("20010901");
-            row.createCell(4).setCellValue("青海省 / 海东市 / 乐都区");
-            row.createCell(5).setCellValue("2023");
-            row.createCell(6).setCellValue("本科");
-            row.createCell(7).setCellValue("青海大学");
-            row.createCell(8).setCellValue("青海省 / 海东市 / 乐都区");
-            row.createCell(9).setCellValue("计算机科学与技术");
-            row.createCell(10).setCellValue(phone);
+            for (int i = 0; i < values.size(); i++) {
+                row.createCell(i).setCellValue(values.get(i));
+            }
+            if (failureReason != null) {
+                row.createCell(values.size()).setCellValue(failureReason);
+            }
             workbook.write(outputStream);
             return outputStream.toByteArray();
         }
+    }
+
+    private List<String> readRowValues(Row row, int cellCount) {
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < cellCount; i++) {
+            values.add(row.getCell(i).getStringCellValue());
+        }
+        return values;
     }
 
 }

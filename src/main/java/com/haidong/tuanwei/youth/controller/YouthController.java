@@ -18,6 +18,7 @@ import com.haidong.tuanwei.youth.entity.YouthInfo;
 import com.haidong.tuanwei.youth.service.YouthInfoService;
 import com.haidong.tuanwei.youth.support.YouthTypeHelper;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -45,6 +46,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Slf4j
 @RequiredArgsConstructor
 public class YouthController {
+
+    private static final String IMPORT_RESULT_SESSION_PREFIX = "youthImportResult:";
 
     private final DictionaryService dictionaryService;
     private final MasterDataService masterDataService;
@@ -80,6 +83,7 @@ public class YouthController {
     public String importYouth(@PathVariable String type,
             @AuthenticationPrincipal AdminUserDetails currentUser,
             MultipartFile file,
+            HttpSession session,
             RedirectAttributes redirectAttributes) {
         if (file == null || file.isEmpty()) {
             log.warn("Youth import skipped because no file was provided: type={}, operatorId={}",
@@ -88,10 +92,25 @@ public class YouthController {
             return "redirect:/youth/" + type;
         }
         YouthImportResult result = youthInfoService.importFromExcel(YouthTypeHelper.code(type), file, currentUser.getId());
+        if (result.hasFailedRows()) {
+            session.setAttribute(importResultSessionKey(type), result);
+        } else {
+            session.removeAttribute(importResultSessionKey(type));
+        }
         redirectAttributes.addFlashAttribute("importResult", result);
         redirectAttributes.addFlashAttribute("importMessage",
                 "导入完成：成功 " + result.getSuccessCount() + " 条，失败 " + result.getFailCount() + " 条");
         return "redirect:/youth/" + type;
+    }
+
+    @GetMapping("/youth/{type}/import-failures")
+    public ResponseEntity<byte[]> downloadFailedImportExcel(@PathVariable String type, HttpSession session) {
+        YouthImportResult result = (YouthImportResult) session.getAttribute(importResultSessionKey(type));
+        if (result == null || !result.hasFailedRows()) {
+            throw new IllegalStateException("暂无可下载的失败数据");
+        }
+        return excelResponse(youthInfoService.generateFailedImportExcel(result),
+                YouthTypeHelper.label(type) + "导入失败数据.xlsx");
     }
 
     @GetMapping("/youth/{type}/export")
@@ -409,5 +428,9 @@ public class YouthController {
 
     private String safeValue(String value) {
         return value == null ? "" : value;
+    }
+
+    private String importResultSessionKey(String type) {
+        return IMPORT_RESULT_SESSION_PREFIX + type;
     }
 }

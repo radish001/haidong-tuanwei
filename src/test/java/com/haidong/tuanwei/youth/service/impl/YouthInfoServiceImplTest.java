@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -197,6 +198,61 @@ class YouthInfoServiceImplTest {
     }
 
     @Test
+    void failedImportExcelShouldKeepOriginalInvalidRowValuesExactly() throws Exception {
+        List<String> originalValues = List.of(
+                "异常年份青年", "男", "汉族", "20010901", "青海省 / 海东市 / 乐都区", "20A3",
+                "本科", "青海大学", "青海省 / 海东市", "计算机科学与技术", "13900000009");
+        MockMultipartFile invalidYearFile = new MockMultipartFile(
+                "file",
+                "invalid-year.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                buildYouthImportFile(originalValues, null));
+
+        YouthImportResult result = youthInfoService.importFromExcel("COLLEGE", invalidYearFile, 1L);
+
+        assertThat(result.getSuccessCount()).isZero();
+        assertThat(result.getFailCount()).isEqualTo(1);
+        assertThat(result.getFailedRows()).hasSize(1);
+        assertThat(result.getFailedRows().get(0).getValues()).containsExactlyElementsOf(originalValues);
+        assertThat(result.getFailedRows().get(0).getMessage()).isEqualTo("招考年份格式不正确");
+
+        byte[] failedExcelBytes = youthInfoService.generateFailedImportExcel(result);
+        try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(failedExcelBytes))) {
+            Sheet sheet = workbook.getSheet("青年信息导入模板");
+            assertThat(sheet).isNotNull();
+            assertThat(sheet.getRow(0).getCell(11).getStringCellValue()).isEqualTo("失败原因");
+            assertThat(rowValues(sheet.getRow(1), 11)).containsExactlyElementsOf(originalValues);
+            assertThat(sheet.getRow(1).getCell(11).getStringCellValue()).isEqualTo("招考年份格式不正确");
+            assertThat(workbook.getFontAt(sheet.getRow(0).getCell(11).getCellStyle().getFontIndex()).getColor())
+                    .isEqualTo(IndexedColors.RED.getIndex());
+            assertThat(workbook.getFontAt(sheet.getRow(1).getCell(11).getCellStyle().getFontIndex()).getColor())
+                    .isEqualTo(IndexedColors.RED.getIndex());
+            assertThat(sheet.getLastRowNum()).isEqualTo(1);
+            assertThat(workbook.getSheet("hidden_5")).isNotNull();
+            assertThat(workbook.getSheet("hidden_10")).isNotNull();
+        }
+    }
+
+    @Test
+    void importFromExcelShouldIgnoreFailureReasonColumnDuringRetry() throws Exception {
+        when(youthInfoDao.countDuplicate(any(), any(), any())).thenReturn(0);
+        List<String> originalValues = List.of(
+                "返修青年", "男", "汉族", "20010901", "青海省 / 海东市 / 乐都区", "2023",
+                "本科", "青海大学", "青海省 / 海东市", "计算机科学与技术", "13900000010");
+        MockMultipartFile repairedFile = new MockMultipartFile(
+                "file",
+                "retry.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                buildYouthImportFile(originalValues, "招考年份格式不正确"));
+
+        YouthImportResult result = youthInfoService.importFromExcel("COLLEGE", repairedFile, 1L);
+
+        assertThat(result.getSuccessCount()).isEqualTo(1);
+        assertThat(result.getFailCount()).isZero();
+        verify(youthInfoDao).insert(any(YouthInfo.class));
+    }
+
+    @Test
     void exportExcelOutputsFullRegionPathsInTemplateOrder() throws Exception {
         YouthInfo youthInfo = new YouthInfo();
         youthInfo.setName("导出青年");
@@ -230,18 +286,18 @@ class YouthInfoServiceImplTest {
             assertThat(sheet.getRow(0).getCell(0).getStringCellValue()).isEqualTo("姓名");
             assertThat(sheet.getRow(0).getCell(4).getStringCellValue()).isEqualTo("籍贯");
             assertThat(sheet.getRow(0).getCell(5).getStringCellValue()).isEqualTo("招考年份");
-            assertThat(sheet.getRow(0).getCell(7).getStringCellValue()).isEqualTo("学历");
-            assertThat(sheet.getRow(0).getCell(9).getStringCellValue()).isEqualTo("专业类别");
-            assertThat(sheet.getRow(0).getCell(10).getStringCellValue()).isEqualTo("学校所在区域");
-            assertThat(sheet.getRow(0).getCell(11).getStringCellValue()).isEqualTo("联系方式");
+            assertThat(sheet.getRow(0).getCell(6).getStringCellValue()).isEqualTo("学历");
+            assertThat(sheet.getRow(0).getCell(7).getStringCellValue()).isEqualTo("学校");
+            assertThat(sheet.getRow(0).getCell(8).getStringCellValue()).isEqualTo("学校所在区域");
+            assertThat(sheet.getRow(0).getCell(9).getStringCellValue()).isEqualTo("专业");
+            assertThat(sheet.getRow(0).getCell(10).getStringCellValue()).isEqualTo("联系方式");
             assertThat(sheet.getRow(1).getCell(4).getStringCellValue()).isEqualTo("青海省-海东市-乐都区");
             assertThat(sheet.getRow(1).getCell(5).getStringCellValue()).isEqualTo("2023");
-            assertThat(sheet.getRow(1).getCell(6).getStringCellValue()).isEqualTo("青海大学");
-            assertThat(sheet.getRow(1).getCell(7).getStringCellValue()).isEqualTo("本科");
-            assertThat(sheet.getRow(1).getCell(8).getStringCellValue()).isEqualTo("计算机科学与技术");
-            assertThat(sheet.getRow(1).getCell(9).getStringCellValue()).isEqualTo("工学");
-            assertThat(sheet.getRow(1).getCell(10).getStringCellValue()).isEqualTo("青海省-海东市-乐都区");
-            assertThat(sheet.getRow(1).getCell(11).getStringCellValue()).isEqualTo("13900000004");
+            assertThat(sheet.getRow(1).getCell(6).getStringCellValue()).isEqualTo("本科");
+            assertThat(sheet.getRow(1).getCell(7).getStringCellValue()).isEqualTo("青海大学");
+            assertThat(sheet.getRow(1).getCell(8).getStringCellValue()).isEqualTo("青海省-海东市-乐都区");
+            assertThat(sheet.getRow(1).getCell(9).getStringCellValue()).isEqualTo("计算机科学与技术");
+            assertThat(sheet.getRow(1).getCell(10).getStringCellValue()).isEqualTo("13900000004");
         }
     }
 
@@ -291,26 +347,30 @@ class YouthInfoServiceImplTest {
     }
 
     private byte[] buildYouthImportFile(String name, String phone, String nativePlace, String schoolRegion, String recruitmentYear) throws Exception {
+        return buildYouthImportFile(List.of(
+                name, "男", "汉族", "20010901", nativePlace, recruitmentYear,
+                "本科", "青海大学", schoolRegion, "计算机科学与技术", phone), null);
+    }
+
+    private byte[] buildYouthImportFile(List<String> values, String failureReason) throws Exception {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("青年信息导入模板");
             Row headerRow = sheet.createRow(0);
-            String[] headers = {"姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
-                    "学校", "学校所在区域", "专业", "联系方式"};
-            for (int i = 0; i < headers.length; i++) {
-                headerRow.createCell(i).setCellValue(headers[i]);
+            List<String> headers = new ArrayList<>(List.of("姓名", "性别", "民族", "出生年月", "籍贯", "招考年份", "学历",
+                    "学校", "学校所在区域", "专业", "联系方式"));
+            if (failureReason != null) {
+                headers.add("失败原因");
+            }
+            for (int i = 0; i < headers.size(); i++) {
+                headerRow.createCell(i).setCellValue(headers.get(i));
             }
             Row row = sheet.createRow(1);
-            row.createCell(0).setCellValue(name);
-            row.createCell(1).setCellValue("男");
-            row.createCell(2).setCellValue("汉族");
-            row.createCell(3).setCellValue("20010901");
-            row.createCell(4).setCellValue(nativePlace);
-            row.createCell(5).setCellValue(recruitmentYear);
-            row.createCell(6).setCellValue("本科");
-            row.createCell(7).setCellValue("青海大学");
-            row.createCell(8).setCellValue(schoolRegion);
-            row.createCell(9).setCellValue("计算机科学与技术");
-            row.createCell(10).setCellValue(phone);
+            for (int i = 0; i < values.size(); i++) {
+                row.createCell(i).setCellValue(values.get(i));
+            }
+            if (failureReason != null) {
+                row.createCell(values.size()).setCellValue(failureReason);
+            }
             workbook.write(outputStream);
             return outputStream.toByteArray();
         }
@@ -337,6 +397,14 @@ class YouthInfoServiceImplTest {
             if (row != null && row.getCell(0) != null) {
                 values.add(row.getCell(0).getStringCellValue());
             }
+        }
+        return values;
+    }
+
+    private List<String> rowValues(Row row, int cellCount) {
+        List<String> values = new ArrayList<>();
+        for (int i = 0; i < cellCount; i++) {
+            values.add(row.getCell(i).getStringCellValue());
         }
         return values;
     }
