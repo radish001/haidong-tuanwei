@@ -120,6 +120,7 @@ public class SystemController {
         form.setId(item.getId());
         form.setDictLabel(item.getDictLabel());
         form.setDictValue(item.getDictValue());
+        form.setEducationScopes(item.getEducationScopes());
         populateDictionaryItemForm(model, section, "编辑" + resolveSectionTitle(tab, section),
                 "/system/dictionaries/items/" + id + "?tab=" + tab + "&section=" + section, form);
         return AjaxRequestSupport.isAjax(requestedWith)
