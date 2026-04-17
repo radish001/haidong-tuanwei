@@ -133,7 +133,7 @@
         order by d.sort_no, d.id
     </select>
 
-    <!-- 本科专业类别分布：所属学历层次包含本科，且学生学历为本科 -->
+    <!-- 本科专业类别分布：仅按专业类别所属学历层次包含本科统计 -->
     <select id="countByMajorCategoryForUndergraduate" resultMap="ChartItemResultMap">
         select d.dict_label as name, count(yi.id) as item_value,
                d.dict_value as code
@@ -142,7 +142,6 @@
         left join youth_info yi on yi.major_code = m.major_code
             and yi.deleted = 0
             and yi.youth_type = #{youthType}
-            and yi.education_level = '05'  <!-- 本科学历代码 -->
         where d.enabled = 1
           and d.dict_type = 'major_category'
           and d.education_scopes like '%UNDERGRADUATE%'
@@ -150,7 +149,7 @@
         order by d.sort_no, d.id
     </select>
 
-    <!-- 专科专业类别分布：所属学历层次包含专科，且学生学历为专科 -->
+    <!-- 专科专业类别分布：仅按专业类别所属学历层次包含专科统计 -->
     <select id="countByMajorCategoryForJuniorCollege" resultMap="ChartItemResultMap">
         select d.dict_label as name, count(yi.id) as item_value,
                d.dict_value as code
@@ -159,7 +158,6 @@
         left join youth_info yi on yi.major_code = m.major_code
             and yi.deleted = 0
             and yi.youth_type = #{youthType}
-            and yi.education_level = '04'  <!-- 专科学历代码 -->
         where d.enabled = 1
           and d.dict_type = 'major_category'
           and d.education_scopes like '%JUNIOR_COLLEGE%'

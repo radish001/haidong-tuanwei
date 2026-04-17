@@ -23,13 +23,13 @@ public interface YouthAnalyticsDao {
 
     /**
      * 本科专业类别分布统计
-     * 统计所属学历层次包含本科专业且学生学历为本科的专业类别分布
+     * 统计所属学历层次包含本科专业的专业类别分布
      */
     List<ChartItem> countByMajorCategoryForUndergraduate(@Param("youthType") String youthType);
 
     /**
      * 专科专业类别分布统计
-     * 统计所属学历层次包含专科专业且学生学历为专科的专业类别分布
+     * 统计所属学历层次包含专科专业的专业类别分布
      */
     List<ChartItem> countByMajorCategoryForJuniorCollege(@Param("youthType") String youthType);
 
