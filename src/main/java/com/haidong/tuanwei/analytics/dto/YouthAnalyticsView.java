@@ -19,4 +19,8 @@ public class YouthAnalyticsView {
     private List<ChartItem> politicalStatusDistribution;
     private List<ChartItem> entrepreneurshipDemandDistribution;
     private List<TagChartView> haidongSchoolTagDistributions;
+    // 新增：本科专业类别分布
+    private List<ChartItem> undergraduateMajorCategoryDistribution;
+    // 新增：专科专业类别分布
+    private List<ChartItem> juniorCollegeMajorCategoryDistribution;
 }

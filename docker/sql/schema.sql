@@ -73,7 +73,6 @@ create table if not exists sys_dict_item (
     dict_value varchar(100) not null,
     sort_no int not null default 0,
     enabled tinyint not null default 1,
-    education_scopes varchar(100) null comment '所属学历层次（专科专业/本科专业/研究生专业，可多选）',
     create_time datetime not null default current_timestamp,
     create_by bigint,
     update_time datetime not null default current_timestamp on update current_timestamp,

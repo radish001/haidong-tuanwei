@@ -135,6 +135,8 @@
                                     <th class="index-cell">序号</th>
                                     <th class="code-column" th:text="${query.section == 'education_level' ? '学历编码' : (query.section == 'degree' ? '学位编码' : '字典值')}">字典值</th>
                                     <th class="name-column" th:text="${query.section == 'education_level' ? '学历名称' : (query.section == 'degree' ? '学位名称' : '显示名称')}">显示名称</th>
+                                    <!-- 专业类别显示所属学历层次列 -->
+                                    <th class="education-scope-column" th:if="${query.section == 'major_category'}">所属学历层次</th>
                                     <th class="action-column">操作</th>
                                 </tr>
                                 <tr th:if="${viewKind == 'major'}">
@@ -171,6 +173,10 @@
                                     <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                                     <td class="code-cell" th:text="${item.dictValue}">编码</td>
                                     <td class="name-cell" th:text="${item.dictLabel}">名称</td>
+                                    <!-- 专业类别显示所属学历层次数据 -->
+                                    <td th:if="${query.section == 'major_category'}">
+                                        <span th:text="${T(com.haidong.tuanwei.system.enums.MajorCategoryEducationScope).toLabelDisplay(item.educationScopes)}">所属学历层次</span>
+                                    </td>
                                     <td class="table-actions">
                                         <a class="btn btn-sm btn-outline-secondary" data-drawer-link th:href="@{/system/dictionaries/items/{id}/edit(id=${item.id}, tab=${query.tab}, section=${query.section})}">编辑</a>
                                         <form th:action="@{/system/dictionaries/items/{id}/delete(id=${item.id}, tab=${query.tab}, section=${query.section})}"

@@ -10,6 +10,24 @@
         <div class="alert error-alert validation-error-banner col-12" th:if="${#fields.hasAnyErrors()}">请检查并填写所有必填项</div>
         <label class="col-12 col-md-6"><span th:text="${dictValueFieldLabel}">字典值</span><input class="form-control" type="text" th:field="*{dictValue}" required></label>
         <label class="col-12 col-md-6"><span th:text="${dictLabelFieldLabel}">显示名称</span><input class="form-control" type="text" th:field="*{dictLabel}" required></label>
+
+        <!-- 专业类别表单显示所属学历层次多选框 -->
+        <div class="col-12" th:if="${majorCategoryEducationScopes != null}">
+            <div class="form-label">所属学历层次 <span class="text-danger">*</span></div>
+            <div class="form-check-group">
+                <div class="form-check form-check-inline" th:each="scope : ${majorCategoryEducationScopes}">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           th:id="${'scope-' + scope.value}"
+                           name="educationScopes"
+                           th:value="${scope.value}"
+                           th:checked="${dictForm.educationScopes != null and dictForm.educationScopes.contains(scope.value)}">
+                    <label class="form-check-label" th:for="${'scope-' + scope.value}" th:text="${scope.label}">学历层次</label>
+                </div>
+            </div>
+            <small class="form-text text-muted">至少选择一项，可多选</small>
+        </div>
+
         <div class="form-actions full-width col-12">
             <a class="btn btn-outline-secondary" th:href="@{/system/dictionaries}" data-drawer-close>取消</a>
             <button type="submit" class="btn btn-primary">保存</button>

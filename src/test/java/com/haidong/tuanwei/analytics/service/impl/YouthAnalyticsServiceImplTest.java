@@ -36,6 +36,12 @@ class YouthAnalyticsServiceImplTest {
                 .thenReturn(List.of(chartItem("双一流", 3), chartItem("普通本科", 2)));
         when(youthAnalyticsDao.countByMajorCategory("COLLEGE"))
                 .thenReturn(List.of(chartItem("工学", 4), chartItem("管理学", 1)));
+        // 新增：本科专业类别分布
+        when(youthAnalyticsDao.countByMajorCategoryForUndergraduate("COLLEGE"))
+                .thenReturn(List.of(chartItem("工学", 3), chartItem("理学", 2)));
+        // 新增：专科专业类别分布
+        when(youthAnalyticsDao.countByMajorCategoryForJuniorCollege("COLLEGE"))
+                .thenReturn(List.of(chartItem("电子信息", 2), chartItem("医药卫生", 1)));
         when(youthAnalyticsDao.countByGender("COLLEGE"))
                 .thenReturn(List.of(chartItem("男", 3), chartItem("女", 2)));
         when(youthAnalyticsDao.countByEducationLevel("COLLEGE"))
@@ -55,6 +61,12 @@ class YouthAnalyticsServiceImplTest {
                 .containsExactly(tuple("双一流", 3), tuple("普通本科", 2));
         assertThat(analytics.getMajorCategoryDistribution()).extracting(ChartItem::getName, ChartItem::getValue)
                 .containsExactly(tuple("工学", 4), tuple("管理学", 1));
+        // 验证新增本科专业类别分布
+        assertThat(analytics.getUndergraduateMajorCategoryDistribution()).extracting(ChartItem::getName, ChartItem::getValue)
+                .containsExactly(tuple("工学", 3), tuple("理学", 2));
+        // 验证新增专科专业类别分布
+        assertThat(analytics.getJuniorCollegeMajorCategoryDistribution()).extracting(ChartItem::getName, ChartItem::getValue)
+                .containsExactly(tuple("电子信息", 2), tuple("医药卫生", 1));
         assertThat(analytics.getGenderDistribution()).extracting(ChartItem::getName).containsExactly("男", "女");
         assertThat(analytics.getEducationDistribution()).extracting(ChartItem::getName).containsExactly("本科", "专科");
         assertThat(analytics.getEthnicityDistribution()).extracting(ChartItem::getName).containsExactly("汉族");

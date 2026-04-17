@@ -14,6 +14,7 @@ import com.haidong.tuanwei.system.entity.MajorCatalog;
 import com.haidong.tuanwei.system.entity.Region;
 import com.haidong.tuanwei.system.entity.School;
 import com.haidong.tuanwei.system.entity.SchoolTag;
+import com.haidong.tuanwei.system.enums.MajorCategoryEducationScope;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.system.service.RegionService;
@@ -720,6 +721,10 @@ public class SystemController {
         model.addAttribute("dictLabelFieldLabel", resolveDictLabelFieldLabel(section));
         model.addAttribute("dictValueFieldLabel", resolveDictValueFieldLabel(section));
         model.addAttribute("dictForm", form);
+        // 专业类别表单添加所属学历层次选项
+        if ("major_category".equals(section)) {
+            model.addAttribute("majorCategoryEducationScopes", MajorCategoryEducationScope.values());
+        }
     }
 
     private void populateSchoolTagForm(Model model, SchoolTagForm form, String formTitle, String formAction) {

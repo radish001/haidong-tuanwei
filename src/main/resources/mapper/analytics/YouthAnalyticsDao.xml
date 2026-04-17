@@ -133,6 +133,40 @@
         order by d.sort_no, d.id
     </select>
 
+    <!-- 本科专业类别分布：所属学历层次包含本科，且学生学历为本科 -->
+    <select id="countByMajorCategoryForUndergraduate" resultMap="ChartItemResultMap">
+        select d.dict_label as name, count(yi.id) as item_value,
+               d.dict_value as code
+        from sys_dict_item d
+        left join sys_major_catalog m on m.category_dict_item_id = d.id
+        left join youth_info yi on yi.major_code = m.major_code
+            and yi.deleted = 0
+            and yi.youth_type = #{youthType}
+            and yi.education_level = '05'  <!-- 本科学历代码 -->
+        where d.enabled = 1
+          and d.dict_type = 'major_category'
+          and d.education_scopes like '%UNDERGRADUATE%'
+        group by d.id, d.dict_label, d.sort_no
+        order by d.sort_no, d.id
+    </select>
+
+    <!-- 专科专业类别分布：所属学历层次包含专科，且学生学历为专科 -->
+    <select id="countByMajorCategoryForJuniorCollege" resultMap="ChartItemResultMap">
+        select d.dict_label as name, count(yi.id) as item_value,
+               d.dict_value as code
+        from sys_dict_item d
+        left join sys_major_catalog m on m.category_dict_item_id = d.id
+        left join youth_info yi on yi.major_code = m.major_code
+            and yi.deleted = 0
+            and yi.youth_type = #{youthType}
+            and yi.education_level = '04'  <!-- 专科学历代码 -->
+        where d.enabled = 1
+          and d.dict_type = 'major_category'
+          and d.education_scopes like '%JUNIOR_COLLEGE%'
+        group by d.id, d.dict_label, d.sort_no
+        order by d.sort_no, d.id
+    </select>
+
     <select id="countJobDemandByMajor" resultMap="ChartItemResultMap">
         select m.major_name as name,
                count(distinct j.id) as item_value,

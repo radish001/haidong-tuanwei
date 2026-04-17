@@ -10,10 +10,11 @@
         <result property="dictLabel" column="dict_label"/>
         <result property="dictValue" column="dict_value"/>
         <result property="sortNo" column="sort_no"/>
+        <result property="educationScopes" column="education_scopes"/>
     </resultMap>
 
     <select id="findByType" resultMap="DictItemResultMap">
-        select id, dict_type, dict_label, dict_value, sort_no
+        select id, dict_type, dict_label, dict_value, sort_no, education_scopes
         from sys_dict_item
         where dict_type = #{dictType}
           and enabled = 1
@@ -21,7 +22,7 @@
     </select>
 
     <select id="searchByType" resultMap="DictItemResultMap">
-        select id, dict_type, dict_label, dict_value, sort_no
+        select id, dict_type, dict_label, dict_value, sort_no, education_scopes
         from sys_dict_item
         where dict_type = #{dictType}
           and enabled = 1
@@ -45,13 +46,13 @@
     </select>
 
     <select id="findAll" resultMap="DictItemResultMap">
-        select id, dict_type, dict_label, dict_value, sort_no
+        select id, dict_type, dict_label, dict_value, sort_no, education_scopes
         from sys_dict_item
         order by dict_type, sort_no, id
     </select>
 
     <select id="findById" resultMap="DictItemResultMap">
-        select id, dict_type, dict_label, dict_value, sort_no
+        select id, dict_type, dict_label, dict_value, sort_no, education_scopes
         from sys_dict_item
         where id = #{id}
         limit 1
@@ -59,14 +60,15 @@
 
     <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.DictItem" useGeneratedKeys="true"
             keyProperty="id">
-        insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled)
-        values (#{dictType}, #{dictLabel}, #{dictValue}, #{sortNo}, 1)
+        insert into sys_dict_item (dict_type, dict_label, dict_value, sort_no, enabled, education_scopes)
+        values (#{dictType}, #{dictLabel}, #{dictValue}, #{sortNo}, 1, #{educationScopes})
     </insert>
 
     <update id="update" parameterType="com.haidong.tuanwei.system.entity.DictItem">
         update sys_dict_item
         set dict_label = #{dictLabel},
-            dict_value = #{dictValue}
+            dict_value = #{dictValue},
+            education_scopes = #{educationScopes}
         where id = #{id}
     </update>
 

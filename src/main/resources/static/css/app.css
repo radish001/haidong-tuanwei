@@ -884,6 +884,7 @@ code {
     gap: 16px;
 }
 .analytics-grid-3col .span-2 { grid-column: span 2; }
+.analytics-grid-3col .span-3 { grid-column: span 3; }
 
 .analytics-topic-panel { margin-top: 20px; }
 .analytics-topic-header {
@@ -1492,6 +1493,7 @@ code {
 
 @media (max-width: 992px) {
     .analytics-grid-3col { grid-template-columns: repeat(2, 1fr); }
+    .analytics-grid-3col .span-3 { grid-column: span 2; }
     .tag-chart-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -1541,5 +1543,6 @@ code {
     .chart-box.tall { height: 300px; }
     .analytics-grid-3col { grid-template-columns: 1fr; }
     .analytics-grid-3col .span-2 { grid-column: span 1; }
+    .analytics-grid-3col .span-3 { grid-column: span 1; }
     .tag-chart-grid { grid-template-columns: 1fr; }
 }

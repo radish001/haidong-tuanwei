@@ -36,6 +36,8 @@ public class AnalyticsController {
         model.addAttribute("ageDistributionJson", toJson(analytics.getAgeDistribution()));
         model.addAttribute("schoolCategoryDistributionJson", toJson(analytics.getSchoolCategoryDistribution()));
         model.addAttribute("majorCategoryDistributionJson", toJson(analytics.getMajorCategoryDistribution()));
+        model.addAttribute("undergraduateMajorCategoryDistributionJson", toJson(analytics.getUndergraduateMajorCategoryDistribution()));
+        model.addAttribute("juniorCollegeMajorCategoryDistributionJson", toJson(analytics.getJuniorCollegeMajorCategoryDistribution()));
         model.addAttribute("jobMajorDistributionJson", toJson(analytics.getJobMajorDistribution()));
         model.addAttribute("genderDistributionJson", toJson(analytics.getGenderDistribution()));
         model.addAttribute("educationDistributionJson", toJson(analytics.getEducationDistribution()));

@@ -25,7 +25,8 @@
                     <div class="card border-0"><div id="educationChart" class="chart-box"></div></div>
                     <div class="card border-0"><div id="ethnicityChart" class="chart-box"></div></div>
                     <div class="card border-0"><div id="genderChart" class="chart-box"></div></div>
-                    <div class="card border-0 span-2"><div id="majorCategoryChart" class="chart-box tall"></div></div>
+                    <div class="card border-0 span-2"><div id="undergraduateMajorCategoryChart" class="chart-box tall"></div></div>
+                    <div class="card border-0 span-3"><div id="juniorCollegeMajorCategoryChart" class="chart-box tall"></div></div>
                 </div>
                 <section class="analytics-topic-panel">
                     <div class="analytics-topic-header">
@@ -60,6 +61,8 @@
     const ageData = /*[[${ageDistributionJson}]]*/ '[]';
     const schoolCategoryData = /*[[${schoolCategoryDistributionJson}]]*/ '[]';
     const majorCategoryData = /*[[${majorCategoryDistributionJson}]]*/ '[]';
+    const undergraduateMajorCategoryData = /*[[${undergraduateMajorCategoryDistributionJson}]]*/ '[]';
+    const juniorCollegeMajorCategoryData = /*[[${juniorCollegeMajorCategoryDistributionJson}]]*/ '[]';
     const jobMajorData = /*[[${jobMajorDistributionJson}]]*/ '[]';
     const genderData = /*[[${genderDistributionJson}]]*/ '[]';
     const educationData = /*[[${educationDistributionJson}]]*/ '[]';
@@ -508,7 +511,10 @@
 
     if (isCollegeAnalytics) {
         renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true, {clickFilterParam: 'schoolCategoryIds'});
-        renderVerticalBar('majorCategoryChart', '专业类别分布', majorCategoryData, 'majorCategory');
+        // 本科专业类别分布
+        renderVerticalBar('undergraduateMajorCategoryChart', '本科专业类别分布', undergraduateMajorCategoryData, 'majorCategory');
+        // 专科专业类别分布
+        renderVerticalBar('juniorCollegeMajorCategoryChart', '专科专业类别分布', juniorCollegeMajorCategoryData, 'majorCategory');
         renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {clickFilterParam: 'ethnicity'});
         renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel');
         renderMirrorBar('genderChart', '性别分布', genderData, 'gender');

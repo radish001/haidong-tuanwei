@@ -6,12 +6,14 @@ import com.haidong.tuanwei.system.dao.MajorCatalogDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.system.dto.DictionaryItemForm;
 import com.haidong.tuanwei.system.entity.DictItem;
+import com.haidong.tuanwei.system.enums.MajorCategoryEducationScope;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -69,11 +71,16 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public void create(String dictType, DictionaryItemForm request) {
         requireManagedType(dictType);
+        // 专业类别必须配置所属学历层次
+        if ("major_category".equals(dictType)) {
+            validateEducationScopes(request.getEducationScopes());
+        }
         DictItem item = new DictItem();
         item.setDictType(dictType);
         item.setDictLabel(request.getDictLabel());
         item.setDictValue(request.getDictValue());
         item.setSortNo(getByType(dictType).size() + 1);
+        item.setEducationScopes(request.getEducationScopes());
         dictionaryDao.insert(item);
         log.info("Dictionary item created: dictType={}, id={}, value={}", dictType, item.getId(), item.getDictValue());
     }
@@ -82,11 +89,37 @@ public class DictionaryServiceImpl implements DictionaryService {
     public void update(Long id, DictionaryItemForm request) {
         DictItem existing = requireExisting(id);
         requireManagedType(existing.getDictType());
+        // 专业类别必须配置所属学历层次
+        if ("major_category".equals(existing.getDictType())) {
+            validateEducationScopes(request.getEducationScopes());
+        }
         existing.setDictLabel(request.getDictLabel());
         existing.setDictValue(request.getDictValue());
+        existing.setEducationScopes(request.getEducationScopes());
         dictionaryDao.update(existing);
         log.info("Dictionary item updated: dictType={}, id={}, value={}",
                 existing.getDictType(), id, existing.getDictValue());
+    }
+
+    /**
+     * 校验所属学历层次：不能为空，且必须包含有效的常量值
+     */
+    private void validateEducationScopes(String educationScopes) {
+        if (!StringUtils.hasText(educationScopes)) {
+            throw new IllegalStateException("专业类别必须至少选择一项所属学历层次");
+        }
+        String[] scopes = educationScopes.split(",");
+        boolean hasValidScope = false;
+        for (String scope : scopes) {
+            String trimmed = scope.trim();
+            if (MajorCategoryEducationScope.fromValue(trimmed) != null) {
+                hasValidScope = true;
+                break;
+            }
+        }
+        if (!hasValidScope) {
+            throw new IllegalStateException("所属学历层次必须包含有效的选项（专科专业、本科专业、研究生专业）");
+        }
     }
 
     @Override
