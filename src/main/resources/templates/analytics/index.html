@@ -29,20 +29,7 @@
                     <div class="card border-0 span-3"><div id="juniorCollegeMajorCategoryChart" class="chart-box tall"></div></div>
                 </div>
                 <section class="analytics-topic-panel">
-                    <div class="analytics-topic-header">
-                        <div>
-                            <h3>海东籍顶尖高校分析</h3>
-                        </div>
-                    </div>
-                    <div id="haidongTagCharts" class="tag-chart-grid"></div>
-                </section>
-                <section class="analytics-topic-panel">
-                    <div class="analytics-topic-header">
-                        <div>
-                            <h3>招聘信息专业分析</h3>
-                        </div>
-                    </div>
-                    <div class="card border-0"><div id="jobMajorChart" class="chart-box"></div></div>
+                    <div id="collegeTopicCharts" class="tag-chart-grid"></div>
                 </section>
             </div>
             <div th:unless="${isCollegeAnalytics}" class="analytics-grid row g-4">
@@ -267,6 +254,7 @@
         const seriesCenter = options.seriesCenter ?? ['50%', '50%'];
         const seriesRadius = options.seriesRadius ?? (donut ? ['36%', '58%'] : '58%');
         const titleTop = options.titleTop ?? 10;
+        const legendBottom = options.legendBottom ?? 0;
         const clickFilterParam = options.clickFilterParam;
         const clickUrlBuilder = options.clickUrlBuilder;
         const colors = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
@@ -279,7 +267,7 @@
                 textStyle: {color: '#e7f0ff', fontSize: 16, fontWeight: 700}
             },
             legend: {
-                bottom: 0,
+                bottom: legendBottom,
                 left: 'center',
                 textStyle: {color: '#8ea3cc', fontSize: 11},
                 itemWidth: 10,
@@ -420,31 +408,49 @@
         attachResize(chart);
     }
 
-    function renderTagCharts(containerId, rawData) {
-        const container = document.getElementById(containerId);
-        if (!container) {
-            return;
-        }
-        container.querySelectorAll('.tag-chart-box').forEach(chartNode => {
-            const instance = echarts.getInstanceByDom(chartNode);
-            if (instance) {
-                instance.dispose();
-            }
-        });
+    function createTopicCard(container, topicLabel, chartId, panelClass = '') {
+        const panel = document.createElement('div');
+        panel.className = `card border-0 tag-chart-panel topic-chart-panel ${panelClass}`.trim();
+        const meta = document.createElement('div');
+        meta.className = 'topic-card-meta';
+        const label = document.createElement('span');
+        label.className = 'topic-card-label';
+        label.textContent = topicLabel;
+        meta.appendChild(label);
+        panel.appendChild(meta);
+        const chartEl = document.createElement('div');
+        chartEl.className = 'chart-box tag-chart-box';
+        chartEl.id = chartId;
+        panel.appendChild(chartEl);
+        container.appendChild(panel);
+        return chartEl;
+    }
+
+    function createTopicEmptyCard(container, topicLabel, message) {
+        const panel = document.createElement('div');
+        panel.className = 'card border-0 tag-chart-panel topic-chart-panel';
+        const meta = document.createElement('div');
+        meta.className = 'topic-card-meta';
+        const label = document.createElement('span');
+        label.className = 'topic-card-label';
+        label.textContent = topicLabel;
+        meta.appendChild(label);
+        panel.appendChild(meta);
+        const empty = document.createElement('div');
+        empty.className = 'tag-chart-empty';
+        empty.textContent = message;
+        panel.appendChild(empty);
+        container.appendChild(panel);
+    }
+
+    function renderTagCharts(container, rawData) {
         const tagCharts = parseData(rawData);
         if (!tagCharts.length) {
-            container.innerHTML = '<div class="tag-chart-empty">暂无学校标签专题数据</div>';
+            createTopicEmptyCard(container, '海东籍顶尖高校分析', '暂无学校标签专题数据');
             return;
         }
-        container.innerHTML = '';
         tagCharts.forEach((item, index) => {
-            const panel = document.createElement('div');
-            panel.className = 'card border-0 tag-chart-panel';
-            const chartEl = document.createElement('div');
-            chartEl.className = 'chart-box tag-chart-box';
-            chartEl.id = `tagChart-${index}`;
-            panel.appendChild(chartEl);
-            container.appendChild(panel);
+            const chartEl = createTopicCard(container, '海东籍顶尖高校分析', `tagChart-${index}`);
             const entries = topNWithOther(item.data || [], 10);
             const colorPalette = ['#4dc3ff', '#66e3b5', '#f9be59', '#f87171', '#8b9df8', '#60a5fa', '#34d399', '#f472b6', '#a78bfa', '#fbbf24', '#94a3b8'];
             requestAnimationFrame(() => {
@@ -509,6 +515,31 @@
         });
     }
 
+    function renderTopicCards(containerId, tagRawData, jobRawData) {
+        const container = document.getElementById(containerId);
+        if (!container) {
+            return;
+        }
+        container.querySelectorAll('.tag-chart-box').forEach(chartNode => {
+            const instance = echarts.getInstanceByDom(chartNode);
+            if (instance) {
+                instance.dispose();
+            }
+        });
+        container.innerHTML = '';
+        renderTagCharts(container, tagRawData);
+        const jobChartEl = createTopicCard(container, '招聘信息专业分析', 'jobMajorChart', 'job-topic-panel');
+        renderPieChart(jobChartEl.id, '招聘信息专业分析', jobRawData, true, {
+            topN: 15,
+            seriesCenter: ['50%', '42%'],
+            seriesRadius: ['28%', '46%'],
+            legendBottom: 6,
+            clickUrlBuilder(code) {
+                return '/jobs?majorCodes=' + encodeURIComponent(code);
+            }
+        });
+    }
+
     if (isCollegeAnalytics) {
         renderPieChart('schoolCategoryChart', '院校层次分布', schoolCategoryData, true, {clickFilterParam: 'schoolCategoryIds'});
         // 本科专业类别分布
@@ -518,13 +549,7 @@
         renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {clickFilterParam: 'ethnicity'});
         renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel');
         renderMirrorBar('genderChart', '性别分布', genderData, 'gender');
-        renderTagCharts('haidongTagCharts', haidongTagData);
-        renderPieChart('jobMajorChart', '招聘信息专业分析', jobMajorData, true, {
-            topN: 15,
-            clickUrlBuilder(code) {
-                return '/jobs?majorCodes=' + encodeURIComponent(code);
-            }
-        });
+        renderTopicCards('collegeTopicCharts', haidongTagData, jobMajorData);
     } else {
     renderAreaChart('ageChart', '年龄结构', ageData);
     renderHorizontalBar('educationChart', '学历', educationData);

@@ -902,7 +902,30 @@ code {
     gap: 16px;
 }
 .tag-chart-panel { padding: 14px 16px 10px; }
+.topic-chart-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.topic-card-meta {
+    display: flex;
+    align-items: center;
+    min-height: 24px;
+}
+.topic-card-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(77, 195, 255, 0.14);
+    border: 1px solid rgba(77, 195, 255, 0.24);
+    color: #9fe7ff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
 .tag-chart-box { width: 100%; min-width: 0; height: 300px; }
+.job-topic-panel .tag-chart-box { height: 360px; }
 
 .tag-chart-empty {
     padding: 24px 18px;
@@ -1545,4 +1568,5 @@ code {
     .analytics-grid-3col .span-2 { grid-column: span 1; }
     .analytics-grid-3col .span-3 { grid-column: span 1; }
     .tag-chart-grid { grid-template-columns: 1fr; }
+    .job-topic-panel .tag-chart-box { height: 340px; }
 }
