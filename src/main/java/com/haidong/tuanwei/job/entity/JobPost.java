@@ -27,6 +27,7 @@ public class JobPost {
     private String contactPerson;
     private String contactPhone;
     private String jobDescription;
+    private Integer sortOrder;
     private LocalDateTime publishTime;
     private Integer status;
     private List<String> educationRequirements = new ArrayList<>();

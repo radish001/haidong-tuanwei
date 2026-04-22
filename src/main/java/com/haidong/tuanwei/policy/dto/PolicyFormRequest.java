@@ -14,6 +14,7 @@ public class PolicyFormRequest {
     private String issuingOrganization;
     private String policySource;
     private String summary;
+    private Integer sortOrder;
 
     @NotBlank(message = "正文不能为空")
     private String contentHtml;

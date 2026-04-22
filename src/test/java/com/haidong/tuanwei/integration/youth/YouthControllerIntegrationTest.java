@@ -66,10 +66,77 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                         .param("recruitmentYear", "2023")
                         .param("graduationDate", "2027-06-30")
                         .param("employmentDirection", "互联网")
+                        .param("sortOrder", "2")
                         .param("phone", uniquePhone))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/youth/college"))
                 .andExpect(flash().attribute("successMessage", "青年信息新增成功"));
+
+        MvcResult listResult = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.youth.entity.YouthInfo> records =
+                (List<com.haidong.tuanwei.youth.entity.YouthInfo>) listResult.getModelAndView().getModel().get("records");
+        assertThat(records)
+                .filteredOn(item -> uniquePhone.equals(item.getPhone()))
+                .extracting(com.haidong.tuanwei.youth.entity.YouthInfo::getSortOrder)
+                .containsExactly(2);
+    }
+
+    @Test
+    void youthPageShouldPrioritizeExplicitSortOrder() throws Exception {
+        String phoneSecond = "160" + System.currentTimeMillis();
+        String phoneFirst = "161" + System.currentTimeMillis();
+        String phoneNull = "162" + System.currentTimeMillis();
+
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "排序青年2")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", phoneSecond)
+                        .param("sortOrder", "2"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "排序青年1")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", phoneFirst)
+                        .param("sortOrder", "1"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "排序青年空")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", phoneNull))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult listResult = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.youth.entity.YouthInfo> records =
+                (List<com.haidong.tuanwei.youth.entity.YouthInfo>) listResult.getModelAndView().getModel().get("records");
+        List<String> phones = records.stream()
+                .map(com.haidong.tuanwei.youth.entity.YouthInfo::getPhone)
+                .toList();
+
+        assertThat(phones.indexOf(phoneFirst)).isGreaterThanOrEqualTo(0);
+        assertThat(phones.indexOf(phoneSecond)).isGreaterThanOrEqualTo(0);
+        assertThat(phones.indexOf(phoneNull)).isGreaterThanOrEqualTo(0);
+        assertThat(phones.indexOf(phoneFirst)).isLessThan(phones.indexOf(phoneSecond));
+        assertThat(phones.indexOf(phoneSecond)).isLessThan(phones.indexOf(phoneNull));
     }
 
     @Test
@@ -410,6 +477,61 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
                 .extracting(com.haidong.tuanwei.job.entity.JobPost::getJobName)
                 .contains(matchingJobName)
                 .doesNotContain(nonMatchingJobName);
+    }
+
+    @Test
+    void youthMatchJobsShouldPrioritizeJobSortOrder() throws Exception {
+        String uniquePhone = "163" + System.currentTimeMillis();
+        String secondJobName = "排序匹配岗位2-" + System.currentTimeMillis();
+        String firstJobName = "排序匹配岗位1-" + System.currentTimeMillis();
+        String unsortedJobName = "排序匹配岗位空-" + System.currentTimeMillis();
+
+        com.haidong.tuanwei.youth.entity.YouthInfo youthInfo = createCollegeYouthForTest(
+                "排序匹配学生", uniquePhone, "10743", "080901", "BK");
+
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", secondJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "100")
+                        .param("sortOrder", "2"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", firstJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "100")
+                        .param("sortOrder", "1"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/jobs")
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", unsortedJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901")
+                        .param("schoolCategoryIds", "100"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult matchResult = mockMvc.perform(get("/youth/college/" + youthInfo.getId() + "/matches").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.job.entity.JobPost> matchedRecords =
+                (List<com.haidong.tuanwei.job.entity.JobPost>) matchResult.getModelAndView().getModel().get("records");
+        List<String> names = matchedRecords.stream()
+                .map(com.haidong.tuanwei.job.entity.JobPost::getJobName)
+                .toList();
+
+        assertThat(names.indexOf(firstJobName)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(secondJobName)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(unsortedJobName)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(firstJobName)).isLessThan(names.indexOf(secondJobName));
+        assertThat(names.indexOf(secondJobName)).isLessThan(names.indexOf(unsortedJobName));
     }
 
     private com.haidong.tuanwei.youth.entity.YouthInfo createCollegeYouthForTest(String name, String phone) throws Exception {

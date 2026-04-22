@@ -36,6 +36,23 @@
         }
 
         const placeholder = select.dataset.placeholder || "请选择";
+        const unlimitedValue = select.dataset.unlimitedValue;
+        const syncUnlimitedSelection = (tom, addedValue) => {
+            if (!unlimitedValue) {
+                return;
+            }
+            const selectedValues = tom.items.slice();
+            if (!selectedValues.includes(unlimitedValue)) {
+                return;
+            }
+            if (addedValue === unlimitedValue) {
+                selectedValues
+                    .filter((value) => value !== unlimitedValue)
+                    .forEach((value) => tom.removeItem(value, true));
+                return;
+            }
+            tom.removeItem(unlimitedValue, true);
+        };
         const tom = new window.TomSelect(select, {
             plugins: ["remove_button", "dropdown_input"],
             create: false,
@@ -48,6 +65,12 @@
             searchField: ["text"],
             render: {
                 no_results: () => "<div class=\"no-results\">未找到匹配项</div>"
+            },
+            onInitialize() {
+                syncUnlimitedSelection(this, unlimitedValue);
+            },
+            onItemAdd(value) {
+                syncUnlimitedSelection(this, value);
             }
         });
 

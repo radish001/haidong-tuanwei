@@ -379,6 +379,7 @@ public class YouthController {
         form.setEntrepreneurshipStatus(youthInfo.getEntrepreneurshipStatus());
         form.setEntrepreneurshipProject(youthInfo.getEntrepreneurshipProject());
         form.setEntrepreneurshipDemand(youthInfo.getEntrepreneurshipDemand());
+        form.setSortOrder(youthInfo.getSortOrder());
         form.setRemarks(youthInfo.getRemarks());
         return form;
     }

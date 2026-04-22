@@ -147,6 +147,7 @@ public class PolicyController {
         form.setIssuingOrganization(article.getIssuingOrganization());
         form.setPolicySource(article.getPolicySource());
         form.setSummary(article.getSummary());
+        form.setSortOrder(article.getSortOrder());
         form.setContentHtml(article.getContentHtml());
         return form;
     }

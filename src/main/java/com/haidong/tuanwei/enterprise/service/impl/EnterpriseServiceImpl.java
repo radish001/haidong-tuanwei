@@ -85,6 +85,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         enterprise.setContactPerson(request.getContactPerson());
         enterprise.setContactPhone(request.getContactPhone());
         enterprise.setDescription(request.getDescription());
+        enterprise.setSortOrder(request.getSortOrder());
         return enterprise;
     }
 

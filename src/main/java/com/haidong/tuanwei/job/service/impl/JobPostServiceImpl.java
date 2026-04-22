@@ -6,6 +6,7 @@ import com.haidong.tuanwei.job.dto.JobFormRequest;
 import com.haidong.tuanwei.job.dto.JobSearchRequest;
 import com.haidong.tuanwei.job.entity.JobPost;
 import com.haidong.tuanwei.job.service.JobPostService;
+import com.haidong.tuanwei.job.support.JobRequirementOptionSupport;
 import com.haidong.tuanwei.system.dao.DictionaryDao;
 import com.haidong.tuanwei.system.dao.MajorCatalogDao;
 import com.haidong.tuanwei.system.dao.SchoolTagDao;
@@ -128,6 +129,7 @@ public class JobPostServiceImpl implements JobPostService {
         jobPost.setContactPerson(request.getContactPerson());
         jobPost.setContactPhone(request.getContactPhone());
         jobPost.setJobDescription(request.getJobDescription());
+        jobPost.setSortOrder(request.getSortOrder());
         return jobPost;
     }
 
@@ -182,7 +184,7 @@ public class JobPostServiceImpl implements JobPostService {
 
     private List<String> normalizeDictValues(String dictType, List<String> values, String label) {
         LinkedHashSet<String> normalized = new LinkedHashSet<>();
-        if (values == null) {
+        if (values == null || JobRequirementOptionSupport.containsUnlimitedSelection(values)) {
             return List.of();
         }
         for (String value : values) {
@@ -215,7 +217,7 @@ public class JobPostServiceImpl implements JobPostService {
 
     private List<String> normalizeMajorCodes(List<String> majorCodes) {
         LinkedHashSet<String> normalized = new LinkedHashSet<>();
-        if (majorCodes == null) {
+        if (majorCodes == null || JobRequirementOptionSupport.containsUnlimitedSelection(majorCodes)) {
             return List.of();
         }
         for (String majorCode : majorCodes) {
@@ -310,7 +312,7 @@ public class JobPostServiceImpl implements JobPostService {
     }
 
     private String validateDictValue(String dictType, String value, String label) {
-        if (value == null || value.isBlank()) {
+        if (value == null || value.isBlank() || JobRequirementOptionSupport.isUnlimitedSelection(value)) {
             return null;
         }
         List<DictItem> items = dictionaryDao.findByType(dictType);

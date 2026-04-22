@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.haidong.tuanwei.integration.IntegrationTestBase;
 import com.haidong.tuanwei.job.dto.JobSearchRequest;
+import com.haidong.tuanwei.job.dto.JobFormRequest;
+import com.haidong.tuanwei.job.support.JobRequirementOptionSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -52,6 +54,7 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
                         .param("workCountyCode", "630202")
                         .param("contactPerson", "招聘负责人")
                         .param("contactPhone", "13912345678")
+                        .param("sortOrder", "2")
                         .param("jobDescription", "这是一个集成测试岗位"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(BASE_URL))
@@ -76,6 +79,50 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
         assertThat(createdJob.getEducationRequirements()).contains("BK", "SS");
         assertThat(createdJob.getMajorCodes()).contains("080901");
         assertThat(createdJob.getSchoolCategoryIds()).contains(100L);
+        assertThat(createdJob.getSortOrder()).isEqualTo(2);
+    }
+
+    @Test
+    void jobsPageShouldPrioritizeExplicitSortOrder() throws Exception {
+        String sortedSecond = "排序岗位2-" + System.currentTimeMillis();
+        String sortedFirst = "排序岗位1-" + System.currentTimeMillis();
+        String unsorted = "排序岗位空-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", sortedSecond)
+                        .param("sortOrder", "2"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", sortedFirst)
+                        .param("sortOrder", "1"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", unsorted))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult listResult = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> records =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) listResult
+                        .getModelAndView().getModel().get("records");
+        java.util.List<String> names = records.stream()
+                .map(com.haidong.tuanwei.job.entity.JobPost::getJobName)
+                .toList();
+
+        assertThat(names.indexOf(sortedFirst)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(sortedSecond)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(unsorted)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(sortedFirst)).isLessThan(names.indexOf(sortedSecond));
+        assertThat(names.indexOf(sortedSecond)).isLessThan(names.indexOf(unsorted));
     }
 
     @Test
@@ -340,14 +387,95 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void jobMatchPageShouldPrioritizeYouthSortOrder() throws Exception {
+        String jobName = "排序匹配学生岗位-" + System.currentTimeMillis();
+        String highPhone = "150" + System.currentTimeMillis();
+        String lowPhone = "151" + System.currentTimeMillis();
+        String nullPhone = "152" + System.currentTimeMillis();
+
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "排序学生2")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", highPhone)
+                        .param("sortOrder", "2"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "排序学生1")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", lowPhone)
+                        .param("sortOrder", "1"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "排序学生空")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", nullPhone))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", jobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult listResult = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> jobs =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) listResult
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.job.entity.JobPost createdJob = jobs.stream()
+                .filter(j -> j.getJobName().equals(jobName))
+                .findFirst()
+                .orElseThrow();
+
+        MvcResult matchResult = mockMvc.perform(get(BASE_URL + "/" + createdJob.getId() + "/matches").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.youth.entity.YouthInfo> matchedRecords =
+                (java.util.List<com.haidong.tuanwei.youth.entity.YouthInfo>) matchResult
+                        .getModelAndView().getModel().get("records");
+        java.util.List<String> phones = matchedRecords.stream()
+                .map(com.haidong.tuanwei.youth.entity.YouthInfo::getPhone)
+                .toList();
+
+        assertThat(phones.indexOf(lowPhone)).isGreaterThanOrEqualTo(0);
+        assertThat(phones.indexOf(highPhone)).isGreaterThanOrEqualTo(0);
+        assertThat(phones.indexOf(nullPhone)).isGreaterThanOrEqualTo(0);
+        assertThat(phones.indexOf(lowPhone)).isLessThan(phones.indexOf(highPhone));
+        assertThat(phones.indexOf(highPhone)).isLessThan(phones.indexOf(nullPhone));
+    }
+
+    @Test
     void newJobPageShouldLoadWithAllOptions() throws Exception {
-        mockMvc.perform(get(BASE_URL + "/new").session(adminSession))
+        MvcResult result = mockMvc.perform(get(BASE_URL + "/new").session(adminSession))
                 .andExpect(status().isOk())
                 .andExpect(view().name("job/form"))
                 .andExpect(model().attributeExists("jobForm", "enterprises", "educationOptions",
                         "majorOptions", "schoolCategoryOptions", "schoolTagOptions", "experienceOptions", "salaryOptions"))
                 .andExpect(model().attribute("formTitle", "新增招聘岗位"))
-                .andExpect(model().attribute("formAction", BASE_URL));
+                .andExpect(model().attribute("formAction", BASE_URL))
+                .andReturn();
+
+        assertThat(result.getResponse().getContentAsString())
+                .contains("不限")
+                .contains("value=\"" + JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE + "\"");
     }
 
     @Test
@@ -383,6 +511,30 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(view().name("job/form"))
                 .andExpect(model().attribute("formTitle", "编辑招聘岗位"))
                 .andExpect(model().attributeExists("jobForm"));
+    }
+
+    @Test
+    void editJobPageShouldShowUnlimitedForEmptyRequirements() throws Exception {
+        String jobName = "不限回显岗位-" + System.currentTimeMillis();
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", jobName)
+                        .param("educationRequirements", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE)
+                        .param("majorCodes", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE))
+                .andExpect(status().is3xxRedirection());
+
+        com.haidong.tuanwei.job.entity.JobPost job = findJobByName(jobName);
+
+        MvcResult editResult = mockMvc.perform(get(BASE_URL + "/" + job.getId() + "/edit").session(adminSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("job/form"))
+                .andReturn();
+
+        JobFormRequest jobForm = (JobFormRequest) editResult.getModelAndView().getModel().get("jobForm");
+        assertThat(jobForm.getEducationRequirements()).containsExactly(JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE);
+        assertThat(jobForm.getMajorCodes()).containsExactly(JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE);
+        assertThat(editResult.getResponse().getContentAsString()).contains("不限");
     }
 
     @Test
@@ -459,6 +611,89 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
         assertThat(html).contains("全部专业");
         assertThat(html).doesNotContain("multiple");
         assertThat(html).doesNotContain("data-multiselect");
+    }
+
+    @Test
+    void jobsPageShouldFilterUnlimitedRequirementsAndShowUnlimitedLabels() throws Exception {
+        String unlimitedJobName = "不限筛选岗位-" + System.currentTimeMillis();
+        String restrictedJobName = "受限筛选岗位-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", unlimitedJobName)
+                        .param("educationRequirements", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE)
+                        .param("majorCodes", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", restrictedJobName)
+                        .param("educationRequirements", "BK")
+                        .param("majorCodes", "080901"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult filteredResult = mockMvc.perform(get(BASE_URL)
+                        .session(adminSession)
+                        .param("educationRequirement", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE)
+                        .param("majorCodes", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> records =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) filteredResult
+                        .getModelAndView().getModel().get("records");
+
+        assertThat(records)
+                .extracting(com.haidong.tuanwei.job.entity.JobPost::getJobName)
+                .contains(unlimitedJobName)
+                .doesNotContain(restrictedJobName);
+
+        String html = filteredResult.getResponse().getContentAsString();
+        assertThat(html).contains("全部专业");
+        assertThat(html).contains("全部学历");
+        assertThat(html).contains("不限");
+    }
+
+    @Test
+    void jobMatchPageShouldShowUnlimitedLabelsForEmptyRequirements() throws Exception {
+        String jobName = "不限匹配摘要岗位-" + System.currentTimeMillis();
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", jobName)
+                        .param("educationRequirements", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE)
+                        .param("majorCodes", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE))
+                .andExpect(status().is3xxRedirection());
+
+        com.haidong.tuanwei.job.entity.JobPost job = findJobByName(jobName);
+
+        MvcResult matchResult = mockMvc.perform(get(BASE_URL + "/" + job.getId() + "/matches").session(adminSession))
+                .andExpect(status().isOk())
+                .andExpect(view().name("job/match-results"))
+                .andReturn();
+
+        String html = matchResult.getResponse().getContentAsString();
+        assertThat(html).contains("专业要求")
+                .contains("学历要求")
+                .contains("不限");
+    }
+
+    private com.haidong.tuanwei.job.entity.JobPost findJobByName(String jobName) throws Exception {
+        MvcResult listResult = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> records =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) listResult
+                        .getModelAndView().getModel().get("records");
+        return records.stream()
+                .filter(j -> j.getJobName().equals(jobName))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("未找到岗位: " + jobName));
     }
 
 }

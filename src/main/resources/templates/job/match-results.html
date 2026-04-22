@@ -18,8 +18,8 @@
                     <h2 class="h4 mb-1" th:text="${jobPost.jobName + ' 匹配学生'}">岗位匹配学生</h2>
                 </div>
                 <div class="detail-grid row g-3">
-                    <div class="col-12 col-sm-6"><span>专业要求</span><strong th:text="${#strings.isEmpty(jobPost.majorRequirementSummary) ? '未限制' : jobPost.majorRequirementSummary}">未限制</strong></div>
-                    <div class="col-12 col-sm-6"><span>学历要求</span><strong th:text="${#strings.isEmpty(jobPost.educationRequirement) ? '未限制' : jobPost.educationRequirement}">未限制</strong></div>
+                    <div class="col-12 col-sm-6"><span>专业要求</span><strong th:text="${#strings.isEmpty(jobPost.majorRequirementSummary) ? '不限' : jobPost.majorRequirementSummary}">不限</strong></div>
+                    <div class="col-12 col-sm-6"><span>学历要求</span><strong th:text="${#strings.isEmpty(jobPost.educationRequirement) ? '不限' : jobPost.educationRequirement}">不限</strong></div>
                     <div class="col-12 col-sm-6"><span>学校类别</span><strong th:text="${#strings.isEmpty(jobPost.schoolCategorySummary) ? '未限制' : jobPost.schoolCategorySummary}">未限制</strong></div>
                     <div class="col-12 col-sm-6"><span>薪资待遇</span><strong th:text="${#strings.isEmpty(salaryRangeLabel) ? '未设置' : salaryRangeLabel}">未设置</strong></div>
                 </div>
@@ -81,7 +81,6 @@
                     <table class="simple-table match-results-table table table-hover align-middle mb-0">
                         <thead>
                         <tr>
-                            <th class="index-cell">序号</th>
                             <th>姓名</th>
                             <th>性别</th>
                             <th>学历</th>
@@ -93,7 +92,6 @@
                         </thead>
                         <tbody>
                         <tr th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                             <td th:text="${item.name}">学生姓名</td>
                             <td th:text="${item.gender}">男</td>
                             <td th:text="${item.educationLevelName}">本科</td>
@@ -103,7 +101,7 @@
                             <td th:text="${item.phone}">13900000001</td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(records)}">
-                            <td class="empty-cell" colspan="8">当前岗位条件下暂无匹配学生</td>
+                            <td class="empty-cell" colspan="7">当前岗位条件下暂无匹配学生</td>
                         </tr>
                         </tbody>
                     </table>

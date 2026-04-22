@@ -340,6 +340,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         youthInfo.setEntrepreneurshipStatus(request.getEntrepreneurshipStatus());
         youthInfo.setEntrepreneurshipProject(request.getEntrepreneurshipProject());
         youthInfo.setEntrepreneurshipDemand(request.getEntrepreneurshipDemand());
+        youthInfo.setSortOrder(request.getSortOrder());
         youthInfo.setRemarks(request.getRemarks());
         return youthInfo;
     }

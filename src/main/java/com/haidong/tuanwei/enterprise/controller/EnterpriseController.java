@@ -227,6 +227,7 @@ public class EnterpriseController {
         form.setContactPerson(enterprise.getContactPerson());
         form.setContactPhone(enterprise.getContactPhone());
         form.setDescription(enterprise.getDescription());
+        form.setSortOrder(enterprise.getSortOrder());
         return form;
     }
 

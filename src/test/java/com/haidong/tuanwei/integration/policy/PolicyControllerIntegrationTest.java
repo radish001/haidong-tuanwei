@@ -39,6 +39,7 @@ class PolicyControllerIntegrationTest extends IntegrationTestBase {
                         .param("issuingOrganization", "海东市团委")
                         .param("policySource", "市政府")
                         .param("summary", "这是一条测试政策的摘要")
+                        .param("sortOrder", "2")
                         .param("contentHtml", "<p>这是政策的详细内容</p>"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(BASE_URL))
@@ -57,6 +58,53 @@ class PolicyControllerIntegrationTest extends IntegrationTestBase {
         assertThat(records)
                 .extracting(com.haidong.tuanwei.policy.entity.PolicyArticle::getTitle)
                 .contains(uniqueTitle);
+        assertThat(records)
+                .filteredOn(item -> uniqueTitle.equals(item.getTitle()))
+                .extracting(com.haidong.tuanwei.policy.entity.PolicyArticle::getSortOrder)
+                .containsExactly(2);
+    }
+
+    @Test
+    void policiesPageShouldPrioritizeExplicitSortOrder() throws Exception {
+        String sortedSecond = "排序政策2-" + System.currentTimeMillis();
+        String sortedFirst = "排序政策1-" + System.currentTimeMillis();
+        String unsorted = "排序政策空-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("title", sortedSecond)
+                        .param("sortOrder", "2")
+                        .param("contentHtml", "<p>内容</p>"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("title", sortedFirst)
+                        .param("sortOrder", "1")
+                        .param("contentHtml", "<p>内容</p>"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("title", unsorted)
+                        .param("contentHtml", "<p>内容</p>"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult listResult = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.policy.entity.PolicyArticle> records =
+                (java.util.List<com.haidong.tuanwei.policy.entity.PolicyArticle>) listResult
+                        .getModelAndView().getModel().get("records");
+        java.util.List<String> titles = records.stream()
+                .map(com.haidong.tuanwei.policy.entity.PolicyArticle::getTitle)
+                .toList();
+
+        assertThat(titles.indexOf(sortedFirst)).isGreaterThanOrEqualTo(0);
+        assertThat(titles.indexOf(sortedSecond)).isGreaterThanOrEqualTo(0);
+        assertThat(titles.indexOf(unsorted)).isGreaterThanOrEqualTo(0);
+        assertThat(titles.indexOf(sortedFirst)).isLessThan(titles.indexOf(sortedSecond));
+        assertThat(titles.indexOf(sortedSecond)).isLessThan(titles.indexOf(unsorted));
     }
 
     @Test

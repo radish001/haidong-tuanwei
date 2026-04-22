@@ -105,7 +105,6 @@
                     <thead>
                     <tr>
                         <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                        <th class="index-cell">序号</th>
                         <th>企业名称</th>
                         <th>企业规模</th>
                         <th>行业</th>
@@ -119,7 +118,6 @@
                     <tbody>
                     <tr th:each="item, itemStat : ${records}">
                         <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                         <td th:text="${item.enterpriseName}">企业名称</td>
                         <td th:text="${item.enterpriseScale}">500-999人</td>
                         <td th:text="${item.industry}">智能硬件</td>
@@ -138,7 +136,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(records)}">
-                        <td class="empty-cell" colspan="10">暂无企业数据</td>
+                        <td class="empty-cell" colspan="9">暂无企业数据</td>
                     </tr>
                     </tbody>
                 </table>

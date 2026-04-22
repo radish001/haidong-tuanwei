@@ -23,4 +23,5 @@ public class EnterpriseFormRequest {
     private String contactPerson;
     private String contactPhone;
     private String description;
+    private Integer sortOrder;
 }

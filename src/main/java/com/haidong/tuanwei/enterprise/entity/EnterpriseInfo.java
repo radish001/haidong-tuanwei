@@ -20,5 +20,6 @@ public class EnterpriseInfo {
     private String contactPerson;
     private String contactPhone;
     private String description;
+    private Integer sortOrder;
     private Integer status;
 }

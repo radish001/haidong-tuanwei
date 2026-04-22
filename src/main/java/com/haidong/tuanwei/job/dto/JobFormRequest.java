@@ -31,4 +31,5 @@ public class JobFormRequest {
     private String contactPerson;
     private String contactPhone;
     private String jobDescription;
+    private Integer sortOrder;
 }

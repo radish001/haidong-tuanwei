@@ -84,7 +84,6 @@
                     <table class="simple-table match-results-table table table-hover align-middle mb-0">
                         <thead>
                         <tr>
-                            <th class="index-cell">序号</th>
                             <th>岗位名称</th>
                             <th>所属企业</th>
                             <th>学历要求</th>
@@ -96,17 +95,16 @@
                         </thead>
                         <tbody>
                         <tr th:each="item, itemStat : ${records}">
-                            <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                             <td th:text="${item.jobName}">岗位名称</td>
                             <td th:text="${item.enterpriseName}">所属企业</td>
-                            <td th:text="${#strings.isEmpty(item.educationRequirement) ? '未限制' : item.educationRequirement}">未限制</td>
-                            <td th:text="${#strings.isEmpty(item.majorRequirementSummary) ? '未限制' : item.majorRequirementSummary}">未限制</td>
+                            <td th:text="${#strings.isEmpty(item.educationRequirement) ? '不限' : item.educationRequirement}">不限</td>
+                            <td th:text="${#strings.isEmpty(item.majorRequirementSummary) ? '不限' : item.majorRequirementSummary}">不限</td>
                             <td th:text="${#strings.isEmpty(item.schoolCategorySummary) ? '未限制' : item.schoolCategorySummary}">未限制</td>
                             <td th:text="${item.workRegionName}">工作地区</td>
                             <td th:text="${item.contactPhone}">联系电话</td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(records)}">
-                            <td class="empty-cell" colspan="8">当前学生条件下暂无匹配招聘岗位</td>
+                            <td class="empty-cell" colspan="7">当前学生条件下暂无匹配招聘岗位</td>
                         </tr>
                         </tbody>
                     </table>

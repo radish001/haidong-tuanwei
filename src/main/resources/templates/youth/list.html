@@ -177,7 +177,6 @@
                     <thead>
                     <tr>
                         <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                        <th class="index-cell">序号</th>
                         <th>姓名</th>
                         <th>性别</th>
                         <th>出生年月</th>
@@ -196,7 +195,6 @@
                     <tbody>
                     <tr th:each="item, itemStat : ${records}">
                         <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                         <td th:text="${item.name}">姓名</td>
                         <td th:text="${item.gender}">男</td>
                         <td th:text="${item.birthDate}">2001-01-01</td>
@@ -220,7 +218,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(records)}">
-                        <td class="empty-cell" colspan="15">暂无在校大学生数据</td>
+                        <td class="empty-cell" colspan="14">暂无在校大学生数据</td>
                     </tr>
                     </tbody>
                 </table>

@@ -69,6 +69,7 @@ public class PolicyArticleServiceImpl implements PolicyArticleService {
         article.setIssuingOrganization(request.getIssuingOrganization());
         article.setPolicySource(request.getPolicySource());
         article.setSummary(request.getSummary());
+        article.setSortOrder(request.getSortOrder());
         article.setContentHtml(request.getContentHtml());
         article.setPublishTime(LocalDateTime.now());
         return article;

@@ -50,6 +50,8 @@
                         <label for="majorCodes">专业要求:
                             <select class="form-select" id="majorCodes" name="majorCodes">
                                 <option value="">全部专业</option>
+                                <option th:value="${unlimitedOptionValue}"
+                                        th:selected="${query.majorCodes != null and query.majorCodes.contains(unlimitedOptionValue)}">不限</option>
                                 <option th:each="item : ${majorOptions}"
                                         th:value="${item.majorCode}"
                                         th:text="${item.majorName}"
@@ -61,6 +63,8 @@
                         <label for="educationRequirement">学历要求:
                             <select class="form-select" id="educationRequirement" name="educationRequirement">
                                 <option value="">全部学历</option>
+                                <option th:value="${unlimitedOptionValue}"
+                                        th:selected="${query.educationRequirement == unlimitedOptionValue}">不限</option>
                                 <option th:each="item : ${educationOptions}"
                                         th:value="${item.dictValue}"
                                         th:text="${item.dictLabel}"
@@ -127,7 +131,6 @@
                     <thead>
                     <tr>
                         <th class="checkbox-cell"><input type="checkbox" aria-label="select all" data-select-all></th>
-                        <th class="index-cell">序号</th>
                         <th>企业名称</th>
                         <th>岗位名称</th>
                         <th>专业要求</th>
@@ -143,12 +146,11 @@
                     <tbody>
                     <tr th:each="item, itemStat : ${records}">
                         <td class="checkbox-cell"><input type="checkbox" aria-label="select row" data-row-select th:value="${item.id}"></td>
-                        <td class="index-cell" th:text="${(currentPage - 1) * pageSize + itemStat.count}">1</td>
                         <td th:text="${item.enterpriseName}">企业名称</td>
                         <td th:text="${item.jobName}">岗位名称</td>
-                        <td th:text="${item.majorRequirementSummary}">计算机科学与技术</td>
+                        <td th:text="${#strings.isEmpty(item.majorRequirementSummary) ? '不限' : item.majorRequirementSummary}">不限</td>
                         <td th:text="${item.experienceRequirement}">1-3年</td>
-                        <td th:text="${item.educationRequirement}">本科</td>
+                        <td th:text="${#strings.isEmpty(item.educationRequirement) ? '不限' : item.educationRequirement}">不限</td>
                         <td th:text="${item.salaryRange}">8000-12000元</td>
                         <td th:text="${item.workRegionName}">乐都区</td>
                         <td th:text="${item.contactPerson}">联系人</td>
@@ -165,7 +167,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(records)}">
-                        <td class="empty-cell" colspan="12">暂无招聘数据</td>
+                        <td class="empty-cell" colspan="11">暂无招聘数据</td>
                     </tr>
                     </tbody>
                 </table>

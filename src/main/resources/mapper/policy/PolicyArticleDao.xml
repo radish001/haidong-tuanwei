@@ -11,6 +11,7 @@
         <result property="policySource" column="policy_source"/>
         <result property="summary" column="summary"/>
         <result property="contentHtml" column="content_html"/>
+        <result property="sortOrder" column="sort_order"/>
         <result property="publishTime" column="publish_time"/>
         <result property="status" column="status"/>
     </resultMap>
@@ -29,10 +30,12 @@
     </sql>
 
     <select id="search" resultMap="PolicyArticleResultMap">
-        select id, title, issuing_organization, policy_source, summary, content_html, publish_time, status
+        select id, title, issuing_organization, policy_source, summary, content_html, sort_order, publish_time, status
         from policy_article
         <include refid="searchWhere"/>
-        order by id desc
+        order by case when sort_order is null then 1 else 0 end,
+                 sort_order asc,
+                 id desc
         <if test="query != null and (query.paged == null or query.paged)">
             limit #{query.offset}, #{query.safePageSize}
         </if>
@@ -45,7 +48,7 @@
     </select>
 
     <select id="findById" resultMap="PolicyArticleResultMap">
-        select id, title, issuing_organization, policy_source, summary, content_html, publish_time, status
+        select id, title, issuing_organization, policy_source, summary, content_html, sort_order, publish_time, status
         from policy_article
         where id = #{id}
           and deleted = 0
@@ -54,9 +57,9 @@
 
     <insert id="insert" parameterType="com.haidong.tuanwei.policy.entity.PolicyArticle" useGeneratedKeys="true"
             keyProperty="id">
-        insert into policy_article (title, issuing_organization, policy_source, summary, content_html, publish_time,
+        insert into policy_article (title, issuing_organization, policy_source, summary, content_html, sort_order, publish_time,
                                     status, deleted)
-        values (#{title}, #{issuingOrganization}, #{policySource}, #{summary}, #{contentHtml}, #{publishTime},
+        values (#{title}, #{issuingOrganization}, #{policySource}, #{summary}, #{contentHtml}, #{sortOrder}, #{publishTime},
                 #{status}, 0)
     </insert>
 
@@ -67,6 +70,7 @@
             policy_source = #{policySource},
             summary = #{summary},
             content_html = #{contentHtml},
+            sort_order = #{sortOrder},
             publish_time = #{publishTime}
         where id = #{id}
           and deleted = 0

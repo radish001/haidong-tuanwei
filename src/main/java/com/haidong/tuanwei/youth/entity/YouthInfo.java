@@ -48,6 +48,7 @@ public class YouthInfo {
     private String entrepreneurshipStatus;
     private String entrepreneurshipProject;
     private String entrepreneurshipDemand;
+    private Integer sortOrder;
     private String remarks;
     private Long createBy;
     private Long updateBy;

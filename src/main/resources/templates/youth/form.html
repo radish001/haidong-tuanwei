@@ -80,6 +80,10 @@
                         <span>招考年份</span>
                         <input class="form-control" type="text" th:field="*{recruitmentYear}" inputmode="numeric" maxlength="4" placeholder="例如 2023">
                     </label>
+                    <label class="col-12 col-md-6">
+                        <span>排序</span>
+                        <input class="form-control" type="number" th:field="*{sortOrder}" placeholder="数值越小越靠前">
+                    </label>
                     <label class="col-12 col-md-6"><span>联系方式</span><input class="form-control" type="text" th:field="*{phone}"></label>
 
                     <div class="form-actions full-width col-12">

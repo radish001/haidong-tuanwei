@@ -1,5 +1,6 @@
 package com.haidong.tuanwei.job.dto;
 
+import com.haidong.tuanwei.job.support.JobRequirementOptionSupport;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -36,5 +37,24 @@ public class JobSearchRequest {
 
     public int getOffset() {
         return (getSafePage() - 1) * getSafePageSize();
+    }
+
+    public boolean hasUnlimitedEducationFilter() {
+        return JobRequirementOptionSupport.isUnlimitedSelection(educationRequirement)
+                || JobRequirementOptionSupport.containsUnlimitedSelection(educationRequirements);
+    }
+
+    public boolean hasSpecificEducationFilter() {
+        return !hasUnlimitedEducationFilter()
+                && ((educationRequirement != null && !educationRequirement.isBlank())
+                || (educationRequirements != null && !educationRequirements.isEmpty()));
+    }
+
+    public boolean hasUnlimitedMajorFilter() {
+        return JobRequirementOptionSupport.containsUnlimitedSelection(majorCodes);
+    }
+
+    public boolean hasSpecificMajorFilter() {
+        return !hasUnlimitedMajorFilter() && majorCodes != null && !majorCodes.isEmpty();
     }
 }

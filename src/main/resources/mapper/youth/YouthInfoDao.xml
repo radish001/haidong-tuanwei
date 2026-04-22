@@ -46,6 +46,7 @@
         <result property="entrepreneurshipStatus" column="entrepreneurship_status"/>
         <result property="entrepreneurshipProject" column="entrepreneurship_project"/>
         <result property="entrepreneurshipDemand" column="entrepreneurship_demand"/>
+        <result property="sortOrder" column="sort_order"/>
         <result property="remarks" column="remarks"/>
         <result property="createTime" column="create_time"/>
     </resultMap>
@@ -160,7 +161,8 @@
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as current_residence_name,
                y.employment_status, y.current_job, y.employment_company,
-               y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
+               y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand,
+               y.sort_order, y.remarks, y.create_time
         from youth_info y
         left join sys_dict_item gd on gd.dict_type = 'gender' and gd.dict_value = y.gender
             and gd.enabled = 1
@@ -187,7 +189,9 @@
         left join sys_region rc on rc.region_code = y.residence_city_code
         left join sys_region rct on rct.region_code = y.residence_county_code
         <include refid="searchWhere"/>
-        order by y.id desc
+        order by case when y.sort_order is null then 1 else 0 end,
+                 y.sort_order asc,
+                 y.id desc
         <if test="query != null and (query.paged == null or query.paged)">
             limit #{query.offset}, #{query.safePageSize}
         </if>
@@ -229,7 +233,8 @@
                y.residence_province_code, y.residence_city_code, y.residence_county_code,
                concat_ws('-', rp.region_name, rc.region_name, rct.region_name) as current_residence_name,
                y.employment_status, y.current_job, y.employment_company,
-               y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand, y.remarks, y.create_time
+               y.entrepreneurship_status, y.entrepreneurship_project, y.entrepreneurship_demand,
+               y.sort_order, y.remarks, y.create_time
         from youth_info y
         left join sys_dict_item gd on gd.dict_type = 'gender' and gd.dict_value = y.gender
             and gd.enabled = 1
@@ -269,7 +274,7 @@
             major_code, major, major_category, recruitment_year,
             graduation_date, employment_direction, phone, residence_province_code, residence_city_code, residence_county_code,
             employment_status, current_job, employment_company,
-            entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, remarks, create_by, update_by,
+            entrepreneurship_status, entrepreneurship_project, entrepreneurship_demand, sort_order, remarks, create_by, update_by,
             deleted
         ) values (
             #{youthType}, #{name}, #{gender}, #{birthDate}, #{ethnicity}, #{politicalStatus},
@@ -277,7 +282,7 @@
             #{educationCode}, #{degreeCode}, #{schoolCode}, #{schoolName}, #{schoolProvinceCode}, #{schoolCityCode},
             #{schoolCountyCode}, #{majorCode}, #{major}, #{majorCategory}, #{recruitmentYear},
             #{graduationDate}, #{employmentDirection}, #{phone}, #{residenceProvinceCode}, #{residenceCityCode}, #{residenceCountyCode}, #{employmentStatus}, #{currentJob},
-            #{employmentCompany}, #{entrepreneurshipStatus}, #{entrepreneurshipProject}, #{entrepreneurshipDemand},
+            #{employmentCompany}, #{entrepreneurshipStatus}, #{entrepreneurshipProject}, #{entrepreneurshipDemand}, #{sortOrder},
             #{remarks}, #{createBy}, #{updateBy}, 0
         )
     </insert>
@@ -315,6 +320,7 @@
             entrepreneurship_status = #{entrepreneurshipStatus},
             entrepreneurship_project = #{entrepreneurshipProject},
             entrepreneurship_demand = #{entrepreneurshipDemand},
+            sort_order = #{sortOrder},
             remarks = #{remarks},
             update_by = #{updateBy}
         where id = #{id}

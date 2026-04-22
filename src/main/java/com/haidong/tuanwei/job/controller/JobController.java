@@ -8,6 +8,7 @@ import com.haidong.tuanwei.job.dto.JobFormRequest;
 import com.haidong.tuanwei.job.dto.JobSearchRequest;
 import com.haidong.tuanwei.job.entity.JobPost;
 import com.haidong.tuanwei.job.service.JobPostService;
+import com.haidong.tuanwei.job.support.JobRequirementOptionSupport;
 import com.haidong.tuanwei.system.service.DictionaryService;
 import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.youth.dto.YouthSearchRequest;
@@ -205,8 +206,8 @@ public class JobController {
         form.setEnterpriseId(jobPost.getEnterpriseId());
         form.setJobName(jobPost.getJobName());
         form.setJobCategory(jobPost.getJobCategory());
-        form.setEducationRequirements(jobPost.getEducationRequirements());
-        form.setMajorCodes(jobPost.getMajorCodes());
+        form.setEducationRequirements(JobRequirementOptionSupport.toFormSelections(jobPost.getEducationRequirements()));
+        form.setMajorCodes(JobRequirementOptionSupport.toFormSelections(jobPost.getMajorCodes()));
         form.setSchoolCategoryIds(jobPost.getSchoolCategoryIds());
         form.setSchoolTagIds(jobPost.getSchoolTagIds());
         form.setExperienceRequirement(jobPost.getExperienceRequirement());
@@ -218,6 +219,7 @@ public class JobController {
         form.setContactPerson(jobPost.getContactPerson());
         form.setContactPhone(jobPost.getContactPhone());
         form.setJobDescription(jobPost.getJobDescription());
+        form.setSortOrder(jobPost.getSortOrder());
         return form;
     }
 
@@ -229,6 +231,7 @@ public class JobController {
         model.addAttribute("schoolTagOptions", masterDataService.getAllSchoolTags());
         model.addAttribute("experienceOptions", dictionaryService.getByType("experience_requirement"));
         model.addAttribute("salaryOptions", dictionaryService.getByType("salary_range"));
+        model.addAttribute("unlimitedOptionValue", JobRequirementOptionSupport.UNLIMITED_OPTION_VALUE);
     }
 
     private void normalizePage(JobSearchRequest query, long totalCount) {

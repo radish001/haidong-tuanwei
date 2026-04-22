@@ -32,13 +32,17 @@
                     <label class="col-12 col-md-6"><span>岗位类别</span><input class="form-control" type="text" th:field="*{jobCategory}"></label>
                     <label class="job-multiselect-label col-12 col-md-6">
                         <span>专业要求</span>
-                        <select class="form-select" th:field="*{majorCodes}" multiple data-multiselect data-placeholder="请选择专业要求">
+                        <select class="form-select" th:field="*{majorCodes}" multiple data-multiselect
+                                data-placeholder="请选择专业要求" th:attr="data-unlimited-value=${unlimitedOptionValue}">
+                            <option th:value="${unlimitedOptionValue}">不限</option>
                             <option th:each="item : ${majorOptions}" th:value="${item.majorCode}" th:text="${item.majorName}"></option>
                         </select>
                     </label>
                     <label class="job-multiselect-label col-12 col-md-6">
                         <span>学历要求</span>
-                        <select class="form-select" th:field="*{educationRequirements}" multiple data-multiselect data-placeholder="请选择学历要求">
+                        <select class="form-select" th:field="*{educationRequirements}" multiple data-multiselect
+                                data-placeholder="请选择学历要求" th:attr="data-unlimited-value=${unlimitedOptionValue}">
+                            <option th:value="${unlimitedOptionValue}">不限</option>
                             <option th:each="item : ${educationOptions}" th:value="${item.dictValue}" th:text="${item.dictLabel}"></option>
                         </select>
                     </label>
@@ -77,6 +81,7 @@
                     </div>
                     <label class="col-12 col-md-6"><span>联系人</span><input class="form-control" type="text" th:field="*{contactPerson}"></label>
                     <label class="col-12 col-md-6"><span>联系电话</span><input class="form-control" type="text" th:field="*{contactPhone}"></label>
+                    <label class="col-12 col-md-6"><span>排序</span><input class="form-control" type="number" th:field="*{sortOrder}" placeholder="数值越小越靠前"></label>
                     <label class="full-width col-12"><span>岗位描述</span><textarea class="form-control" th:field="*{jobDescription}"></textarea></label>
                     <div class="form-actions full-width col-12">
                         <a class="btn btn-outline-secondary" th:href="@{/jobs}" data-drawer-close>取消</a>

@@ -12,6 +12,7 @@ public class PolicyArticle {
     private String policySource;
     private String summary;
     private String contentHtml;
+    private Integer sortOrder;
     private LocalDateTime publishTime;
     private Integer status;
 }

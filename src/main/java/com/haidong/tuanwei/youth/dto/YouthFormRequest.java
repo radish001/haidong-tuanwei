@@ -43,5 +43,6 @@ public class YouthFormRequest {
     private String entrepreneurshipStatus;
     private String entrepreneurshipProject;
     private String entrepreneurshipDemand;
+    private Integer sortOrder;
     private String remarks;
 }

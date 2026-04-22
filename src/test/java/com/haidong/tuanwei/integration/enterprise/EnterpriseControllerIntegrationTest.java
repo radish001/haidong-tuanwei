@@ -60,6 +60,7 @@ class EnterpriseControllerIntegrationTest extends IntegrationTestBase {
                         .param("address", "海东市乐都区测试地址")
                         .param("contactPerson", "测试联系人")
                         .param("contactPhone", "13912345678")
+                        .param("sortOrder", "3")
                         .param("description", "这是集成测试创建的企业"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl(BASE_URL))
@@ -80,6 +81,10 @@ class EnterpriseControllerIntegrationTest extends IntegrationTestBase {
         assertThat(records)
                 .extracting(com.haidong.tuanwei.enterprise.entity.EnterpriseInfo::getEnterpriseName)
                 .contains(uniqueName);
+        assertThat(records)
+                .filteredOn(item -> uniqueName.equals(item.getEnterpriseName()))
+                .extracting(com.haidong.tuanwei.enterprise.entity.EnterpriseInfo::getSortOrder)
+                .containsExactly(3);
 
         // Step 3: 找到新创建的企业ID
         com.haidong.tuanwei.enterprise.entity.EnterpriseInfo createdEnterprise = records.stream()
@@ -92,7 +97,49 @@ class EnterpriseControllerIntegrationTest extends IntegrationTestBase {
                 .andExpect(status().isOk())
                 .andExpect(view().name("enterprise/form"))
                 .andExpect(model().attributeExists("enterpriseForm"))
+                .andExpect(model().attribute("enterpriseForm",
+                        org.hamcrest.Matchers.hasProperty("sortOrder", org.hamcrest.Matchers.is(3))))
                 .andExpect(model().attribute("formTitle", "编辑企业信息"));
+    }
+
+    @Test
+    void enterprisesPageShouldPrioritizeExplicitSortOrder() throws Exception {
+        String sortedSecond = "排序企业2-" + System.currentTimeMillis();
+        String sortedFirst = "排序企业1-" + System.currentTimeMillis();
+        String unsorted = "排序企业空-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseName", sortedSecond)
+                        .param("sortOrder", "2"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseName", sortedFirst)
+                        .param("sortOrder", "1"))
+                .andExpect(status().is3xxRedirection());
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseName", unsorted))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult listResult = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.enterprise.entity.EnterpriseInfo> records =
+                (java.util.List<com.haidong.tuanwei.enterprise.entity.EnterpriseInfo>) listResult
+                        .getModelAndView().getModel().get("records");
+        java.util.List<String> names = records.stream()
+                .map(com.haidong.tuanwei.enterprise.entity.EnterpriseInfo::getEnterpriseName)
+                .toList();
+
+        assertThat(names.indexOf(sortedFirst)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(sortedSecond)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(unsorted)).isGreaterThanOrEqualTo(0);
+        assertThat(names.indexOf(sortedFirst)).isLessThan(names.indexOf(sortedSecond));
+        assertThat(names.indexOf(sortedSecond)).isLessThan(names.indexOf(unsorted));
     }
 
     /**

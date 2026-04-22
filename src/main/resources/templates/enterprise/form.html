@@ -61,6 +61,7 @@
                     <label class="full-width col-12"><span>企业地址</span><input class="form-control" type="text" th:field="*{address}"></label>
                     <label class="col-12 col-md-6"><span>联系人</span><input class="form-control" type="text" th:field="*{contactPerson}"></label>
                     <label class="col-12 col-md-6"><span>联系电话</span><input class="form-control" type="text" th:field="*{contactPhone}"></label>
+                    <label class="col-12 col-md-6"><span>排序</span><input class="form-control" type="number" th:field="*{sortOrder}" placeholder="数值越小越靠前"></label>
                     <label class="full-width col-12"><span>企业介绍</span><textarea class="form-control" th:field="*{description}"></textarea></label>
                     <div class="form-actions full-width col-12">
                         <a class="btn btn-outline-secondary" th:href="@{/enterprises}" data-drawer-close>取消</a>

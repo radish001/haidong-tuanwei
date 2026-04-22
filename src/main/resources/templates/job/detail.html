@@ -23,14 +23,15 @@
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>所属企业</span><strong th:text="${record.enterpriseName}">所属企业</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>岗位名称</span><strong th:text="${record.jobName}">岗位名称</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>岗位类别</span><strong th:text="${record.jobCategory}">岗位类别</strong></div>
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>学历要求</span><strong th:text="${record.educationRequirement}">学历要求</strong></div>
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>专业要求</span><strong th:text="${record.majorRequirementSummary}">专业要求</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>学历要求</span><strong th:text="${#strings.isEmpty(record.educationRequirement) ? '不限' : record.educationRequirement}">不限</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>专业要求</span><strong th:text="${#strings.isEmpty(record.majorRequirementSummary) ? '不限' : record.majorRequirementSummary}">不限</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>院校类别要求</span><strong th:text="${record.schoolCategorySummary}">院校类别要求</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>院校标签要求</span><strong th:text="${record.schoolTagSummary}">院校标签要求</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>经验要求</span><strong th:text="${experienceRequirementLabel}">经验要求</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>薪资待遇</span><strong th:text="${salaryRangeLabel}">薪资待遇</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>招聘人数</span><strong th:text="${record.recruitCount}">招聘人数</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>工作地区</span><strong th:text="${record.workRegionName}">工作地区</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系人</span><strong th:text="${record.contactPerson}">联系人</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系电话</span><strong th:text="${record.contactPhone}">联系电话</strong></div>
                     <div class="col-12"><span>岗位描述</span><strong th:text="${record.jobDescription}">岗位描述</strong></div>
