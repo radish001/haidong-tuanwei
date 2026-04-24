@@ -1186,15 +1186,17 @@ code {
 }
 
 .simple-table { font-size: 13px; }
+.simple-table > :not(caption) > * > * { text-align: center; }
 .empty-cell { text-align: center; color: var(--text-secondary); padding: 28px 12px; }
 .code-column, .code-cell { width: 160px; white-space: nowrap; }
-.name-column, .name-cell { text-align: left; }
+.name-column, .name-cell { text-align: center; }
 .name-column { min-width: 180px; }
 .code-cell { color: #b8eaff; font-variant-numeric: tabular-nums; }
 .action-column { width: 130px; white-space: nowrap; }
 .checkbox-cell { width: 42px; text-align: center; }
 .checkbox-cell input { accent-color: #3ad8ff; }
 .index-cell { width: 54px; color: var(--text-secondary); }
+.simple-table .table-actions { justify-content: center; }
 
 .pagination-bar {
     display: flex;

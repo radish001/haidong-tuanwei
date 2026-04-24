@@ -236,10 +236,13 @@
         attachResize(chart);
     }
 
-    function topNWithOther(data, n) {
+    function topNWithOther(data, n, aggregateOther = true) {
         if (data.length <= n) return data;
         const sorted = data.slice().sort((a, b) => b.value - a.value);
         const top = sorted.slice(0, n);
+        if (!aggregateOther) {
+            return top;
+        }
         const otherValue = sorted.slice(n).reduce((sum, item) => sum + item.value, 0);
         if (otherValue > 0) {
             top.push({name: '其他', value: otherValue});
@@ -248,11 +251,13 @@
     }
 
     function renderPieChart(elementId, title, rawData, donut, options = {}) {
-        const data = topNWithOther(parseData(rawData), options.topN ?? 10);
+        const data = topNWithOther(parseData(rawData), options.topN ?? 10, options.aggregateOther ?? true);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
         const seriesCenter = options.seriesCenter ?? ['50%', '50%'];
         const seriesRadius = options.seriesRadius ?? (donut ? ['36%', '58%'] : '58%');
+        const minAngle = options.minAngle ?? 0;
+        const borderWidth = options.borderWidth ?? 4;
         const titleTop = options.titleTop ?? 10;
         const legendBottom = options.legendBottom ?? 0;
         const clickFilterParam = options.clickFilterParam;
@@ -278,11 +283,12 @@
                 type: 'pie',
                 radius: seriesRadius,
                 center: seriesCenter,
+                minAngle: minAngle,
                 label: {show: false},
                 labelLine: {show: false},
                 itemStyle: {
                     borderColor: '#071738',
-                    borderWidth: 4
+                    borderWidth: borderWidth
                 },
                 data: data.map((item, index) => ({
                     name: item.name,
@@ -530,7 +536,8 @@
         renderTagCharts(container, tagRawData);
         const jobChartEl = createTopicCard(container, '招聘信息专业分析', 'jobMajorChart', 'job-topic-panel');
         renderPieChart(jobChartEl.id, '招聘信息专业分析', jobRawData, true, {
-            topN: 15,
+            topN: 10,
+            aggregateOther: false,
             seriesCenter: ['50%', '42%'],
             seriesRadius: ['28%', '46%'],
             legendBottom: 6,
@@ -546,14 +553,23 @@
         renderVerticalBar('undergraduateMajorCategoryChart', '本科专业类别分布', undergraduateMajorCategoryData, 'majorCategory');
         // 专科专业类别分布
         renderVerticalBar('juniorCollegeMajorCategoryChart', '专科专业类别分布', juniorCollegeMajorCategoryData, 'majorCategory');
-        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {clickFilterParam: 'ethnicity'});
+        renderPieChart('ethnicityChart', '民族分类占比', ethnicityData, false, {
+            clickFilterParam: 'ethnicity',
+            minAngle: 5,
+            aggregateOther: false,
+            borderWidth: 1
+        });
         renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel');
         renderMirrorBar('genderChart', '性别分布', genderData, 'gender');
         renderTopicCards('collegeTopicCharts', haidongTagData, jobMajorData);
     } else {
     renderAreaChart('ageChart', '年龄结构', ageData);
     renderHorizontalBar('educationChart', '学历', educationData);
-    renderPieChart('ethnicityChart', '民族分布', ethnicityData, false);
+    renderPieChart('ethnicityChart', '民族分布', ethnicityData, false, {
+        minAngle: 5,
+        aggregateOther: false,
+        borderWidth: 1
+    });
     renderPieChart('politicalChart', '政治面貌', politicalData, true);
     renderHorizontalBar('genderChart', '性别分布', genderData);
     renderPieChart('demandChart', '创业需求', demandData, true);

@@ -28,11 +28,21 @@ class EnterpriseControllerIntegrationTest extends IntegrationTestBase {
      */
     @Test
     void enterprisesPageShouldLoadWithExistingData() throws Exception {
-        mockMvc.perform(get(BASE_URL).session(adminSession))
+        MvcResult result = mockMvc.perform(get(BASE_URL).session(adminSession))
                 .andExpect(status().isOk())
                 .andExpect(view().name("enterprise/list"))
                 .andExpect(model().attributeExists("records", "industryOptions", "natureOptions", "scaleOptions"))
-                .andExpect(model().attribute("pageTitle", "企业信息"));
+                .andExpect(model().attribute("pageTitle", "企业信息"))
+                .andReturn();
+
+        String html = result.getResponse().getContentAsString();
+        int natureHeaderIndex = html.indexOf("<th>企业性质</th>");
+        int industryHeaderIndex = html.indexOf("<th>行业</th>");
+
+        assertThat(html).doesNotContain("<th>企业规模</th>");
+        assertThat(natureHeaderIndex).isGreaterThanOrEqualTo(0);
+        assertThat(industryHeaderIndex).isGreaterThanOrEqualTo(0);
+        assertThat(natureHeaderIndex).isLessThan(industryHeaderIndex);
     }
 
     /**

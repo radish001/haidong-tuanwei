@@ -112,7 +112,8 @@ class AnalyticsControllerIntegrationTest extends IntegrationTestBase {
 
         assertThat(jobMajorJson).contains("080901");
         assertThat(html).contains("招聘信息专业分析");
-        assertThat(html).contains("topN: 15");
+        assertThat(html).contains("topN: 10");
+        assertThat(html).contains("aggregateOther: false");
         assertThat(html).contains("/jobs?majorCodes=");
     }
 
