@@ -144,6 +144,13 @@ create table if not exists sys_analytics_school_tag (
     unique (tag_id)
 );
 
+create table if not exists sys_display_settings (
+    id bigint primary key auto_increment,
+    sort_field_visible boolean not null default true,
+    create_time timestamp not null default current_timestamp,
+    update_time timestamp not null default current_timestamp
+);
+
 create table if not exists youth_info (
     id bigint primary key auto_increment,
     youth_type varchar(32) not null,

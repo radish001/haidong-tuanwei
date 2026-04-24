@@ -16,6 +16,7 @@ import com.haidong.tuanwei.system.entity.DictItem;
 import com.haidong.tuanwei.system.entity.MajorCatalog;
 import com.haidong.tuanwei.system.entity.Region;
 import com.haidong.tuanwei.system.entity.School;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.system.support.RegionSelectionSupport;
 import com.haidong.tuanwei.youth.dao.YouthInfoDao;
 import com.haidong.tuanwei.youth.dto.YouthImportResult;
@@ -44,6 +45,7 @@ class YouthInfoServiceImplTest {
     private RegionDao regionDao;
     private MajorCatalogDao majorCatalogDao;
     private SchoolDao schoolDao;
+    private MasterDataService masterDataService;
     private YouthInfoServiceImpl youthInfoService;
 
     @BeforeEach
@@ -53,6 +55,7 @@ class YouthInfoServiceImplTest {
         regionDao = mock(RegionDao.class);
         majorCatalogDao = mock(MajorCatalogDao.class);
         schoolDao = mock(SchoolDao.class);
+        masterDataService = mock(MasterDataService.class);
 
         stubDictionary("gender", "男", "女");
         stubDictionary("ethnicity", "汉族", "藏族");
@@ -85,8 +88,10 @@ class YouthInfoServiceImplTest {
         }
 
         RegionSelectionSupport regionSelectionSupport = new RegionSelectionSupport(regionDao);
+        when(masterDataService.isSortFieldVisible()).thenReturn(true);
         youthInfoService = new YouthInfoServiceImpl(
-                youthInfoDao, dictionaryDao, regionDao, majorCatalogDao, schoolDao, regionSelectionSupport);
+                youthInfoDao, dictionaryDao, regionDao, majorCatalogDao, schoolDao, regionSelectionSupport,
+                masterDataService);
     }
 
     @Test

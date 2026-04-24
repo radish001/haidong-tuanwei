@@ -154,6 +154,13 @@ create table if not exists sys_analytics_school_tag (
     unique key uk_sys_analytics_school_tag (tag_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+create table if not exists sys_display_settings (
+    id bigint primary key auto_increment,
+    sort_field_visible tinyint(1) not null default 1,
+    create_time datetime not null default current_timestamp,
+    update_time datetime not null default current_timestamp on update current_timestamp
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 create table if not exists youth_info (
     id bigint primary key auto_increment,
     youth_type varchar(32) not null,

@@ -20,7 +20,7 @@
                     <div class="detail-grid row g-3">
                         <div class="col-12 col-sm-6"><span>来源</span><strong th:text="${record.policySource}">官网</strong></div>
                         <div class="col-12 col-sm-6"><span>状态</span><strong th:text="${record.status == 1 ? '已发布' : '草稿'}">已发布</strong></div>
-                        <div class="col-12 col-sm-6"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
+                        <div class="col-12 col-sm-6" th:if="${sortFieldVisible}"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
                         <div class="col-12"><span>摘要</span><strong th:text="${record.summary}">政策摘要</strong></div>
                         <div class="col-12">
                             <span>正文</span>

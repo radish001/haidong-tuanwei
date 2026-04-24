@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haidong.tuanwei.system.dao.DisplaySettingsDao">
+
+    <resultMap id="DisplaySettingsResultMap" type="com.haidong.tuanwei.system.entity.DisplaySettings">
+        <id property="id" column="id"/>
+        <result property="sortFieldVisible" column="sort_field_visible"/>
+    </resultMap>
+
+    <select id="findFirst" resultMap="DisplaySettingsResultMap">
+        select id, sort_field_visible
+        from sys_display_settings
+        order by id
+        limit 1
+    </select>
+
+    <insert id="insert" parameterType="com.haidong.tuanwei.system.entity.DisplaySettings" useGeneratedKeys="true"
+            keyProperty="id">
+        insert into sys_display_settings (sort_field_visible)
+        values (#{sortFieldVisible})
+    </insert>
+
+    <update id="updateSortFieldVisible">
+        update sys_display_settings
+        set sort_field_visible = #{sortFieldVisible}
+        where id = #{id}
+    </update>
+</mapper>

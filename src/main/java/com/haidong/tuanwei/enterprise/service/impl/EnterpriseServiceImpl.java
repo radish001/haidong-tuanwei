@@ -2,6 +2,7 @@ package com.haidong.tuanwei.enterprise.service.impl;
 
 import com.haidong.tuanwei.system.dao.DictionaryDao;
 import com.haidong.tuanwei.system.entity.DictItem;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.system.support.RegionSelectionSupport;
 import com.haidong.tuanwei.enterprise.dao.EnterpriseDao;
 import com.haidong.tuanwei.enterprise.dto.EnterpriseFormRequest;
@@ -19,6 +20,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
     private final EnterpriseDao enterpriseDao;
     private final DictionaryDao dictionaryDao;
     private final RegionSelectionSupport regionSelectionSupport;
+    private final MasterDataService masterDataService;
 
     @Override
     public List<EnterpriseInfo> search(EnterpriseSearchRequest query) {
@@ -52,6 +54,7 @@ public class EnterpriseServiceImpl implements EnterpriseService {
         EnterpriseInfo enterprise = toEntity(request);
         enterprise.setId(id);
         enterprise.setStatus(1);
+        enterprise.setSortOrder(resolveSortOrderForUpdate(id, request.getSortOrder()));
         enterpriseDao.update(enterprise);
     }
 
@@ -99,5 +102,13 @@ public class EnterpriseServiceImpl implements EnterpriseService {
                 .filter(itemValue -> itemValue.equals(value))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(label + "不在基础数据范围内"));
+    }
+
+    private Integer resolveSortOrderForUpdate(Long id, Integer requestedSortOrder) {
+        if (masterDataService.isSortFieldVisible() || requestedSortOrder != null) {
+            return requestedSortOrder;
+        }
+        EnterpriseInfo existing = enterpriseDao.findById(id);
+        return existing == null ? null : existing.getSortOrder();
     }
 }

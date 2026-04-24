@@ -2,6 +2,7 @@ package com.haidong.tuanwei.common.config;
 
 import com.haidong.tuanwei.system.entity.Menu;
 import com.haidong.tuanwei.system.service.MenuService;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.common.security.AdminUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class AdminViewModelAdvice {
     private static final Set<String> HIDDEN_TOP_LEVEL_MENU_NAMES = Set.of();
 
     private final MenuService menuService;
+    private final MasterDataService masterDataService;
 
     @Value("${app.upload.max-file-size:10MB}")
     private String uploadMaxFileSizeText;
@@ -69,6 +71,11 @@ public class AdminViewModelAdvice {
     @ModelAttribute("uploadMaxFileSizeText")
     public String uploadMaxFileSizeText() {
         return uploadMaxFileSizeText;
+    }
+
+    @ModelAttribute("sortFieldVisible")
+    public boolean sortFieldVisible() {
+        return masterDataService.isSortFieldVisible();
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)

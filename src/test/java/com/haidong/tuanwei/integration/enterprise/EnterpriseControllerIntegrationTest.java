@@ -204,6 +204,84 @@ class EnterpriseControllerIntegrationTest extends IntegrationTestBase {
                         org.hamcrest.Matchers.hasProperty("address", org.hamcrest.Matchers.is(updatedAddress))));
     }
 
+    @Test
+    void sortFieldShouldHideAndExistingValueShouldBePreservedWhenSettingDisabled() throws Exception {
+        String uniqueName = "隐藏排序企业-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseName", uniqueName)
+                        .param("industry", "IT")
+                        .param("enterpriseNature", "PRIVATE")
+                        .param("enterpriseScale", "MEDIUM")
+                        .param("regionProvinceCode", "630000")
+                        .param("regionCityCode", "630200")
+                        .param("regionCountyCode", "630202")
+                        .param("address", "原地址")
+                        .param("contactPerson", "原联系人")
+                        .param("contactPhone", "13912340000")
+                        .param("sortOrder", "7"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult createdList = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.enterprise.entity.EnterpriseInfo> createdRecords =
+                (java.util.List<com.haidong.tuanwei.enterprise.entity.EnterpriseInfo>) createdList
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.enterprise.entity.EnterpriseInfo created = createdRecords.stream()
+                .filter(item -> uniqueName.equals(item.getEnterpriseName()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "false"))
+                .andExpect(status().is3xxRedirection());
+
+        String editHtml = mockMvc.perform(get(BASE_URL + "/" + created.getId() + "/edit").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(editHtml).doesNotContain("name=\"sortOrder\"");
+
+        String detailHtml = mockMvc.perform(get(BASE_URL + "/" + created.getId()).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(detailHtml).doesNotContain("<span>排序</span>");
+
+        mockMvc.perform(post(BASE_URL + "/" + created.getId())
+                        .session(adminSession)
+                        .param("id", String.valueOf(created.getId()))
+                        .param("enterpriseName", uniqueName)
+                        .param("industry", "IT")
+                        .param("enterpriseNature", "PRIVATE")
+                        .param("enterpriseScale", "MEDIUM")
+                        .param("regionProvinceCode", "630000")
+                        .param("regionCityCode", "630200")
+                        .param("regionCountyCode", "630202")
+                        .param("address", "更新后地址")
+                        .param("contactPerson", "更新联系人")
+                        .param("contactPhone", "13912340001"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult updatedList = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.enterprise.entity.EnterpriseInfo> updatedRecords =
+                (java.util.List<com.haidong.tuanwei.enterprise.entity.EnterpriseInfo>) updatedList
+                        .getModelAndView().getModel().get("records");
+        assertThat(updatedRecords)
+                .filteredOn(item -> uniqueName.equals(item.getEnterpriseName()))
+                .extracting(com.haidong.tuanwei.enterprise.entity.EnterpriseInfo::getSortOrder)
+                .containsExactly(7);
+    }
+
     /**
      * 测试：删除企业
      * 验证：删除后不再出现在列表中

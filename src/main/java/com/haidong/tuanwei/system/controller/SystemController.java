@@ -54,10 +54,12 @@ public class SystemController {
     private static final String TAB_SCHOOL = "school";
     private static final String TAB_ENTERPRISE = "enterprise";
     private static final String TAB_ANALYTICS = "analytics";
+    private static final String TAB_DISPLAY = "display";
 
     private static final String SECTION_REGION = "region";
     private static final String SECTION_SCHOOL_TAG = "school-tag";
     private static final String SECTION_ANALYTICS_HAIDONG_TAG = "haidong-school-tag";
+    private static final String SECTION_SORT_FIELD_VISIBILITY = "sort-field-visibility";
 
     private final DictionaryService dictionaryService;
     private final RegionService regionService;
@@ -380,6 +382,20 @@ public class SystemController {
         return redirectToWorkbench(TAB_ANALYTICS, SECTION_ANALYTICS_HAIDONG_TAG, null, null);
     }
 
+    @PostMapping("/system/display/sort-field-visibility")
+    public String saveSortFieldVisibility(
+            @RequestParam(name = "sortFieldVisible", defaultValue = "false") boolean sortFieldVisible,
+            RedirectAttributes redirectAttributes) {
+        try {
+            masterDataService.saveSortFieldVisible(sortFieldVisible);
+            log.info("Sort field visibility configuration saved: sortFieldVisible={}", sortFieldVisible);
+            redirectAttributes.addFlashAttribute("successMessage", "排序显示设置保存成功");
+        } catch (IllegalStateException ex) {
+            redirectAttributes.addFlashAttribute("errorMessage", ex.getMessage());
+        }
+        return redirectToWorkbench(TAB_DISPLAY, SECTION_SORT_FIELD_VISIBILITY, null, null);
+    }
+
     @GetMapping("/system/schools/new")
     public String newSchool(@RequestHeader(value = "X-Requested-With", required = false) String requestedWith,
             Model model) {
@@ -693,6 +709,11 @@ public class SystemController {
                 model.addAttribute("allSchoolTags", masterDataService.getAllSchoolTags());
                 model.addAttribute("selectedTagIds", masterDataService.getAnalyticsSchoolTagIds());
             }
+            case TAB_DISPLAY -> {
+                viewKind = "display-sort-field-visibility";
+                totalCount = 0;
+                model.addAttribute("sortFieldVisibleSetting", masterDataService.isSortFieldVisible());
+            }
             default -> throw new IllegalStateException("未知页签");
         }
 
@@ -767,7 +788,8 @@ public class SystemController {
     private void normalizeQuery(DictionaryWorkbenchQuery query) {
         String tab = query.getTab();
         String section = query.getSection();
-        if (!List.of(TAB_COMMON, TAB_MAJOR_CATEGORY, TAB_MAJOR, TAB_SCHOOL_CATEGORY, TAB_SCHOOL, TAB_ENTERPRISE, TAB_ANALYTICS)
+        if (!List.of(TAB_COMMON, TAB_MAJOR_CATEGORY, TAB_MAJOR, TAB_SCHOOL_CATEGORY, TAB_SCHOOL, TAB_ENTERPRISE,
+                TAB_ANALYTICS, TAB_DISPLAY)
                 .contains(tab)) {
             query.setTab(TAB_COMMON);
         }
@@ -796,6 +818,7 @@ public class SystemController {
                 }
             }
             case TAB_ANALYTICS -> query.setSection(SECTION_ANALYTICS_HAIDONG_TAG);
+            case TAB_DISPLAY -> query.setSection(SECTION_SORT_FIELD_VISIBILITY);
             default -> {
             }
         }
@@ -847,6 +870,7 @@ public class SystemController {
             case "experience_requirement" -> "经验要求";
             case "salary_range" -> "薪资待遇";
             case SECTION_ANALYTICS_HAIDONG_TAG -> "海东籍顶尖高校分析";
+            case SECTION_SORT_FIELD_VISIBILITY -> "排序字段显示";
             default -> switch (tab) {
                 case TAB_MAJOR -> "专业名称";
                 case TAB_SCHOOL -> "学校";
@@ -865,6 +889,7 @@ public class SystemController {
             case "enterprise_scale", "enterprise_nature", "enterprise_industry" -> "企业信息录入与筛选使用统一字典来源";
             case "experience_requirement", "salary_range" -> "招聘岗位录入、筛选与统计使用统一字典来源";
             case SECTION_ANALYTICS_HAIDONG_TAG -> "选择参与数据分析图表的学校标签";
+            case SECTION_SORT_FIELD_VISIBILITY -> "控制业务详情页和新增/编辑页是否展示排序字段，不影响当前列表排序结果";
             default -> "统一维护受控基础数据，供录入、筛选和校验使用";
         };
     }
@@ -896,7 +921,7 @@ public class SystemController {
                                     : "/system/dictionaries/items/new?tab=" + query.getTab() + "&section=" + query.getSection();
             case TAB_MAJOR -> "/system/majors/new";
             case TAB_SCHOOL -> "/system/schools/new";
-            case TAB_ANALYTICS -> null;
+            case TAB_ANALYTICS, TAB_DISPLAY -> null;
             default -> "#";
         };
     }

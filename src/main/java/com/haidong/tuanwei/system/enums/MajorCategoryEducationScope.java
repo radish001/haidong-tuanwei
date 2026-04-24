@@ -41,10 +41,10 @@ public enum MajorCategoryEducationScope {
         }
         String[] values = scopesValue.split(",");
         StringBuilder labels = new StringBuilder();
-        for (int i = 0; i < values.length; i++) {
-            MajorCategoryEducationScope scope = fromValue(values[i].trim());
+        for (String value : values) {
+            MajorCategoryEducationScope scope = fromValue(value.trim());
             if (scope != null) {
-                if (i > 0) {
+                if (!labels.isEmpty()) {
                     labels.append("、");
                 }
                 labels.append(scope.getLabel());

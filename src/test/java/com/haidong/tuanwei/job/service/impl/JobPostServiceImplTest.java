@@ -17,6 +17,7 @@ import com.haidong.tuanwei.system.dao.SchoolTagDao;
 import com.haidong.tuanwei.system.entity.DictItem;
 import com.haidong.tuanwei.system.entity.MajorCatalog;
 import com.haidong.tuanwei.system.entity.SchoolTag;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.system.support.RegionSelectionSupport;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,7 @@ class JobPostServiceImplTest {
     private MajorCatalogDao majorCatalogDao;
     private SchoolTagDao schoolTagDao;
     private RegionSelectionSupport regionSelectionSupport;
+    private MasterDataService masterDataService;
     private JobPostServiceImpl jobPostService;
 
     @BeforeEach
@@ -41,6 +43,7 @@ class JobPostServiceImplTest {
         majorCatalogDao = mock(MajorCatalogDao.class);
         schoolTagDao = mock(SchoolTagDao.class);
         regionSelectionSupport = mock(RegionSelectionSupport.class);
+        masterDataService = mock(MasterDataService.class);
 
         EnterpriseInfo enterprise = new EnterpriseInfo();
         enterprise.setId(1L);
@@ -70,9 +73,11 @@ class JobPostServiceImplTest {
         RegionSelectionSupport.RegionSelection regionSelection = new RegionSelectionSupport.RegionSelection("630000", "630200",
                 "630202");
         when(regionSelectionSupport.normalize("630000", "630200", "630202", "工作地区")).thenReturn(regionSelection);
+        when(masterDataService.isSortFieldVisible()).thenReturn(true);
 
         jobPostService = new JobPostServiceImpl(
-                jobPostDao, enterpriseService, dictionaryDao, majorCatalogDao, schoolTagDao, regionSelectionSupport);
+                jobPostDao, enterpriseService, dictionaryDao, majorCatalogDao, schoolTagDao, regionSelectionSupport,
+                masterDataService);
     }
 
     @Test

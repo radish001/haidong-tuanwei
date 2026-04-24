@@ -26,7 +26,7 @@
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>民族</span><strong th:text="${record.ethnicityName}">汉族</strong></div>
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>籍贯</span><strong th:text="${record.nativePlaceName}">青海省-海东市-乐都区</strong></div>
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>招考年份</span><strong th:text="${record.recruitmentYear}">2023</strong></div>
-                        <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
+                        <div class="col-12 col-sm-6 col-lg-4 col-xl-6" th:if="${sortFieldVisible}"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>学校</span><strong th:text="${record.schoolName}">青海大学</strong></div>
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>学历</span><strong th:text="${record.educationLevelName}">本科</strong></div>
                         <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>专业</span><strong th:text="${record.major}">计算机科学与技术</strong></div>

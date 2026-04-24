@@ -71,4 +71,8 @@ public interface MasterDataService {
     List<Long> getAnalyticsSchoolTagIds();
 
     void saveAnalyticsSchoolTagIds(List<Long> tagIds);
+
+    boolean isSortFieldVisible();
+
+    void saveSortFieldVisible(boolean sortFieldVisible);
 }

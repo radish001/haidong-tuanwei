@@ -5,6 +5,7 @@ import com.haidong.tuanwei.policy.dto.PolicyFormRequest;
 import com.haidong.tuanwei.policy.dto.PolicySearchRequest;
 import com.haidong.tuanwei.policy.entity.PolicyArticle;
 import com.haidong.tuanwei.policy.service.PolicyArticleService;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class PolicyArticleServiceImpl implements PolicyArticleService {
 
     private final PolicyArticleDao policyArticleDao;
+    private final MasterDataService masterDataService;
 
     @Override
     public List<PolicyArticle> search(PolicySearchRequest query) {
@@ -42,6 +44,7 @@ public class PolicyArticleServiceImpl implements PolicyArticleService {
     public void update(Long id, PolicyFormRequest request, Long operatorId) {
         PolicyArticle article = toEntity(request);
         article.setId(id);
+        article.setSortOrder(resolveSortOrderForUpdate(id, request.getSortOrder()));
         policyArticleDao.update(article);
     }
 
@@ -73,5 +76,13 @@ public class PolicyArticleServiceImpl implements PolicyArticleService {
         article.setContentHtml(request.getContentHtml());
         article.setPublishTime(LocalDateTime.now());
         return article;
+    }
+
+    private Integer resolveSortOrderForUpdate(Long id, Integer requestedSortOrder) {
+        if (masterDataService.isSortFieldVisible() || requestedSortOrder != null) {
+            return requestedSortOrder;
+        }
+        PolicyArticle existing = policyArticleDao.findById(id);
+        return existing == null ? null : existing.getSortOrder();
     }
 }

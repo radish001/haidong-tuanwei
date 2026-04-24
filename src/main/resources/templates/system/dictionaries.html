@@ -25,6 +25,7 @@
                         <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'school'} ? ' active'" th:href="@{/system/dictionaries(tab='school')}">学校</a></li>
                         <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'enterprise'} ? ' active'" th:href="@{/system/dictionaries(tab='enterprise')}">企业字典</a></li>
                         <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'analytics'} ? ' active'" th:href="@{/system/dictionaries(tab='analytics')}">数据分析</a></li>
+                        <li class="nav-item"><a class="nav-link" data-ajax-link th:classappend="${query.tab == 'display'} ? ' active'" th:href="@{/system/dictionaries(tab='display')}">显示设置</a></li>
                     </ul>
                 </div>
 
@@ -72,6 +73,25 @@
                                 </div>
                             </form>
                         </div>
+                        <div th:if="${viewKind == 'display-sort-field-visibility'}" class="analytics-tag-config">
+                            <form th:action="@{/system/display/sort-field-visibility}" method="post" class="row g-3">
+                                <div class="col-12">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               id="sortFieldVisible"
+                                               name="sortFieldVisible"
+                                               value="true"
+                                               th:checked="${sortFieldVisibleSetting}">
+                                        <label class="form-check-label" for="sortFieldVisible">显示业务页面中的排序字段</label>
+                                    </div>
+                                    <div class="form-text mt-2">关闭后仅隐藏详情页和新增/编辑页中的“排序”字段，不影响当前列表排序结果。</div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">保存配置</button>
+                                </div>
+                            </form>
+                        </div>
                         <div class="workbench-tabs" th:if="${query.tab == 'common' or query.tab == 'school-category' or query.tab == 'enterprise'}">
                             <ul class="nav nav-tabs border-0 gap-2 flex-wrap">
                                 <th:block th:if="${query.tab == 'common'}">
@@ -96,7 +116,8 @@
                             </ul>
                         </div>
 
-                        <div class="workbench-toolbar" th:if="${viewKind != 'analytics-haidong-tag'}">
+                        <div class="workbench-toolbar"
+                             th:if="${viewKind != 'analytics-haidong-tag' and viewKind != 'display-sort-field-visibility'}">
                             <form class="filter-form workbench-filter-form compact-filter row g-3 bootstrap-filter-form system-dictionaries-filter-form" method="get" id="dictionary-list-form" data-ajax-form>
                                 <input type="hidden" name="tab" th:value="${query.tab}">
                                 <input type="hidden" name="section" th:value="${query.section}">
@@ -127,7 +148,8 @@
                             </div>
                         </div>
 
-                        <div class="system-table-wrap" th:if="${viewKind != 'analytics-haidong-tag'}">
+                        <div class="system-table-wrap"
+                             th:if="${viewKind != 'analytics-haidong-tag' and viewKind != 'display-sort-field-visibility'}">
                             <div class="table-responsive">
                                 <table class="simple-table system-simple-table table table-hover align-middle mb-0">
                                 <thead>

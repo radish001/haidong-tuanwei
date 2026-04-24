@@ -109,7 +109,7 @@ class AnalyticsControllerTest {
 
         when(youthAnalyticsService.getAnalytics("GRADUATED_UNEMPLOYED")).thenReturn(analytics);
 
-        analyticsController.analyticsPage("graduated_unemployed", model);
+        analyticsController.analyticsPage("graduate", model);
 
         assertThat(model.getAttribute("isCollegeAnalytics")).isEqualTo(false);
     }

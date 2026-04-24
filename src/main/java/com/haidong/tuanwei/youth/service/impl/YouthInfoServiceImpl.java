@@ -4,6 +4,7 @@ import com.haidong.tuanwei.system.dao.DictionaryDao;
 import com.haidong.tuanwei.system.dao.MajorCatalogDao;
 import com.haidong.tuanwei.system.dao.RegionDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.youth.dao.YouthInfoDao;
 import com.haidong.tuanwei.youth.dto.YouthFormRequest;
 import com.haidong.tuanwei.youth.dto.YouthImportFailedRow;
@@ -71,6 +72,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
     private final MajorCatalogDao majorCatalogDao;
     private final SchoolDao schoolDao;
     private final RegionSelectionSupport regionSelectionSupport;
+    private final MasterDataService masterDataService;
 
     @Override
     public List<YouthInfo> search(String youthType, YouthSearchRequest query) {
@@ -102,6 +104,7 @@ public class YouthInfoServiceImpl implements YouthInfoService {
         YouthInfo youthInfo = toEntity(request);
         youthInfo.setId(id);
         youthInfo.setUpdateBy(operatorId);
+        youthInfo.setSortOrder(resolveSortOrderForUpdate(id, request.getSortOrder()));
         youthInfoDao.update(youthInfo);
         log.info("Youth record updated: id={}, operatorId={}", id, operatorId);
     }
@@ -293,6 +296,14 @@ public class YouthInfoServiceImpl implements YouthInfoService {
             log.error("Failed to generate youth export file: type={}", youthType, e);
             throw new IllegalStateException("导出文件生成失败", e);
         }
+    }
+
+    private Integer resolveSortOrderForUpdate(Long id, Integer requestedSortOrder) {
+        if (masterDataService.isSortFieldVisible() || requestedSortOrder != null) {
+            return requestedSortOrder;
+        }
+        YouthInfo existing = youthInfoDao.findById(id);
+        return existing == null ? null : existing.getSortOrder();
     }
 
     private YouthInfo toEntity(YouthFormRequest request) {

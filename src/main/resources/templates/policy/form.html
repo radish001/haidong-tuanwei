@@ -24,7 +24,7 @@
                     <label class="full-width col-12"><span>标题</span><input class="form-control" type="text" th:field="*{title}" required></label>
                     <label class="col-12 col-md-6"><span>发布单位</span><input class="form-control" type="text" th:field="*{issuingOrganization}"></label>
                     <label class="col-12 col-md-6"><span>来源</span><input class="form-control" type="text" th:field="*{policySource}"></label>
-                    <label class="col-12 col-md-6"><span>排序</span><input class="form-control" type="number" th:field="*{sortOrder}" placeholder="数值越小越靠前"></label>
+                    <label class="col-12 col-md-6" th:if="${sortFieldVisible}"><span>排序</span><input class="form-control" type="number" th:field="*{sortOrder}" placeholder="数值越小越靠前"></label>
                     <label class="full-width col-12"><span>摘要</span><textarea class="form-control" th:field="*{summary}"></textarea></label>
                     <label class="full-width col-12">
                         <span>正文</span>

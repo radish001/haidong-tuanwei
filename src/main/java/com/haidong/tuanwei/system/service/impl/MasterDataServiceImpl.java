@@ -1,10 +1,11 @@
 package com.haidong.tuanwei.system.service.impl;
 
 import com.haidong.tuanwei.common.util.ExcelUtils;
+import com.haidong.tuanwei.system.dao.AnalyticsSchoolTagDao;
 import com.haidong.tuanwei.system.dao.DictionaryDao;
+import com.haidong.tuanwei.system.dao.DisplaySettingsDao;
 import com.haidong.tuanwei.job.dao.JobPostDao;
 import com.haidong.tuanwei.system.dao.MajorCatalogDao;
-import com.haidong.tuanwei.system.dao.AnalyticsSchoolTagDao;
 import com.haidong.tuanwei.system.dao.SchoolDao;
 import com.haidong.tuanwei.system.dao.SchoolTagDao;
 import com.haidong.tuanwei.system.dto.DataImportResult;
@@ -12,6 +13,7 @@ import com.haidong.tuanwei.system.dto.MajorForm;
 import com.haidong.tuanwei.system.dto.SchoolForm;
 import com.haidong.tuanwei.system.dto.SchoolTagForm;
 import com.haidong.tuanwei.system.entity.DictItem;
+import com.haidong.tuanwei.system.entity.DisplaySettings;
 import com.haidong.tuanwei.system.entity.MajorCatalog;
 import com.haidong.tuanwei.system.entity.School;
 import com.haidong.tuanwei.system.entity.SchoolTag;
@@ -36,6 +38,7 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,6 +54,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     private final DictionaryDao dictionaryDao;
     private final JobPostDao jobPostDao;
     private final AnalyticsSchoolTagDao analyticsSchoolTagDao;
+    private final DisplaySettingsDao displaySettingsDao;
 
     @Override
     public List<MajorCatalog> searchMajors(String keyword, int page, int pageSize) {
@@ -662,5 +666,34 @@ public class MasterDataServiceImpl implements MasterDataService {
         }
         log.info("Analytics school tags saved: requestedCount={}, savedCount={}",
                 tagIds == null ? 0 : tagIds.size(), savedCount);
+    }
+
+    @Override
+    public boolean isSortFieldVisible() {
+        try {
+            DisplaySettings settings = displaySettingsDao.findFirst();
+            return settings == null || settings.getSortFieldVisible() == null || settings.getSortFieldVisible();
+        } catch (DataAccessException ex) {
+            log.warn("Falling back to visible sort field because display settings table is unavailable", ex);
+            return true;
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveSortFieldVisible(boolean sortFieldVisible) {
+        try {
+            DisplaySettings settings = displaySettingsDao.findFirst();
+            if (settings == null) {
+                DisplaySettings newSettings = new DisplaySettings();
+                newSettings.setSortFieldVisible(sortFieldVisible);
+                displaySettingsDao.insert(newSettings);
+            } else {
+                displaySettingsDao.updateSortFieldVisible(settings.getId(), sortFieldVisible);
+            }
+            log.info("Sort field visibility saved: sortFieldVisible={}", sortFieldVisible);
+        } catch (DataAccessException ex) {
+            throw new IllegalStateException("排序显示设置保存失败，请先执行数据库表结构更新", ex);
+        }
     }
 }

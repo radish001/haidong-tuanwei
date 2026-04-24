@@ -200,6 +200,69 @@ class JobControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void sortFieldShouldHideAndExistingValueShouldBePreservedWhenSettingDisabled() throws Exception {
+        String uniqueJobName = "隐藏排序岗位-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("enterpriseId", "1")
+                        .param("jobName", uniqueJobName)
+                        .param("sortOrder", "5"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult createdList = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> createdRecords =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) createdList
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.job.entity.JobPost created = createdRecords.stream()
+                .filter(item -> uniqueJobName.equals(item.getJobName()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "false"))
+                .andExpect(status().is3xxRedirection());
+
+        String editHtml = mockMvc.perform(get(BASE_URL + "/" + created.getId() + "/edit").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(editHtml).doesNotContain("name=\"sortOrder\"");
+
+        String detailHtml = mockMvc.perform(get(BASE_URL + "/" + created.getId()).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(detailHtml).doesNotContain("<span>排序</span>");
+
+        mockMvc.perform(post(BASE_URL + "/" + created.getId())
+                        .session(adminSession)
+                        .param("id", String.valueOf(created.getId()))
+                        .param("enterpriseId", "1")
+                        .param("jobName", uniqueJobName)
+                        .param("jobCategory", "UPDATED"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult updatedList = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.job.entity.JobPost> updatedRecords =
+                (java.util.List<com.haidong.tuanwei.job.entity.JobPost>) updatedList
+                        .getModelAndView().getModel().get("records");
+        assertThat(updatedRecords)
+                .filteredOn(item -> uniqueJobName.equals(item.getJobName()))
+                .extracting(com.haidong.tuanwei.job.entity.JobPost::getSortOrder)
+                .containsExactly(5);
+    }
+
+    @Test
     void deleteJobShouldRemoveFromList() throws Exception {
         // 创建岗位
         String jobName = "待删除岗位-" + System.currentTimeMillis();

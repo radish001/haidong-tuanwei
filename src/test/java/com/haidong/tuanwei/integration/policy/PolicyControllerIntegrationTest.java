@@ -156,6 +156,68 @@ class PolicyControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void sortFieldShouldHideAndExistingValueShouldBePreservedWhenSettingDisabled() throws Exception {
+        String uniqueTitle = "隐藏排序政策-" + System.currentTimeMillis();
+
+        mockMvc.perform(post(BASE_URL)
+                        .session(adminSession)
+                        .param("title", uniqueTitle)
+                        .param("sortOrder", "4")
+                        .param("contentHtml", "<p>初始内容</p>"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult createdList = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.policy.entity.PolicyArticle> createdRecords =
+                (java.util.List<com.haidong.tuanwei.policy.entity.PolicyArticle>) createdList
+                        .getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.policy.entity.PolicyArticle created = createdRecords.stream()
+                .filter(item -> uniqueTitle.equals(item.getTitle()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "false"))
+                .andExpect(status().is3xxRedirection());
+
+        String editHtml = mockMvc.perform(get(BASE_URL + "/" + created.getId() + "/edit").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(editHtml).doesNotContain("name=\"sortOrder\"");
+
+        String detailHtml = mockMvc.perform(get(BASE_URL + "/" + created.getId()).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(detailHtml).doesNotContain("<span>排序</span>");
+
+        mockMvc.perform(post(BASE_URL + "/" + created.getId())
+                        .session(adminSession)
+                        .param("id", String.valueOf(created.getId()))
+                        .param("title", uniqueTitle)
+                        .param("contentHtml", "<p>更新后内容</p>"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult updatedList = mockMvc.perform(get(BASE_URL).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        java.util.List<com.haidong.tuanwei.policy.entity.PolicyArticle> updatedRecords =
+                (java.util.List<com.haidong.tuanwei.policy.entity.PolicyArticle>) updatedList
+                        .getModelAndView().getModel().get("records");
+        assertThat(updatedRecords)
+                .filteredOn(item -> uniqueTitle.equals(item.getTitle()))
+                .extracting(com.haidong.tuanwei.policy.entity.PolicyArticle::getSortOrder)
+                .containsExactly(4);
+    }
+
+    @Test
     void updatePolicyStatusShouldTogglePublishState() throws Exception {
         // 创建政策
         String title = "状态测试政策-" + System.currentTimeMillis();

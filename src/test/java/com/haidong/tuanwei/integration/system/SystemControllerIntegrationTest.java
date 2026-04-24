@@ -490,6 +490,49 @@ class SystemControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void displayTabShouldLoadWithSortFieldVisibilitySetting() throws Exception {
+        mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "display"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("system/dictionaries"))
+                .andExpect(model().attribute("viewKind", "display-sort-field-visibility"))
+                .andExpect(model().attribute("sortFieldVisibleSetting", true));
+    }
+
+    @Test
+    void saveSortFieldVisibilityShouldPersistSelection() throws Exception {
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "排序显示设置保存成功"));
+
+        mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "display"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("sortFieldVisibleSetting", false));
+    }
+
+    @Test
+    void saveSortFieldVisibilityShouldAllowTurningSettingBackOn() throws Exception {
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "false"))
+                .andExpect(status().is3xxRedirection());
+
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("successMessage", "排序显示设置保存成功"));
+
+        mockMvc.perform(get(BASE_URL).session(adminSession)
+                        .param("tab", "display"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("sortFieldVisibleSetting", true));
+    }
+
+    @Test
     void saveAnalyticsSchoolTagsShouldPersistSelection() throws Exception {
         mockMvc.perform(post("/system/analytics/haidong-school-tags")
                         .session(adminSession)

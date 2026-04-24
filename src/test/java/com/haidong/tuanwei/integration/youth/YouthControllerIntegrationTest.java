@@ -192,6 +192,75 @@ class YouthControllerIntegrationTest extends IntegrationTestBase {
     }
 
     @Test
+    void sortFieldShouldHideAndExistingValueShouldBePreservedWhenSettingDisabled() throws Exception {
+        String phone = "165" + System.currentTimeMillis();
+
+        mockMvc.perform(post("/youth/college")
+                        .session(adminSession)
+                        .param("name", "隐藏排序青年")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", phone)
+                        .param("sortOrder", "6"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult createdList = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.youth.entity.YouthInfo> createdRecords =
+                (List<com.haidong.tuanwei.youth.entity.YouthInfo>) createdList.getModelAndView().getModel().get("records");
+        com.haidong.tuanwei.youth.entity.YouthInfo created = createdRecords.stream()
+                .filter(item -> phone.equals(item.getPhone()))
+                .findFirst()
+                .orElseThrow();
+
+        mockMvc.perform(post("/system/display/sort-field-visibility")
+                        .session(adminSession)
+                        .param("sortFieldVisible", "false"))
+                .andExpect(status().is3xxRedirection());
+
+        String editHtml = mockMvc.perform(get("/youth/college/" + created.getId() + "/edit").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(editHtml).doesNotContain("name=\"sortOrder\"");
+
+        String detailHtml = mockMvc.perform(get("/youth/college/" + created.getId()).session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        assertThat(detailHtml).doesNotContain("<span>排序</span>");
+
+        mockMvc.perform(post("/youth/college/" + created.getId())
+                        .session(adminSession)
+                        .param("id", String.valueOf(created.getId()))
+                        .param("name", "隐藏排序青年")
+                        .param("gender", "M")
+                        .param("educationLevel", "BK")
+                        .param("schoolCode", "10743")
+                        .param("majorCode", "080901")
+                        .param("phone", phone)
+                        .param("recruitmentYear", "2024"))
+                .andExpect(status().is3xxRedirection());
+
+        MvcResult updatedList = mockMvc.perform(get("/youth/college").session(adminSession))
+                .andExpect(status().isOk())
+                .andReturn();
+        @SuppressWarnings("unchecked")
+        List<com.haidong.tuanwei.youth.entity.YouthInfo> updatedRecords =
+                (List<com.haidong.tuanwei.youth.entity.YouthInfo>) updatedList.getModelAndView().getModel().get("records");
+        assertThat(updatedRecords)
+                .filteredOn(item -> phone.equals(item.getPhone()))
+                .extracting(com.haidong.tuanwei.youth.entity.YouthInfo::getSortOrder)
+                .containsExactly(6);
+    }
+
+    @Test
     void downloadTemplateShouldReturnExcel() throws Exception {
         mockMvc.perform(get("/youth/college/template").session(adminSession))
                 .andExpect(status().isOk())

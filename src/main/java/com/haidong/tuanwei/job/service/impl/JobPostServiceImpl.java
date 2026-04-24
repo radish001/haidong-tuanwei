@@ -13,6 +13,7 @@ import com.haidong.tuanwei.system.dao.SchoolTagDao;
 import com.haidong.tuanwei.system.entity.DictItem;
 import com.haidong.tuanwei.system.entity.MajorCatalog;
 import com.haidong.tuanwei.system.entity.SchoolTag;
+import com.haidong.tuanwei.system.service.MasterDataService;
 import com.haidong.tuanwei.system.support.RegionSelectionSupport;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class JobPostServiceImpl implements JobPostService {
     private final MajorCatalogDao majorCatalogDao;
     private final SchoolTagDao schoolTagDao;
     private final RegionSelectionSupport regionSelectionSupport;
+    private final MasterDataService masterDataService;
 
     @Override
     public List<JobPost> search(JobSearchRequest query) {
@@ -73,6 +75,7 @@ public class JobPostServiceImpl implements JobPostService {
         JobPost jobPost = toEntity(request);
         jobPost.setId(id);
         jobPost.setStatus(1);
+        jobPost.setSortOrder(resolveSortOrderForUpdate(id, request.getSortOrder()));
         jobPostDao.update(jobPost);
         replaceSelections(id, request, operatorId);
         log.info("Job post updated: id={}, operatorId={}, enterpriseId={}",
@@ -249,6 +252,14 @@ public class JobPostServiceImpl implements JobPostService {
             normalized.add(tag.getId());
         }
         return new ArrayList<>(normalized);
+    }
+
+    private Integer resolveSortOrderForUpdate(Long id, Integer requestedSortOrder) {
+        if (masterDataService.isSortFieldVisible() || requestedSortOrder != null) {
+            return requestedSortOrder;
+        }
+        JobPost existing = jobPostDao.findById(id);
+        return existing == null ? null : existing.getSortOrder();
     }
 
     private String joinDictLabels(String dictType, List<String> dictValues) {

@@ -31,7 +31,7 @@
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>薪资待遇</span><strong th:text="${salaryRangeLabel}">薪资待遇</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>招聘人数</span><strong th:text="${record.recruitCount}">招聘人数</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>工作地区</span><strong th:text="${record.workRegionName}">工作地区</strong></div>
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-6" th:if="${sortFieldVisible}"><span>排序</span><strong th:text="${record.sortOrder} ?: '未设置'">未设置</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系人</span><strong th:text="${record.contactPerson}">联系人</strong></div>
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-6"><span>联系电话</span><strong th:text="${record.contactPhone}">联系电话</strong></div>
                     <div class="col-12"><span>岗位描述</span><strong th:text="${record.jobDescription}">岗位描述</strong></div>
