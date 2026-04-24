@@ -331,6 +331,7 @@ public class YouthController {
     }
 
     private void applyJobMatchConditions(JobSearchRequest query, YouthInfo youthInfo, School school) {
+        query.setIncludeUnspecifiedRequirements(true);
         query.setEducationRequirement(null);
         query.setEducationRequirements(toSingletonList(youthInfo.getEducationCode()));
         query.setMajorCodes(toSingletonList(youthInfo.getMajorCode()));

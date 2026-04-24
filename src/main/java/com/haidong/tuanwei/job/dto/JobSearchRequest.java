@@ -23,6 +23,7 @@ public class JobSearchRequest {
     private Integer page = 1;
     private Integer pageSize = 10;
     private Boolean paged = true;
+    private Boolean includeUnspecifiedRequirements = false;
 
     public int getSafePage() {
         return page == null || page < 1 ? 1 : page;
@@ -56,5 +57,9 @@ public class JobSearchRequest {
 
     public boolean hasSpecificMajorFilter() {
         return !hasUnlimitedMajorFilter() && majorCodes != null && !majorCodes.isEmpty();
+    }
+
+    public boolean shouldIncludeUnspecifiedRequirements() {
+        return Boolean.TRUE.equals(includeUnspecifiedRequirements);
     }
 }
