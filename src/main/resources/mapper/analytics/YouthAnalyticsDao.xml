@@ -72,7 +72,14 @@
           and yi.education_level is not null
           and yi.education_level != ''
         group by yi.education_level, d.dict_label
-        order by item_value desc
+        order by case yi.education_level
+                     when '07' then 4
+                     when '06' then 3
+                     when '05' then 2
+                     when '04' then 1
+                     else 0
+                 end desc,
+                 yi.education_level desc
     </select>
 
     <select id="countByGender" resultMap="ChartItemResultMap">

@@ -160,7 +160,7 @@
         attachResize(chart);
     }
 
-    function renderHorizontalBar(elementId, title, rawData, clickFilterParam) {
+    function renderHorizontalBar(elementId, title, rawData, clickFilterParam, options = {}) {
         const data = parseData(rawData);
         const chart = initChart(elementId, title, data);
         if (!chart) return;
@@ -172,6 +172,7 @@
             yAxis: {
                 type: 'category',
                 data: data.map(item => item.name),
+                inverse: options.inverseCategory === true,
                 axisLabel: {color: '#8ea3cc'}
             },
             series: [{
@@ -559,12 +560,12 @@
             aggregateOther: false,
             borderWidth: 1
         });
-        renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel');
+        renderHorizontalBar('educationChart', '学历分布', educationData, 'educationLevel', {inverseCategory: true});
         renderMirrorBar('genderChart', '性别分布', genderData, 'gender');
         renderTopicCards('collegeTopicCharts', haidongTagData, jobMajorData);
     } else {
     renderAreaChart('ageChart', '年龄结构', ageData);
-    renderHorizontalBar('educationChart', '学历', educationData);
+    renderHorizontalBar('educationChart', '学历', educationData, null, {inverseCategory: true});
     renderPieChart('ethnicityChart', '民族分布', ethnicityData, false, {
         minAngle: 5,
         aggregateOther: false,
